@@ -1,0 +1,121 @@
+/* Custom styles for the admin panel */
+
+/* Fix wrapper to prevent horizontal overflow */
+#wrapper {
+    display: flex;
+    overflow-x: hidden;
+}
+
+/* Fix sidebar width and make it scrollable */
+.sidebar {
+    width: 14rem !important;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1;
+    flex-shrink: 0;
+    transition: width 0.15s ease-in-out;
+}
+
+/* Fix sidebar nav item width */
+.sidebar .nav-item .nav-link {
+    width: auto;
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+/* Fix sidebar nav item span */
+.sidebar .nav-item .nav-link span {
+    font-size: 0.85rem;
+    display: inline;
+    margin-left: 0.5rem;
+}
+
+/* Additional styling for active menu items */
+.sidebar .nav-item.active .nav-link {
+    font-weight: 700;
+}
+
+/* Custom styles for the sidebar collapse */
+.sidebar.toggled {
+    width: 6.5rem !important;
+    min-width: 6.5rem !important;
+    max-width: 6.5rem !important;
+}
+
+.sidebar.toggled .nav-item .nav-link {
+    text-align: center;
+    padding: 0.75rem 1rem;
+    width: 6.5rem;
+}
+
+.sidebar.toggled .nav-item .nav-link span {
+    font-size: 0.65rem;
+    display: block;
+    margin-left: 0;
+}
+
+.sidebar.toggled .sidebar-heading {
+    display: none;
+}
+
+/* Fix content wrapper to prevent horizontal scrolling */
+#content-wrapper {
+    flex: 1;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fix main content area */
+#content {
+    flex: 1 0 auto;
+}
+
+/* Fix footer positioning */
+footer.sticky-footer {
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.sidebar.toggled {
+    width: 6.5rem !important;
+}
+
+.sidebar.toggled ~ #content-wrapper {
+    flex: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        position: relative;
+        height: auto;
+        max-height: 80vh;
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        float: none;
+    }
+    
+    #content-wrapper {
+        width: 100%;
+        float: none;
+    }
+    
+    .sidebar.toggled {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .sidebar.toggled ~ #content-wrapper {
+        width: 100%;
+    }
+} 

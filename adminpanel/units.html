@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Admin Panel for Bazar-dor">
+    <meta name="author" content="">
+
+    <title>Bazar-dor Admin - Units</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Bazar-dor Admin</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Main
+            </div>
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Catalog
+            </div>
+
+            <!-- Nav Item - Units -->
+            <li class="nav-item active">
+                <a class="nav-link" href="units.html">
+                    <i class="fas fa-fw fa-ruler-combined"></i>
+                    <span>Units</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Categories -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
+                    <i class="fas fa-fw fa-tags"></i>
+                    <span>Categories</span>
+                </a>
+                <div id="collapseCategories" class="collapse" aria-labelledby="headingCategories" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="categories.html">All Categories</a>
+                        <a class="collapse-item" href="add-category.html">Add Category</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Products -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+                    <i class="fas fa-fw fa-box-open"></i>
+                    <span>Products</span>
+                </a>
+                <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="products.html">All Products</a>
+                        <a class="collapse-item" href="add-product.html">Add Product</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Markets -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMarkets" aria-expanded="false" aria-controls="collapseMarkets">
+                    <i class="fas fa-fw fa-store"></i>
+                    <span>Markets</span>
+                </a>
+                <div id="collapseMarkets" class="collapse" aria-labelledby="headingMarkets" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="markets.html">All Markets</a>
+                        <a class="collapse-item" href="add-market.html">Add Market</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Users Management
+            </div>
+
+            <!-- Nav Item - Users -->
+            <li class="nav-item">
+                <a class="nav-link" href="users.html">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Contributions -->
+            <li class="nav-item">
+                <a class="nav-link" href="contributions.html">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Contributions</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Points Management -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePoints" aria-expanded="false" aria-controls="collapsePoints">
+                    <i class="fas fa-fw fa-award"></i>
+                    <span>Points Management</span>
+                </a>
+                <div id="collapsePoints" class="collapse" aria-labelledby="headingPoints" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="manage-points.html">Manage Points</a>
+                        <a class="collapse-item" href="volunteer-redemptions.html">Redemptions</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Redemptions -->
+            <li class="nav-item">
+                <a class="nav-link" href="volunteer-redemptions.html">
+                    <i class="fas fa-fw fa-gift"></i>
+                    <span>Redemptions</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Marketing
+            </div>
+
+            <!-- Nav Item - Banners -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBanners" aria-expanded="false" aria-controls="collapseBanners">
+                    <i class="fas fa-fw fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <div id="collapseBanners" class="collapse" aria-labelledby="headingBanners" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="banners.html">All Banners</a>
+                        <a class="collapse-item" href="add-banner.html">Add Banner</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Featured Banners -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFeaturedBanners" aria-expanded="false" aria-controls="collapseFeaturedBanners">
+                    <i class="fas fa-fw fa-star"></i>
+                    <span>Featured Banners</span>
+                </a>
+                <div id="collapseFeaturedBanners" class="collapse" aria-labelledby="headingFeaturedBanners" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="featured-banners.html">All Featured Banners</a>
+                        <a class="collapse-item" href="add-featured-banner.html">Add Featured Banner</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Reports
+            </div>
+
+            <!-- Nav Item - Market Reports -->
+            <li class="nav-item">
+                <a class="nav-link" href="market-reports.html">
+                    <i class="fas fa-fw fa-store-alt"></i>
+                    <span>Market Reports</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Product Reports -->
+            <li class="nav-item">
+                <a class="nav-link" href="product-reports.html">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>Product Reports</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Price Analytics -->
+            <li class="nav-item">
+                <a class="nav-link" href="price-reports.html">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Price Analytics</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - User Analytics -->
+            <li class="nav-item">
+                <a class="nav-link" href="user-reports.html">
+                    <i class="fas fa-fw fa-user-chart"></i>
+                    <span>User Analytics</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Configuration
+            </div>
+
+            <!-- Nav Item - Zone Management -->
+            <li class="nav-item">
+                <a class="nav-link" href="zone-management.html">
+                    <i class="fas fa-fw fa-map-marker-alt"></i>
+                    <span>Zone Management</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Settings -->
+            <li class="nav-item">
+                <a class="nav-link" href="settings.html">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin User</span>
+                                <img class="img-profile rounded-circle"
+                                    src="img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Units</h1>
+                    <p class="mb-4">Manage measurement units for products in your catalog.</p>
+
+                    <!-- Unit Form Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Add Unit</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="unitForm" class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="unitName">Unit Name</label>
+                                    <input type="text" class="form-control" id="unitName" placeholder="Enter unit name">
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="unitSymbol">Symbol</label>
+                                    <input type="text" class="form-control" id="unitSymbol" placeholder="e.g. kg">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="unitType">Type</label>
+                                    <select class="form-control" id="unitType">
+                                        <option selected value="">Select unit type</option>
+                                        <option value="weight">Weight</option>
+                                        <option value="volume">Volume</option>
+                                        <option value="length">Length</option>
+                                        <option value="count">Count</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="unitStatus">Status</label>
+                                    <select class="form-control" id="unitStatus">
+                                        <option value="active" selected>Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 text-right">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus-circle mr-1"></i>Add Unit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Units DataTable -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">All Units</h6>
+                            <div class="d-flex">
+                                <a href="#" class="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#importUnitModal">
+                                    <i class="fas fa-file-import fa-sm"></i> Import
+                                </a>
+                                <div class="dropdown mr-2">
+                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-file-export fa-sm"></i> Export
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                                        <a class="dropdown-item" href="#" id="exportCSV">
+                                            <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> CSV
+                                        </a>
+                                        <a class="dropdown-item" href="#" id="exportPDF">
+                                            <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> PDF
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-filter fa-sm"></i> Filter
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="filterDropdown">
+                                        <div class="dropdown-header">Filter By:</div>
+                                        <a class="dropdown-item" href="#" data-filter="type">
+                                            <i class="fas fa-tags fa-sm fa-fw text-gray-400"></i> Type
+                                        </a>
+                                        <a class="dropdown-item" href="#" data-filter="status">
+                                            <i class="fas fa-toggle-on fa-sm fa-fw text-gray-400"></i> Status
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#" id="resetFilters">
+                                            <i class="fas fa-undo fa-sm fa-fw text-gray-400"></i> Reset Filters
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Unit Name</th>
+                                            <th>Symbol</th>
+                                            <th>Type</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>U001</td>
+                                            <td>Kilogram</td>
+                                            <td>kg</td>
+                                            <td>Weight</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>2023-05-10</td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" data-toggle="modal" data-target="#editUnitModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-unit">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-unit">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>U002</td>
+                                            <td>Liter</td>
+                                            <td>L</td>
+                                            <td>Volume</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>2023-05-12</td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" data-toggle="modal" data-target="#editUnitModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-unit">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-unit">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>U003</td>
+                                            <td>Piece</td>
+                                            <td>pc</td>
+                                            <td>Count</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>2023-05-15</td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" data-toggle="modal" data-target="#editUnitModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-unit">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-unit">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Bazar-dor 2023</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Unit Modal -->
+    <div class="modal fade" id="addUnitModal" tabindex="-1" role="dialog" aria-labelledby="addUnitModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUnitModalLabel">Add New Unit</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="modalUnitName">Unit Name</label>
+                            <input type="text" class="form-control" id="modalUnitName" placeholder="Enter unit name">
+                        </div>
+                        <div class="form-group">
+                            <label for="modalUnitSymbol">Symbol</label>
+                            <input type="text" class="form-control" id="modalUnitSymbol" placeholder="e.g. kg">
+                        </div>
+                        <div class="form-group">
+                            <label for="modalUnitType">Type</label>
+                            <select class="form-control" id="modalUnitType">
+                                <option selected value="">Select unit type</option>
+                                <option value="weight">Weight</option>
+                                <option value="volume">Volume</option>
+                                <option value="length">Length</option>
+                                <option value="count">Count</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modalUnitStatus">Status</label>
+                            <select class="form-control" id="modalUnitStatus">
+                                <option value="active" selected>Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="button" id="saveNewUnit">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Unit Modal -->
+    <div class="modal fade" id="editUnitModal" tabindex="-1" role="dialog" aria-labelledby="editUnitModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUnitModalLabel">Edit Unit</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="editModalUnitName">Unit Name</label>
+                            <input type="text" class="form-control" id="editModalUnitName" value="Kilogram">
+                        </div>
+                        <div class="form-group">
+                            <label for="editModalUnitSymbol">Symbol</label>
+                            <input type="text" class="form-control" id="editModalUnitSymbol" value="kg">
+                        </div>
+                        <div class="form-group">
+                            <label for="editModalUnitType">Type</label>
+                            <select class="form-control" id="editModalUnitType">
+                                <option>Select unit type</option>
+                                <option value="weight" selected>Weight</option>
+                                <option value="volume">Volume</option>
+                                <option value="length">Length</option>
+                                <option value="count">Count</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editModalUnitStatus">Status</label>
+                            <select class="form-control" id="editModalUnitStatus">
+                                <option value="active" selected>Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="button" id="saveEditUnit">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Units Modal -->
+    <div class="modal fade" id="importUnitModal" tabindex="-1" role="dialog" aria-labelledby="importUnitModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importUnitModalLabel">Import Units</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Upload a CSV file containing unit data. The file should have the following columns: Unit Name, Symbol, Type, and Status.
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label for="importFile">Select File</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="importFile" accept=".csv">
+                                <label class="custom-file-label" for="importFile">Choose file...</label>
+                            </div>
+                            <small class="form-text text-muted">Maximum file size: 2MB</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="importOptions">Import Options</label>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="skipHeader" checked>
+                                <label class="custom-control-label" for="skipHeader">First row is header</label>
+                            </div>
+                            <div class="custom-control custom-checkbox mt-2">
+                                <input type="checkbox" class="custom-control-input" id="updateExisting">
+                                <label class="custom-control-label" for="updateExisting">Update existing units</label>
+                            </div>
+                        </div>
+                        <div class="mt-3 mb-2">
+                            <a href="#" id="downloadTemplate" class="text-primary">
+                                <i class="fas fa-download mr-1"></i> Download template
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" type="button" id="startImport">
+                        <i class="fas fa-file-import mr-1"></i> Import
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Units Page Script -->
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#dataTable').DataTable();
+            
+            // Unit Form Submit
+            $('#unitForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const unitName = $('#unitName').val();
+                const unitSymbol = $('#unitSymbol').val();
+                const unitType = $('#unitType').val();
+                const unitStatus = $('#unitStatus').val();
+                
+                // Validate form
+                if (!unitName || !unitSymbol || !unitType) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please fill all required fields!'
+                    });
+                    return;
+                }
+                
+                // In a real application, this would send data to the server
+                // For demo purposes, we'll just show a success message and clear the form
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Unit Added',
+                    text: `${unitName} has been added successfully!`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Clear form
+                $('#unitForm')[0].reset();
+            });
+            
+            // Modal Add Unit
+            $('#saveNewUnit').on('click', function() {
+                // Get modal form values
+                const unitName = $('#modalUnitName').val();
+                const unitSymbol = $('#modalUnitSymbol').val();
+                const unitType = $('#modalUnitType').val();
+                const unitStatus = $('#modalUnitStatus').val();
+                
+                // Validate form
+                if (!unitName || !unitSymbol || !unitType) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please fill all required fields!'
+                    });
+                    return;
+                }
+                
+                // In a real application, this would send data to the server
+                // For demo purposes, we'll just show a success message and close the modal
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Unit Added',
+                    text: `${unitName} has been added successfully!`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Close modal
+                $('#addUnitModal').modal('hide');
+            });
+            
+            // Edit Unit
+            $('#saveEditUnit').on('click', function() {
+                // Get modal form values
+                const unitName = $('#editModalUnitName').val();
+                const unitSymbol = $('#editModalUnitSymbol').val();
+                const unitType = $('#editModalUnitType').val();
+                const unitStatus = $('#editModalUnitStatus').val();
+                
+                // Validate form
+                if (!unitName || !unitSymbol || !unitType) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please fill all required fields!'
+                    });
+                    return;
+                }
+                
+                // In a real application, this would send data to the server
+                // For demo purposes, we'll just show a success message and close the modal
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Unit Updated',
+                    text: `${unitName} has been updated successfully!`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Close modal
+                $('#editUnitModal').modal('hide');
+            });
+            
+            // Delete Unit
+            $('.delete-unit').on('click', function() {
+                const row = $(this).closest('tr');
+                const unitName = row.find('td:nth-child(2)').text();
+                
+                Swal.fire({
+                    title: 'Delete Unit?',
+                    text: `Are you sure you want to delete ${unitName}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // In a real application, this would send a delete request to the server
+                        // For demo purposes, we'll just remove the row from the table
+                        row.remove();
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: `${unitName} has been deleted successfully.`,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            });
+            
+            // View Unit
+            $('.view-unit').on('click', function() {
+                const row = $(this).closest('tr');
+                const unitId = row.find('td:nth-child(1)').text();
+                const unitName = row.find('td:nth-child(2)').text();
+                const unitSymbol = row.find('td:nth-child(3)').text();
+                const unitType = row.find('td:nth-child(4)').text();
+                const unitStatus = row.find('td:nth-child(5) .badge').text();
+                const unitCreated = row.find('td:nth-child(6)').text();
+                
+                Swal.fire({
+                    title: 'Unit Details',
+                    html: `
+                        <div class="text-left">
+                            <p><strong>ID:</strong> ${unitId}</p>
+                            <p><strong>Name:</strong> ${unitName}</p>
+                            <p><strong>Symbol:</strong> ${unitSymbol}</p>
+                            <p><strong>Type:</strong> ${unitType}</p>
+                            <p><strong>Status:</strong> ${unitStatus}</p>
+                            <p><strong>Created:</strong> ${unitCreated}</p>
+                        </div>
+                    `,
+                    confirmButtonText: 'Close',
+                    confirmButtonColor: '#4e73df'
+                });
+            });
+            
+            // Export functionality
+            $('#exportCSV').on('click', function() {
+                // In a real application, this would be an AJAX call to a server endpoint
+                // that would generate and return a CSV file
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Export Started',
+                    text: 'Your CSV file is being generated and will download shortly.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Simulate file download (for demo purposes)
+                setTimeout(function() {
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.download = 'units-export-' + new Date().toISOString().split('T')[0] + '.csv';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }, 2000);
+            });
+            
+            $('#exportPDF').on('click', function() {
+                // In a real application, this would be an AJAX call to a server endpoint
+                // that would generate and return a PDF file
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Export Started',
+                    text: 'Your PDF file is being generated and will download shortly.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Simulate file download (for demo purposes)
+                setTimeout(function() {
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.download = 'units-export-' + new Date().toISOString().split('T')[0] + '.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }, 2000);
+            });
+            
+            // Filter functionality
+            let activeFilters = {};
+            
+            $('[data-filter]').on('click', function(e) {
+                e.preventDefault();
+                const filterType = $(this).data('filter');
+                
+                // Build filter options dynamically based on current table data
+                let options = [];
+                if (filterType === 'type') {
+                    // Collect all unique types from the table
+                    const types = new Set();
+                    $('#dataTable tbody tr').each(function() {
+                        const type = $(this).find('td:nth-child(4)').text().trim();
+                        types.add(type);
+                    });
+                    options = Array.from(types);
+                } else if (filterType === 'status') {
+                    options = ['Active', 'Inactive'];
+                }
+                
+                // Build the filter dialog HTML
+                let filterOptionsHtml = '';
+                options.forEach(option => {
+                    filterOptionsHtml += `
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="filter-${filterType}-${option.toLowerCase()}" value="${option}">
+                            <label class="custom-control-label" for="filter-${filterType}-${option.toLowerCase()}">${option}</label>
+                        </div>
+                    `;
+                });
+                
+                Swal.fire({
+                    title: `Filter by ${filterType.charAt(0).toUpperCase() + filterType.slice(1)}`,
+                    html: filterOptionsHtml,
+                    confirmButtonText: 'Apply Filter',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const selectedOptions = [];
+                        options.forEach(option => {
+                            if ($(`#filter-${filterType}-${option.toLowerCase()}`).is(':checked')) {
+                                selectedOptions.push(option);
+                            }
+                        });
+                        return selectedOptions;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed && result.value.length > 0) {
+                        activeFilters[filterType] = result.value;
+                        applyFilters();
+                    }
+                });
+            });
+            
+            $('#resetFilters').on('click', function(e) {
+                e.preventDefault();
+                activeFilters = {};
+                applyFilters();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Filters Reset',
+                    text: 'All filters have been removed.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            });
+            
+            function applyFilters() {
+                const table = $('#dataTable').DataTable();
+                
+                // Clear any existing filters
+                table.search('').columns().search('').draw();
+                
+                // Apply each active filter
+                if (Object.keys(activeFilters).length === 0) {
+                    // No filters, show all rows
+                    table.search('').columns().search('').draw();
+                } else {
+                    // Custom filtering function
+                    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                        let showRow = true;
+                        
+                        // Check type filter
+                        if (activeFilters.type && activeFilters.type.length > 0) {
+                            if (!activeFilters.type.includes(data[3])) {
+                                showRow = false;
+                            }
+                        }
+                        
+                        // Check status filter
+                        if (activeFilters.status && activeFilters.status.length > 0) {
+                            const rowStatus = $(table.row(dataIndex).node()).find('td:nth-child(5) .badge').text();
+                            if (!activeFilters.status.includes(rowStatus)) {
+                                showRow = false;
+                            }
+                        }
+                        
+                        return showRow;
+                    });
+                    
+                    // Redraw the table
+                    table.draw();
+                    
+                    // Remove the custom filter function
+                    $.fn.dataTable.ext.search.pop();
+                }
+            }
+
+            // Import functionality
+            $('#importFile').on('change', function() {
+                const fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').html(fileName || 'Choose file...');
+            });
+            
+            $('#downloadTemplate').on('click', function(e) {
+                e.preventDefault();
+                
+                // Create a template CSV file content
+                const csvContent = 'Unit Name,Symbol,Type,Status\nKilogram,kg,Weight,Active\nLiter,L,Volume,Active\nPiece,pc,Count,Active';
+                
+                // Create a blob and download link
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'units-template.csv';
+                document.body.appendChild(link);
+                link.click();
+                window.URL.revokeObjectURL(url);
+            });
+            
+            $('#startImport').on('click', function() {
+                const fileInput = $('#importFile')[0];
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No File Selected',
+                        text: 'Please select a CSV file to import.',
+                    });
+                    return;
+                }
+                
+                // In a real application, you would use FormData to submit the file to the server
+                // For demo purposes, we'll just show a success message
+                Swal.fire({
+                    title: 'Importing...',
+                    html: 'Please wait while we import your units.',
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Simulate importing process (3 seconds delay)
+                setTimeout(function() {
+                    // Close import modal
+                    $('#importUnitModal').modal('hide');
+                    
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Completed',
+                        html: `
+                            <div class="text-left">
+                                <p><strong>Units imported:</strong> 3</p>
+                                <p><strong>Units updated:</strong> 0</p>
+                                <p><strong>Errors:</strong> 0</p>
+                            </div>
+                        `,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Reset the file input
+                        $('#importFile').val('').next('.custom-file-label').html('Choose file...');
+                    });
+                    
+                    // Add some sample rows to the DataTable (simulating successful import)
+                    const table = $('#dataTable').DataTable();
+                    
+                    // In a real application, this would be the data received from the server
+                    // For demo, we'll just add some predefined rows
+                    const now = new Date().toISOString().split('T')[0];
+                    
+                    // Check if rows don't already exist
+                    if (table.row(':contains("Ton")').length === 0) {
+                        table.row.add(['U004', 'Ton', 't', 'Weight', '<span class="badge badge-success">Active</span>', now, 
+                            '<a href="#" class="btn btn-primary btn-circle btn-sm" data-toggle="modal" data-target="#editUnitModal"><i class="fas fa-edit"></i></a> ' +
+                            '<a href="#" class="btn btn-danger btn-circle btn-sm delete-unit"><i class="fas fa-trash"></i></a> ' +
+                            '<a href="#" class="btn btn-info btn-circle btn-sm view-unit"><i class="fas fa-eye"></i></a>'
+                        ]).draw();
+                    }
+                    
+                    // Reattach event handlers to the new buttons
+                    $('.delete-unit, .view-unit').off('click');
+                    
+                    // Reattach delete event handler
+                    $('.delete-unit').on('click', function() {
+                        const row = $(this).closest('tr');
+                        const unitName = row.find('td:nth-child(2)').text();
+                        
+                        Swal.fire({
+                            title: 'Delete Unit?',
+                            text: `Are you sure you want to delete ${unitName}?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                row.remove();
+                                
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: `${unitName} has been deleted successfully.`,
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        });
+                    });
+                    
+                    // Reattach view event handler
+                    $('.view-unit').on('click', function() {
+                        const row = $(this).closest('tr');
+                        const unitId = row.find('td:nth-child(1)').text();
+                        const unitName = row.find('td:nth-child(2)').text();
+                        const unitSymbol = row.find('td:nth-child(3)').text();
+                        const unitType = row.find('td:nth-child(4)').text();
+                        const unitStatus = row.find('td:nth-child(5) .badge').text();
+                        const unitCreated = row.find('td:nth-child(6)').text();
+                        
+                        Swal.fire({
+                            title: 'Unit Details',
+                            html: `
+                                <div class="text-left">
+                                    <p><strong>ID:</strong> ${unitId}</p>
+                                    <p><strong>Name:</strong> ${unitName}</p>
+                                    <p><strong>Symbol:</strong> ${unitSymbol}</p>
+                                    <p><strong>Type:</strong> ${unitType}</p>
+                                    <p><strong>Status:</strong> ${unitStatus}</p>
+                                    <p><strong>Created:</strong> ${unitCreated}</p>
+                                </div>
+                            `,
+                            confirmButtonText: 'Close',
+                            confirmButtonColor: '#4e73df'
+                        });
+                    });
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+
+</html>

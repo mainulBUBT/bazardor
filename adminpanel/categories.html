@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Admin Panel for Bazar-dor - Categories">
+    <meta name="author" content="">
+
+    <title>Bazar-dor Admin - Categories</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <style>
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eaecf4; /* Light background */
+            color: #4e73df; /* Primary color */
+            border-radius: 8px;
+            font-size: 1.25rem;
+            vertical-align: middle;
+        }
+        .table-responsive {
+            /* Ensure table doesn't overflow card */
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Bazar-dor Admin</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Main
+            </div>
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Catalog
+            </div>
+
+            <!-- Nav Item - Units -->
+            <li class="nav-item">
+                <a class="nav-link" href="units.html">
+                    <i class="fas fa-fw fa-ruler-combined"></i>
+                    <span>Units</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Categories -->
+            <li class="nav-item active dropdown">
+                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="true" aria-controls="collapseCategories">
+                    <i class="fas fa-fw fa-tags"></i>
+                    <span>Categories</span>
+                </a>
+                <div id="collapseCategories" class="collapse show" aria-labelledby="headingCategories" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item active" href="categories.html">All Categories</a>
+                        <a class="collapse-item" href="add-category.html">Add Category</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Products -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+                    <i class="fas fa-fw fa-box-open"></i>
+                    <span>Products</span>
+                </a>
+                <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="products.html">All Products</a>
+                        <a class="collapse-item" href="add-product.html">Add Product</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Markets -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMarkets" aria-expanded="false" aria-controls="collapseMarkets">
+                    <i class="fas fa-fw fa-store"></i>
+                    <span>Markets</span>
+                </a>
+                <div id="collapseMarkets" class="collapse" aria-labelledby="headingMarkets" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="markets.html">All Markets</a>
+                        <a class="collapse-item" href="add-market.html">Add Market</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Users Management
+            </div>
+
+            <!-- Nav Item - Users -->
+            <li class="nav-item">
+                <a class="nav-link" href="users.html">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Contributions -->
+            <li class="nav-item">
+                <a class="nav-link" href="contributions.html">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Contributions</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Points Management -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePoints" aria-expanded="false" aria-controls="collapsePoints">
+                    <i class="fas fa-fw fa-award"></i>
+                    <span>Points Management</span>
+                </a>
+                <div id="collapsePoints" class="collapse" aria-labelledby="headingPoints" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="manage-points.html">Manage Points</a>
+                        <a class="collapse-item" href="volunteer-redemptions.html">Redemptions</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Redemptions -->
+            <li class="nav-item">
+                <a class="nav-link" href="volunteer-redemptions.html">
+                    <i class="fas fa-fw fa-gift"></i>
+                    <span>Redemptions</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Marketing
+            </div>
+
+            <!-- Nav Item - Banners -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBanners" aria-expanded="false" aria-controls="collapseBanners">
+                    <i class="fas fa-fw fa-images"></i>
+                    <span>Banners</span>
+                </a>
+                <div id="collapseBanners" class="collapse" aria-labelledby="headingBanners" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="banners.html">All Banners</a>
+                        <a class="collapse-item" href="add-banner.html">Add Banner</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Featured Banners -->
+            <li class="nav-item dropdown">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFeaturedBanners" aria-expanded="false" aria-controls="collapseFeaturedBanners">
+                    <i class="fas fa-fw fa-star"></i>
+                    <span>Featured Banners</span>
+                </a>
+                <div id="collapseFeaturedBanners" class="collapse" aria-labelledby="headingFeaturedBanners" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="featured-banners.html">All Featured Banners</a>
+                        <a class="collapse-item" href="add-featured-banner.html">Add Featured Banner</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Reports
+            </div>
+
+            <!-- Nav Item - Market Reports -->
+            <li class="nav-item">
+                <a class="nav-link" href="market-reports.html">
+                    <i class="fas fa-fw fa-store-alt"></i>
+                    <span>Market Reports</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Product Reports -->
+            <li class="nav-item">
+                <a class="nav-link" href="product-reports.html">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>Product Reports</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Price Analytics -->
+            <li class="nav-item">
+                <a class="nav-link" href="price-reports.html">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Price Analytics</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - User Analytics -->
+            <li class="nav-item">
+                <a class="nav-link" href="user-reports.html">
+                    <i class="fas fa-fw fa-user-chart"></i>
+                    <span>User Analytics</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Configuration
+            </div>
+
+            <!-- Nav Item - Zone Management -->
+            <li class="nav-item">
+                <a class="nav-link" href="zone-management.html">
+                    <i class="fas fa-fw fa-map-marker-alt"></i>
+                    <span>Zone Management</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Settings -->
+            <li class="nav-item">
+                <a class="nav-link" href="settings.html">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin User</span>
+                                <img class="img-profile rounded-circle"
+                                    src="img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Categories</h1>
+                    <p class="mb-4">Manage product categories for your store.</p>
+
+                    <!-- Categories DataTable -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">All Categories</h6>
+                            <div class="d-flex">
+                                <a href="add-category.html" class="btn btn-sm btn-primary mr-2">
+                                    <i class="fas fa-plus fa-sm"></i> Add New Category
+                                </a>
+                                <a href="#" class="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#importCategoryModal">
+                                    <i class="fas fa-file-import fa-sm"></i> Import
+                                </a>
+                                <div class="dropdown mr-2">
+                                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-file-export fa-sm"></i> Export
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                                        <a class="dropdown-item" href="#" id="exportCSV">
+                                            <i class="fas fa-file-csv fa-sm fa-fw text-gray-400 mr-2"></i> CSV
+                                        </a>
+                                        <a class="dropdown-item" href="#" id="exportPDF">
+                                            <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400 mr-2"></i> PDF
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-filter fa-sm"></i> Filter
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="filterDropdown">
+                                        <div class="dropdown-header">Filter By:</div>
+                                        <a class="dropdown-item" href="#" data-filter="parent">
+                                            <i class="fas fa-folder-tree fa-sm fa-fw text-gray-400 mr-2"></i> Parent Category
+                                        </a>
+                                        <a class="dropdown-item" href="#" data-filter="status">
+                                            <i class="fas fa-toggle-on fa-sm fa-fw text-gray-400 mr-2"></i> Status
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#" id="resetFilters">
+                                            <i class="fas fa-undo fa-sm fa-fw text-gray-400 mr-2"></i> Reset Filters
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Icon</th>
+                                            <th>Category Name</th>
+                                            <th>Parent Category</th>
+                                            <th>Products</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#C001</td>
+                                            <td><div class="category-icon"><i class="fas fa-carrot"></i></div></td> <!-- Changed icon -->
+                                            <td>Fruits</td>
+                                            <td>-</td>
+                                            <td><span class="badge badge-secondary">42</span></td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-category" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-category" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#C002</td>
+                                            <td><div class="category-icon"><i class="fas fa-lemon"></i></div></td> <!-- Changed icon -->
+                                            <td>Citrus Fruits</td>
+                                            <td>Fruits</td>
+                                            <td><span class="badge badge-secondary">15</span></td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-category" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-category" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#C003</td>
+                                             <td><div class="category-icon"><i class="fas fa-seedling"></i></div></td> <!-- Changed icon -->
+                                            <td>Vegetables</td>
+                                            <td>-</td>
+                                            <td><span class="badge badge-secondary">38</span></td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-category" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-category" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#C004</td>
+                                             <td><div class="category-icon"><i class="fas fa-pepper-hot"></i></div></td> <!-- Changed icon -->
+                                            <td>Root Vegetables</td>
+                                            <td>Vegetables</td>
+                                             <td><span class="badge badge-secondary">12</span></td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-category" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-category" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>#C005</td>
+                                             <td><div class="category-icon"><i class="fas fa-cheese"></i></div></td> <!-- Changed icon -->
+                                            <td>Dairy</td>
+                                            <td>-</td>
+                                            <td><span class="badge badge-secondary">25</span></td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-circle btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-danger btn-circle btn-sm delete-category" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info btn-circle btn-sm view-category" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Bazar-dor 2023</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Categories Page Script -->
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#dataTable').DataTable({
+                // Optional: Add configuration for search, pagination, etc.
+                // For example, disable default search box if using custom one:
+                // searching: false 
+            });
+            
+            // Delete Category Confirmation
+            $('.delete-category').on('click', function(e) {
+                e.preventDefault(); // Prevent default link behavior
+                const row = $(this).closest('tr');
+                const categoryName = row.find('td:nth-child(3)').text(); // Get category name from 3rd column
+                const categoryId = row.find('td:nth-child(1)').text(); // Get category ID from 1st column
+
+                Swal.fire({
+                    title: 'Delete Category?',
+                    text: `Are you sure you want to delete "${categoryName}" (${categoryId})? This might affect associated products.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#858796', // Use SB Admin 2 gray
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // In a real application, send an AJAX request to delete the category
+                        // For demo: remove row and show success message
+                        $('#dataTable').DataTable().row(row).remove().draw();
+                        
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: `Category "${categoryName}" has been deleted.`,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            });
+
+            // View Category Details (Example using SweetAlert)
+            $('.view-category').on('click', function(e) {
+                e.preventDefault();
+                 const row = $(this).closest('tr');
+                 const categoryId = row.find('td:nth-child(1)').text();
+                 const iconHtml = row.find('td:nth-child(2)').html(); // Get icon HTML
+                 const categoryName = row.find('td:nth-child(3)').text();
+                 const parentCategory = row.find('td:nth-child(4)').text();
+                 const productsCount = row.find('td:nth-child(5) .badge').text();
+                 const statusHtml = row.find('td:nth-child(6)').html(); // Get status badge HTML
+
+                 Swal.fire({
+                     title: 'Category Details',
+                     html: `
+                         <div class="text-left">
+                             <p><strong>ID:</strong> ${categoryId}</p>
+                             <p><strong>Icon:</strong> ${iconHtml}</p>
+                             <p><strong>Name:</strong> ${categoryName}</p>
+                             <p><strong>Parent:</strong> ${parentCategory === '-' ? 'None' : parentCategory}</p>
+                             <p><strong>Products:</strong> ${productsCount}</p>
+                             <p><strong>Status:</strong> ${statusHtml}</p>
+                         </div>
+                     `,
+                     confirmButtonText: 'Close',
+                     confirmButtonColor: '#4e73df' // SB Admin 2 primary color
+                 });
+             });
+
+             // Optional: Add custom search functionality if needed
+             // $('#categorySearchInput').on('keyup', function() {
+             //    $('#dataTable').DataTable().search(this.value).draw();
+             // });
+            
+             // Export functionality
+            $('#exportCSV').on('click', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Export Started',
+                    text: 'Your CSV file is being generated.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                // In real app, trigger server-side CSV generation
+            });
+            
+            $('#exportPDF').on('click', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Export Started',
+                    text: 'Your PDF file is being generated.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                // In real app, trigger server-side PDF generation
+            });
+
+            // Filter functionality
+            let activeCategoryFilters = {};
+            
+            $('[data-filter]').on('click', function(e) {
+                e.preventDefault();
+                const filterType = $(this).data('filter');
+                const table = $('#dataTable').DataTable();
+                let options = [];
+
+                if (filterType === 'parent') {
+                    const parentCategories = new Set();
+                    table.column(3).data().each(function(d) { // Column index 3 for Parent Category
+                        parentCategories.add(d === '-' ? 'None' : d);
+                    });
+                    options = Array.from(parentCategories);
+                } else if (filterType === 'status') {
+                    // Extract unique statuses from the badge HTML
+                    const statuses = new Set();
+                    table.column(5).nodes().each(function(node) {
+                         const statusText = $(node).find('.badge').text();
+                         if(statusText) statuses.add(statusText);
+                    });
+                     options = Array.from(statuses);
+                     if (!options.includes('Active')) options.push('Active'); // Ensure common statuses are present
+                     if (!options.includes('Inactive')) options.push('Inactive');
+                }
+
+                let filterOptionsHtml = '';
+                options.forEach(option => {
+                    const optionId = `filter-${filterType}-${option.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+                    filterOptionsHtml += `
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="${optionId}" value="${option}">
+                            <label class="custom-control-label" for="${optionId}">${option}</label>
+                        </div>
+                    `;
+                });
+
+                Swal.fire({
+                    title: `Filter by ${filterType.charAt(0).toUpperCase() + filterType.slice(1)}`,
+                    html: `<div class="text-left">${filterOptionsHtml}</div>`,
+                    confirmButtonText: 'Apply Filter',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const selectedOptions = [];
+                        options.forEach(option => {
+                             const optionId = `filter-${filterType}-${option.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+                            if ($(`#${optionId}`).is(':checked')) {
+                                selectedOptions.push(option);
+                            }
+                        });
+                        return selectedOptions;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed && result.value.length > 0) {
+                        activeCategoryFilters[filterType] = result.value;
+                        applyCategoryFilters();
+                    } else if (result.isConfirmed && result.value.length === 0) {
+                         // If confirmed with no selections, remove this filter
+                        delete activeCategoryFilters[filterType];
+                        applyCategoryFilters();
+                    }
+                });
+            });
+
+            $('#resetFilters').on('click', function(e) {
+                e.preventDefault();
+                activeCategoryFilters = {};
+                applyCategoryFilters();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Filters Reset',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            });
+
+            function applyCategoryFilters() {
+                const table = $('#dataTable').DataTable();
+                
+                // Remove previous custom filter function before applying new one
+                 $.fn.dataTable.ext.search.pop();
+
+                if (Object.keys(activeCategoryFilters).length === 0) {
+                    table.search('').columns().search('').draw(); // Clear all filters
+                } else {
+                    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                        let showRow = true;
+                        
+                        // Check Parent Category filter (column index 3)
+                        if (activeCategoryFilters.parent && activeCategoryFilters.parent.length > 0) {
+                            const parentVal = data[3] === '-' ? 'None' : data[3];
+                            if (!activeCategoryFilters.parent.includes(parentVal)) {
+                                showRow = false;
+                            }
+                        }
+                        
+                        // Check Status filter (column index 5)
+                        if (showRow && activeCategoryFilters.status && activeCategoryFilters.status.length > 0) {
+                             const statusText = $(table.column(5).nodes()[dataIndex]).find('.badge').text(); 
+                            if (!activeCategoryFilters.status.includes(statusText)) {
+                                showRow = false;
+                            }
+                        }
+                        
+                        return showRow;
+                    });
+                    table.draw();
+                }
+            }
+
+             // Import functionality
+             $('#importFile').on('change', function() {
+                 const fileName = $(this).val().split('\\').pop();
+                 $(this).next('.custom-file-label').html(fileName || 'Choose file...');
+             });
+             
+             $('#downloadTemplate').on('click', function(e) {
+                 e.preventDefault();
+                 const csvContent = 'Category Name,Parent Category,Status,Icon\nFruits,-,Active,fas fa-carrot\nVegetables,-,Active,fas fa-seedling\nCitrus Fruits,Fruits,Active,fas fa-lemon';
+                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                 const link = document.createElement('a');
+                 const url = URL.createObjectURL(blob);
+                 link.setAttribute('href', url);
+                 link.setAttribute('download', 'categories-template.csv');
+                 link.style.visibility = 'hidden';
+                 document.body.appendChild(link);
+                 link.click();
+                 document.body.removeChild(link);
+             });
+             
+             $('#startImport').on('click', function() {
+                 const fileInput = $('#importFile')[0];
+                 if (!fileInput.files || fileInput.files.length === 0) {
+                     Swal.fire({ icon: 'error', title: 'No File Selected', text: 'Please select a CSV file.' });
+                     return;
+                 }
+                 
+                 Swal.fire({
+                     title: 'Importing...',
+                     text: 'Please wait while categories are imported.',
+                     timerProgressBar: true,
+                     allowOutsideClick: false,
+                     didOpen: () => { Swal.showLoading(); }
+                 });
+                 
+                 // Simulate import process
+                 setTimeout(() => {
+                     $('#importCategoryModal').modal('hide');
+                     Swal.fire({
+                         icon: 'success',
+                         title: 'Import Complete',
+                         html: '<div class="text-left"><p><strong>Categories processed:</strong> 5</p><p><strong>Added:</strong> 2</p><p><strong>Updated:</strong> 1</p><p><strong>Errors:</strong> 2</p></div>',
+                         confirmButtonText: 'OK'
+                     }).then(() => {
+                         $('#importFile').val('').next('.custom-file-label').html('Choose file...');
+                         // Optionally: Refresh table data here
+                         // Example: $('#dataTable').DataTable().ajax.reload(); 
+                         // For demo, we just add a sample row to show effect
+                         const table = $('#dataTable').DataTable();
+                          const newCategory = ['#C006', '<div class="category-icon"><i class="fas fa-bread-slice"></i></div>', 'Bakery', '-', '<span class="badge badge-secondary">18</span>', '<span class="badge badge-success">Active</span>', '<a href="#" class="btn btn-primary btn-circle btn-sm" title="Edit"><i class="fas fa-edit"></i></a> <a href="#" class="btn btn-danger btn-circle btn-sm delete-category" title="Delete"><i class="fas fa-trash"></i></a> <a href="#" class="btn btn-info btn-circle btn-sm view-category" title="View"><i class="fas fa-eye"></i></a>'];
+                          // Check if row exists before adding
+                         if (table.rows().data().toArray().flat().indexOf('#C006') === -1) {
+                              table.row.add(newCategory).draw();
+                              // Re-attach event listeners if necessary
+                              reattachEventListeners();
+                         }
+                     });
+                 }, 2500);
+             });
+
+             // Function to re-attach event listeners (needed after adding rows)
+             function reattachEventListeners() {
+                  // Re-bind delete confirmation
+                 $('.delete-category').off('click').on('click', function(e) {
+                     e.preventDefault();
+                     const row = $(this).closest('tr');
+                     const categoryName = row.find('td:nth-child(3)').text();
+                     const categoryId = row.find('td:nth-child(1)').text();
+
+                     Swal.fire({
+                         title: 'Delete Category?',
+                         text: `Are you sure you want to delete "${categoryName}" (${categoryId})? This might affect associated products.`,
+                         icon: 'warning',
+                         showCancelButton: true,
+                         confirmButtonColor: '#d33',
+                         cancelButtonColor: '#858796',
+                         confirmButtonText: 'Yes, delete it!'
+                     }).then((result) => {
+                         if (result.isConfirmed) {
+                             $('#dataTable').DataTable().row(row).remove().draw();
+                             Swal.fire({ title: 'Deleted!', text: `Category "${categoryName}" has been deleted.`, icon: 'success', timer: 2000, showConfirmButton: false });
+                         }
+                     });
+                 });
+
+                 // Re-bind view details
+                 $('.view-category').off('click').on('click', function(e) {
+                     e.preventDefault();
+                     const row = $(this).closest('tr');
+                     const categoryId = row.find('td:nth-child(1)').text();
+                     const iconHtml = row.find('td:nth-child(2)').html(); 
+                     const categoryName = row.find('td:nth-child(3)').text();
+                     const parentCategory = row.find('td:nth-child(4)').text();
+                     const productsCount = row.find('td:nth-child(5) .badge').text();
+                     const statusHtml = row.find('td:nth-child(6)').html();
+
+                     Swal.fire({
+                         title: 'Category Details',
+                         html: `<div class="text-left"><p><strong>ID:</strong> ${categoryId}</p><p><strong>Icon:</strong> ${iconHtml}</p><p><strong>Name:</strong> ${categoryName}</p><p><strong>Parent:</strong> ${parentCategory === '-' ? 'None' : parentCategory}</p><p><strong>Products:</strong> ${productsCount}</p><p><strong>Status:</strong> ${statusHtml}</p></div>`,
+                         confirmButtonText: 'Close',
+                         confirmButtonColor: '#4e73df'
+                     });
+                 });
+                 // Re-attach edit button handler if needed
+                  $('[title="Edit"]').off('click').on('click', function(e) {
+                       e.preventDefault();
+                       // Add edit logic here - e.g., redirect to edit page or open edit modal
+                       alert('Edit button clicked for row - implement edit logic');
+                   });
+             }
+
+             // Initial attachment of event listeners
+             reattachEventListeners();
+             
+        });
+    </script>
+
+    <!-- Import Category Modal -->
+    <div class="modal fade" id="importCategoryModal" tabindex="-1" role="dialog" aria-labelledby="importCategoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importCategoryModalLabel">Import Categories</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Upload a CSV file. Required columns: Category Name, Parent Category (leave blank for top-level), Status (Active/Inactive), Icon (Font Awesome class, e.g., fas fa-tag).
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label for="importFile">Select CSV File</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="importFile" accept=".csv">
+                                <label class="custom-file-label" for="importFile">Choose file...</label>
+                            </div>
+                            <small class="form-text text-muted">Max file size: 2MB</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="importOptions">Import Options</label>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="skipHeader" checked>
+                                <label class="custom-control-label" for="skipHeader">First row is header</label>
+                            </div>
+                            <div class="custom-control custom-checkbox mt-2">
+                                <input type="checkbox" class="custom-control-input" id="updateExisting">
+                                <label class="custom-control-label" for="updateExisting">Update existing categories by Name</label>
+                            </div>
+                        </div>
+                        <div class="mt-3 mb-2">
+                            <a href="#" id="downloadTemplate" class="text-primary">
+                                <i class="fas fa-download mr-1"></i> Download template
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" type="button" id="startImport">
+                        <i class="fas fa-file-import mr-1"></i> Start Import
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html> 
