@@ -70,7 +70,7 @@ class UpdateSettingsRequest extends FormRequest
             ],
             default => [],
         });
-        dd($rules);
+  
         return $rules;
     }
     
