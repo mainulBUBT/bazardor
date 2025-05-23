@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? 'Admin Dashboard' }}</title>
+        <title>@yield('title', translate('messages.BazarDor Admin'))</title>
 
         <!-- Custom fonts for this template-->
         <link href="/bazardor-backend/public/assets/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
