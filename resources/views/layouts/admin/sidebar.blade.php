@@ -18,7 +18,7 @@
     </div>
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">
+    <li class="nav-item {{ request()->is('admin') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/dashboard')}}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>{{translate('messages.Dashboard') }}</span>
@@ -35,7 +35,7 @@
 
     <!-- Nav Item - Units -->
     <li class="nav-item {{ request()->is('admin/units*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{url('/admin/units')}}">
+        <a class="nav-link" href="{{ route('admin.units.index') }}">
             <i class="fas fa-fw fa-ruler-combined"></i>
             <span>{{translate('messages.Units') }}</span>
         </a>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -64,5 +65,23 @@ if (!function_exists('handle_file_upload')) {
         }
         
         return $fileName;
+    }
+}
+
+if (!function_exists('pagination_limit')) {
+    function pagination_limit()
+    {
+        try {
+            if (!session()->has('pagination_limit')) {
+                $limit = Setting::where('key_name', 'pagination_limit')->where('settings_type', 'business_information')->first()?->value ?? DEFAULT_PAGINATION;
+                session()->put('pagination_limit', $limit);
+            } else {
+                $limit = session('pagination_limit');
+            }
+        } catch (Exception $exception) {
+            return DEFAULT_PAGINATION;
+        }
+
+        return $limit;
     }
 }

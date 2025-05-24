@@ -3,10 +3,7 @@
 namespace App\Services;
 
 use App\Models\Setting;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SettingService
 {
