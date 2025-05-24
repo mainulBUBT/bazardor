@@ -86,6 +86,25 @@ class SettingService
             return false;
         }   
     }
+
+    public function updateStatus($id, $status, $group)
+    {
+        $setting = $this->setting->where('settings_type', $group)
+                                ->where('key_name', $id)
+                                ->first();
+
+        if ($setting) {
+            $setting->update(['value' => $status]);
+        } else {
+            $this->setting->create([
+                'settings_type' => $group,
+                'key_name' => $id,
+                'value' => $status
+            ]);
+        }
+        
+        return true;
+    }   
     
     /**
      * Get default settings

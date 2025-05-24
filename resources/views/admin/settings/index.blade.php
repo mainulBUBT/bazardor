@@ -93,7 +93,7 @@
                             <i class="fas fa-user-check"></i> {{ translate('messages.Auto-approve new user registrations') }}
                         </label>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="autoApproveUsers" name="auto_approve_users" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'auto_approve_users')->first()?->value ? 'checked' : '' }}>
+                            <input type="checkbox" id="autoApproveUsers" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="auto_approve_users" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'auto_approve_users')->first()?->value ? 'checked' : '' }}>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -102,7 +102,7 @@
                             <i class="fas fa-store-alt"></i> {{ translate('messages.Auto-approve market submissions') }}
                         </label>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="autoApproveMarkets" name="auto_approve_markets" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'auto_approve_markets')->first()?->value ? 'checked' : '' }}>
+                            <input type="checkbox" id="autoApproveMarkets" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="auto_approve_markets" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'auto_approve_markets')->first()?->value ? 'checked' : '' }}>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -111,7 +111,7 @@
                             <i class="fas fa-box"></i> {{ translate('messages.Auto-approve product submissions') }}
                         </label>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="autoApproveProducts" name="auto_approve_products" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'auto_approve_products')->first()?->value ? 'checked' : '' }}>
+                            <input type="checkbox" id="autoApproveProducts" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="auto_approve_products" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'auto_approve_products')->first()?->value ? 'checked' : '' }}>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -120,7 +120,7 @@
                             <i class="fas fa-globe"></i> {{ translate('messages.Enable multi-language support') }}
                         </label>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="enableMultiLanguage" name="enable_multi_language" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_multi_language')->first()?->value ? 'checked' : '' }}>
+                            <input type="checkbox" id="enableMultiLanguage" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="enable_multi_language" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_multi_language')->first()?->value ? 'checked' : '' }}>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -129,7 +129,7 @@
                             <i class="fas fa-map-marked-alt"></i> {{ translate('messages.Enable geolocation services') }}
                         </label>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="enableGeolocation" name="enable_geolocation" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_geolocation')->first()?->value ? 'checked' : '' }}>
+                            <input type="checkbox" id="enableGeolocation" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="enable_geolocation" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_geolocation')->first()?->value ? 'checked' : '' }}>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -142,5 +142,5 @@
 @endsection
 
 @push('scripts')
-
+    
 @endpush

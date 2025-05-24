@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateSettingsRequest;
 use App\Services\SettingService;
+use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Cache;
 
 class SettingController extends Controller
 {
@@ -25,7 +25,7 @@ class SettingController extends Controller
      */
     public function index(Request $request): View
     {
-        $tab = $request->query('tab', 'general');
+        $tab = $request->query('tab', GENERAL_SETTINGS);
         $settings = $this->settingService->getSettings($tab);
         
         return view("admin.settings.index", compact('tab', 'settings'));
@@ -40,17 +40,48 @@ class SettingController extends Controller
      */
     public function updateSettings(UpdateSettingsRequest $updateSettingsRequest): RedirectResponse
     {
-        $tab = $updateSettingsRequest->query('tab', 'general');
+        $tab = $updateSettingsRequest->query('tab', GENERAL_SETTINGS);
         $validated = $updateSettingsRequest->validated();
         
         $success = $this->settingService->updateSettings($validated, $tab);
         
         if ($success) {
-            return redirect()->route('admin.settings.index', ['tab' => $tab])
-                ->with('success', translate('messages.Settings updated successfully!'));
+            Toastr::success(translate('messages.Settings updated successfully!'));
+            return redirect()->route('admin.settings.index', ['tab' => $tab]);
         }
         
-        return redirect()->route('admin.settings.index', ['tab' => $tab])
-            ->with('error', translate('messages.Failed to update settings.'));
+        Toastr::error(translate('messages.Failed to update settings.'));
+        return redirect()->route('admin.settings.index', ['tab' => $tab]);
+    }
+
+    /**
+     * Update the specified settings status.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'status' => 'required|boolean',   
+            'id' => 'required',
+            'tab' => 'sometimes|string'  
+        ]);
+        
+        $tab = $request->input('tab', $request->query('tab', GENERAL_SETTINGS));
+        
+        $success = $this->settingService->updateStatus($validated['id'], $validated['status'], $tab);
+        
+        if ($success) {
+            return response()->json([
+                'success' => true,
+                'message' => translate('messages.status_updated_successfully')
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => translate('messages.failed_to_update_status')
+        ], 500);
     }
 }

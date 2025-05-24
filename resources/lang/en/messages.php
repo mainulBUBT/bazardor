@@ -97,4 +97,12 @@
   'Choose file' => 'Choose file',
   'Favicon' => 'Favicon',
   'Recommended size: 32x32 pixels, Formats: .ico, .png' => 'Recommended size: 32x32 pixels  Formats: .ico  .png',
+  'are_you_sure' => 'Are you sure',
+  'want_to_change_status' => 'Want to change status',
+  'no' => 'No',
+  'yes' => 'Yes',
+  'status_changed_successfully' => 'Status changed successfully',
+  'status_change_failed' => 'Status change failed',
+  'status_is_not_changed' => 'Status is not changed',
+  'status_updated_successfully' => 'Status updated successfully',
 );
