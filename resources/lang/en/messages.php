@@ -140,4 +140,12 @@
   'Piece' => 'Piece',
   'pc' => 'Pc',
   'No data found' => 'No data found',
+  'Unit created successfully' => 'Unit created successfully',
+  'Are you sure?' => 'Are you sure ',
+  'Name' => 'Name',
+  'Update' => 'Update',
+  'Update Unit' => 'Update Unit',
+  'Unit updated successfully' => 'Unit updated successfully',
+  'Want to delete this unit?' => 'Want to delete this unit ',
+  'Unit deleted successfully' => 'Unit deleted successfully',
 );

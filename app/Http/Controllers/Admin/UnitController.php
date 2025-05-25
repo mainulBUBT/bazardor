@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Unit;
+use App\Http\Requests\UnitStoreUpdateRequest;
 use App\Services\UnitService;
+use Brian2694\Toastr\Facades\Toastr;
 
 class UnitController extends Controller
 {
@@ -26,15 +26,18 @@ class UnitController extends Controller
      */
     public function create()
     {
-        //
+    
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UnitStoreUpdateRequest $unitStoreUpdateRequest)
     {
-        //
+        $this->unitService->storeUnit($unitStoreUpdateRequest->validated());
+
+        Toastr::success(translate("messages.Unit created successfully"));
+        return redirect()->route("admin.units.index");
     }
 
     /**
@@ -50,15 +53,19 @@ class UnitController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $unit = $this->unitService->findById($id);
+        return view("admin.units.edit", compact('unit'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UnitStoreUpdateRequest $unitStoreUpdateRequest, string $id)
     {
-        //
+        $this->unitService->updateUnit($unitStoreUpdateRequest->validated(), $id);
+
+        Toastr::success(translate("messages.Unit updated successfully"));
+        return redirect()->route("admin.units.index");
     }
 
     /**
@@ -66,6 +73,9 @@ class UnitController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->unitService->deleteUnit($id);
+
+        Toastr::success(translate("messages.Unit deleted successfully"));
+        return redirect()->route("admin.units.index");
     }
 }

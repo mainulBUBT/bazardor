@@ -12,18 +12,19 @@
             <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Add Unit') }}</h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.units.store') }}" class="row">
+            <form action="{{ route('admin.units.store') }}" class="row" method="POST">
+                @csrf
                 <div class="col-md-4 mb-3">
                     <label for="unitName">{{ translate('messages.Unit Name') }}</label>
-                    <input type="text" class="form-control" id="unitName" placeholder="{{ translate('messages.Enter unit name') }}">
+                    <input type="text" class="form-control" name="name" id="unitName" placeholder="{{ translate('messages.Enter unit name') }}">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="unitSymbol">{{ translate('messages.Symbol') }}</label>
-                    <input type="text" class="form-control" id="unitSymbol" placeholder="{{ translate('messages.e.g. kg') }}">
+                    <input type="text" class="form-control" name="symbol" id="unitSymbol" placeholder="{{ translate('messages.e.g. kg') }}">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="unitType">{{ translate('messages.Type') }}</label>
-                    <select class="form-control" id="unitType">
+                    <select class="form-control" name="unit_type" id="unitType">
                         <option selected value="">{{ translate('messages.Select unit type') }}</option>
                         <option value="weight">{{ translate('messages.Weight') }}</option>
                         <option value="volume">{{ translate('messages.Volume') }}</option>
@@ -115,16 +116,13 @@
                                     <a href="{{ route('admin.units.edit', $unit->id) }}" class="btn btn-primary btn-circle btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.units.destroy', $unit->id) }}" method="POST" style="display:inline-block;">
+                                    <form action="" method="POST" style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-circle btn-sm delete-unit" onclick="return confirm('{{ translate('messages.Are you sure?') }}')">
+                                        <button type="submit" onclick="formAlert('delete-unit', '{{ translate('messages.Want to delete this unit?') }}')" class="btn btn-danger btn-circle btn-sm delete-unit">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
-                                    <a href="{{ route('admin.units.show', $unit->id) }}" class="btn btn-info btn-circle btn-sm view-unit">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
                                 </td>
                             </tr>
                         @empty
