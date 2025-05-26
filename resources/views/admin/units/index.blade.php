@@ -116,13 +116,13 @@
                                     <a href="{{ route('admin.units.edit', $unit->id) }}" class="btn btn-primary btn-circle btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="" method="POST" style="display:inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" onclick="formAlert('delete-unit', '{{ translate('messages.Want to delete this unit?') }}')" class="btn btn-danger btn-circle btn-sm delete-unit">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <form id="delete-unit-{{ $unit->id }}" action="" method="POST" class="d-inline">
+    @csrf
+    @method('DELETE')
+    <button type="button" onclick="formAlert('delete-unit-{{ $unit->id }}', '{{ translate('messages.Want to delete this unit?') }}')" class="btn btn-danger btn-circle btn-sm delete-unit">
+        <i class="fas fa-trash"></i>
+    </button>
+</form>
                                 </td>
                             </tr>
                         @empty

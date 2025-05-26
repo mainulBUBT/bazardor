@@ -148,4 +148,7 @@
   'Unit updated successfully' => 'Unit updated successfully',
   'Want to delete this unit?' => 'Want to delete this unit ',
   'Unit deleted successfully' => 'Unit deleted successfully',
+  'Filter By Type:' => 'Filter By Type:',
+  'Unit' => 'Unit',
+  'Filter By Status:' => 'Filter By Status:',
 );
