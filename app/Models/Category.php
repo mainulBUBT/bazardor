@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Unit extends Model
+class Category extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -18,8 +18,11 @@ class Unit extends Model
      */
     protected $fillable = [
         'name',
-        'short_name',
+        'slug',
+        'description',
+        'image_path',
         'is_active',
+        'position',
     ];
 
     /**
@@ -29,10 +32,11 @@ class Unit extends Model
      */
     protected $casts = [
         'is_active' => 'boolean',
+        'position' => 'integer',
     ];
 
     /**
-     * Get the products for the unit.
+     * Get the products for the category.
      */
     public function products(): HasMany
     {
@@ -40,10 +44,18 @@ class Unit extends Model
     }
 
     /**
-     * Scope a query to only include active units.
+     * Scope a query to only include active categories.
      */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope a query to order by position.
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('position');
     }
 }
