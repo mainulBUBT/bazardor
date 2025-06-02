@@ -22,16 +22,22 @@ class BannerStoreUpdateRequest extends FormRequest
     public function rules(): array
     {
         $bannerId = $this->route('banner');
-        $imageRule = $this->isMethod('post') ? 'required' : 'nullable';
+        $imageRule = ($this->isMethod('post') && $this->type == 'general') ? 'required' : 'nullable';
         return [
             'title' => 'required|string|max:255',
             'image' => [$imageRule, 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-            'url' => 'nullable|url|max:255',
+            'url' => 'required|url|max:255',
             'type' => 'required|in:general,featured',
-            'is_active' => 'boolean',
-            'position' => 'integer',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'description' => 'required_if:type,general|string',
+            'badge_text' => 'required_if:type,featured|string|max:255',
+            'badge_color' => 'required_if:type,featured|string|max:50',
+            'badge_background_color' => 'required_if:type,featured|string|max:50',
+            'badge_icon' => 'required_if:type,featured|string|max:100',
+            'button_text' => 'required_if:type,featured|string|max:100',
+            'is_active' => 'sometimes|boolean',
+            'position' => 'required_if:type,general|integer',
+            'start_date' => 'required_if:type,general|date',
+            'end_date' => 'required_if:type,general|date|after_or_equal:start_date',
         ];
     }
 
@@ -49,6 +55,17 @@ class BannerStoreUpdateRequest extends FormRequest
             'url.max' => 'The link is too long',
             'type.required' => 'Banner type is required',
             'type.in' => 'Banner type must be general or featured',
+            'description.string' => 'Description must be a string',
+            'badge_text.string' => 'Badge text must be a string',
+            'badge_text.max' => 'Badge text is too long',
+            'badge_color.string' => 'Badge color must be a string',
+            'badge_color.max' => 'Badge color is too long',
+            'badge_background_color.string' => 'Badge background color must be a string',
+            'badge_background_color.max' => 'Badge background color is too long',
+            'badge_icon.string' => 'Badge icon must be a string',
+            'badge_icon.max' => 'Badge icon is too long',
+            'button_text.string' => 'Button text must be a string',
+            'button_text.max' => 'Button text is too long',
             'is_active.boolean' => 'Status must be true or false',
             'position.integer' => 'Position must be an integer',
             'start_date.date' => 'Start date must be a valid date',

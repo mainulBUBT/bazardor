@@ -11,7 +11,7 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
     
     Route::resource('units', UnitController::class);
     Route::resource('banners', BannerController::class);
-    Route::post('banners/{banner}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
+    Route::post('banners/status/{banner}', [BannerController::class, 'status'])->name('banners.status');
 
     Route::group(["prefix"=> "settings", "as"=> "settings."], function () {
         Route::get("/", [SettingController::class, 'index'])->name('index');

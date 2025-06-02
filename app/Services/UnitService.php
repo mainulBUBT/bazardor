@@ -15,7 +15,7 @@ class UnitService
      */
     public function getUnits()
     {
-        return Unit::latest()->paginate(pagination_limit());
+        return $this->unit->latest()->paginate(pagination_limit());
     }
 
     /**
@@ -25,7 +25,7 @@ class UnitService
      */
     public function findById(int $id)
     {
-        return Unit::findOrFail($id);
+        return $this->unit->findOrFail($id);
     }   
     
     /**
@@ -35,7 +35,7 @@ class UnitService
      */
     public function storeUnit(array $validated)
     {
-        return Unit::create($validated);
+        return $this->unit->create($validated);
     }
 
     /**

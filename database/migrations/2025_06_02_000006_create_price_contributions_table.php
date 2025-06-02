@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('price_contributions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('market_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('product_id');
+            $table->foreignId('market_id');
+            $table->foreignId('user_id');
             $table->decimal('submitted_price', 10, 2);
             $table->string('proof_image')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

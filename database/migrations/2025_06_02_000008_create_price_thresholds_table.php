@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('price_thresholds', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
+            $table->foreignId('product_id');
             $table->decimal('min_price', 10, 2);
             $table->decimal('max_price', 10, 2);
             $table->timestamps();

@@ -11,11 +11,9 @@ use Brian2694\Toastr\Facades\Toastr;
 
 class BannerController extends Controller
 {
-    protected $bannerService;
-
-    public function __construct(BannerService $bannerService)
+    public function __construct(protected BannerService $bannerService)
     {
-        $this->bannerService = $bannerService;
+
     }
 
     /**
@@ -23,7 +21,7 @@ class BannerController extends Controller
      */
     public function index()
     {
-        $banners = Banner::ordered()->get();
+        $banners = $this->bannerService->getBanners();
         return view('admin.banners.index', compact('banners'));
     }
 
@@ -40,11 +38,10 @@ class BannerController extends Controller
      */
     public function store(BannerStoreUpdateRequest $request)
     {
-        dd($request->all());
         $validated = $request->validated();
         $this->bannerService->store($validated);
 
-        Toastr::success('Banner created successfully!');
+        Toastr::success(translate("messages.Banner created successfully!"));
         return redirect()->route('admin.banners.index');
     }
 
@@ -63,17 +60,25 @@ class BannerController extends Controller
     {
         $validated = $request->validated();
         $this->bannerService->update($banner, $validated + ['image' => $request->file('image')]);
-        Toastr::success('Banner updated successfully!');
+        Toastr::success(translate("messages.Banner updated successfully!"));
         return redirect()->route('admin.banners.index');
     }
 
     /**
      * Remove the specified banner from storage.
      */
-    public function destroy(Banner $banner)
+    public function destroy($bannerId, Request $request)
     {
-        $this->bannerService->delete($banner);
-        Toastr::success('Banner deleted successfully!');
+        $this->bannerService->delete($bannerId);
+        Toastr::success(translate("messages.Banner deleted successfully!"));
         return redirect()->route('admin.banners.index');
+    }
+
+    public function status($bannerId, Request $request)
+    {
+        $this->bannerService->status($bannerId, $request->status);
+
+        Toastr::success(translate("messages.Banner status updated successfully!"));
+        return redirect()->back();
     }
 }

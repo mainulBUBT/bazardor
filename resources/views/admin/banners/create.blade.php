@@ -1,13 +1,13 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Add Banner')
+@section('title', translate('messages.Add New Banner'))
 
 @section('content')
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">{{ translate('messages.Add New Banner') }}</h1>
-        <a href="banners.html" class="d-none d-sm-inline-block btn btn-sm btn-outline-secondary shadow-sm"><i
+        <a href="{{ route('admin.banners.index') }}" class="d-none d-sm-inline-block btn btn-sm btn-outline-secondary shadow-sm"><i
                 class="fas fa-arrow-left fa-sm text-gray-700"></i> {{ translate('messages.Back to Banners') }}</a>
     </div>
 
@@ -25,37 +25,37 @@
                         <div class="row mb-3">
                             <div class="col-md-8">
                                 <label for="bannerTitle" class="form-label">{{ translate('messages.Banner Title') }} <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="bannerTitle" placeholder="{{ translate('messages.Enter banner title') }}" required>
+                                <input type="text" name="title" class="form-control" id="bannerTitle" placeholder="{{ translate('messages.Enter banner title') }}" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="bannerPosition" class="form-label">{{ translate('messages.Position') }} <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="bannerPosition" min="1" value="1" required>
+                                <input type="number" name="position" class="form-control" id="bannerPosition" min="1" value="1" required>
                                 <small class="text-muted">{{ translate('messages.Order (1 is first)') }}</small>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="bannerLink" class="form-label">{{ translate('messages.Link URL') }}</label>
-                            <input type="url" class="form-control" id="bannerLink" placeholder="{{ translate('messages.https://example.com/offer (optional)') }}">
+                            <input type="url" name="url" class="form-control" id="bannerLink" placeholder="{{ translate('messages.https://example.com/offer (optional)') }}">
                             <small class="text-muted">{{ translate('messages.Leave blank if no link is needed') }}</small>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="bannerStartDate" class="form-label">{{ translate('messages.Start Date') }}</label>
-                                <input type="date" class="form-control" id="bannerStartDate">
+                                <input type="date" name="start_date" class="form-control" id="bannerStartDate">
                                 <small class="text-muted">{{ translate('messages.Optional: When the banner becomes active') }}</small>
                             </div>
                             <div class="col-md-6">
                                 <label for="bannerEndDate" class="form-label">{{ translate('messages.End Date') }}</label>
-                                <input type="date" class="form-control" id="bannerEndDate">
+                                <input type="date" name="end_date" class="form-control" id="bannerEndDate">
                                 <small class="text-muted">{{ translate('messages.Optional: When the banner expires') }}</small>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="bannerDescription" class="form-label">{{ translate('messages.Description') }}</label>
-                            <textarea class="form-control" id="bannerDescription" rows="3" placeholder="{{ translate('messages.Internal description (optional)') }}"></textarea>
+                            <textarea name="description" class="form-control" id="bannerDescription" rows="3" placeholder="{{ translate('messages.Internal description (optional)') }}"></textarea>
                         </div>
                     </div>
                 </div>
@@ -70,10 +70,9 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="bannerStatus" class="form-label">{{ translate('messages.Status') }} <span class="text-danger">*</span></label>
-                            <select class="form-control" id="bannerStatus" required>
-                                <option value="active" selected>{{ translate('messages.Active') }}</option>
-                                <option value="inactive">{{ translate('messages.Inactive') }}</option>
-                                <option value="scheduled">{{ translate('messages.Scheduled') }}</option>
+                            <select name="is_active" class="form-control" id="bannerStatus" required>
+                                <option value="1" selected>{{ translate('messages.Active') }}</option>
+                                <option value="0">{{ translate('messages.Inactive') }}</option>
                             </select>
                         </div>
                     </div>
@@ -88,7 +87,7 @@
                         <div class="mb-3">
                             <label for="bannerImage" class="form-label">{{ translate('messages.Upload Image') }} <span class="text-danger">*</span></label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="bannerImage" accept="image/*" required>
+                                <input type="file" name="image" class="custom-file-input" id="bannerImage" accept="image/*" required>
                                 <label class="custom-file-label" for="bannerImage" id="bannerImageLabel">{{ translate('messages.Choose file...') }}</label>
                             </div>
                             <small class="text-muted">{{ translate('messages.Recommended: 1200x400px, Max 2MB') }}</small>
@@ -105,7 +104,7 @@
                 </div>
             </div>
         </div>
-
+        <input type="hidden" name="type" value="general">
         <!-- Action Buttons -->
         <div class="row mb-4">
             <div class="col-12 d-flex justify-content-end">

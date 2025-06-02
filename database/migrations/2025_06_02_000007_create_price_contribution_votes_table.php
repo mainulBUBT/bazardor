@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('price_contribution_votes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('price_contribution_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('price_contribution_id');
+            $table->foreignId('user_id');
             $table->boolean('is_upvote');
             $table->timestamps();
             $table->unique(['price_contribution_id', 'user_id']);

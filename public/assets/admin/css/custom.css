@@ -223,6 +223,16 @@ footer.sticky-footer {
     margin-top: 1rem;
 }
 
+.banner-image {
+    max-width: 150px;
+    max-height: 50px;
+    object-fit: contain;
+}
+.custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #1cc88a;
+    border-color: #1cc88a;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     #wrapper {
