@@ -40,7 +40,6 @@ return new class extends Migration
             $table->index('is_active');
             $table->index('position');
             $table->index('rating');
-            $table->spatialIndex(['latitude', 'longitude']);
         });
     }
 

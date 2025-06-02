@@ -145,14 +145,14 @@
 
     <!-- Nav Item - Banners -->
     <li class="nav-item {{ request()->is('admin/banners*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBanners" aria-expanded="false" aria-controls="collapseBanners">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBanners" aria-expanded="{{ request()->is('admin/banners*') ? 'true' : 'false' }}" aria-controls="collapseBanners">
             <i class="fas fa-fw fa-images"></i>
             <span>{{translate('messages.Banners') }}</span>
         </a>
-        <div id="collapseBanners" class="collapse" aria-labelledby="headingBanners" data-parent="#accordionSidebar">
+        <div id="collapseBanners" class="collapse{{ request()->is('admin/banners*') ? ' show' : '' }}" aria-labelledby="headingBanners" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{url('/admin/banners')}}">{{translate('messages.All Banners') }}</a>
-                <a class="collapse-item" href="{{url('/admin/banners/create')}}">{{translate('messages.Add Banner') }}</a>
+                <a class="collapse-item {{ request()->is('admin/banners') ? 'active' : '' }}" href="{{url('/admin/banners')}}">{{translate('messages.All Banners') }}</a>
+                <a class="collapse-item {{ request()->is('admin/banners/create') ? 'active' : '' }}" href="{{url('/admin/banners/create')}}">{{translate('messages.Add Banner') }}</a>
             </div>
         </div>
     </li>

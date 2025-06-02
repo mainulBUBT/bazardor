@@ -19,6 +19,7 @@
         <link href="{{ asset('public/assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>  
         <!-- SweetAlert2 CSS -->
         <link href="{{ asset('public/assets/admin/vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"/>
+        @stack('styles')
     </head>
     <body id="page-top">
         <!-- Page Wrapper -->
