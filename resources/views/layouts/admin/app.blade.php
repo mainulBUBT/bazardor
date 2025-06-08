@@ -9,17 +9,19 @@
         <title>@yield('title', translate('messages.BazarDor Admin'))</title>
 
         <!-- Custom fonts for this template-->
-        <link href="/bazardor-backend/public/assets/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+        <link href="{{ asset('public/assets/admin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
         <!-- Custom styles for this template-->
-        <link href="/bazardor-backend/public/assets/admin/css/sb-admin-2.min.css" rel="stylesheet">
-        <link href="/bazardor-backend/public/assets/admin/css/custom.css" rel="stylesheet">
+        <link href="{{ asset('public/assets/admin/css/sb-admin-2.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('public/assets/admin/css/custom.css') }}" rel="stylesheet">
         <!-- Toastr CSS -->
         <link href="{{ asset('public/assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>  
         <!-- SweetAlert2 CSS -->
         <link href="{{ asset('public/assets/admin/vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"/>
-        @stack('styles')
+            <!-- Select2 CSS -->
+        <link href="{{ asset('public/assets/admin/vendor/select2/select2.min.css') }}" rel="stylesheet" />
+    @stack('styles')
     </head>
     <body id="page-top">
         <!-- Page Wrapper -->
@@ -67,14 +69,16 @@
         @include('layouts.admin.logout-modal')
 
         <!-- Bootstrap core JavaScript-->
-        <script src="/bazardor-backend/public/assets/admin/vendor/jquery/jquery.min.js"></script>
-        <script src="/bazardor-backend/public/assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="{{ asset('public/assets/admin/vendor/jquery/jquery.min.js') }}"></script>
+        <!-- Select2 JS -->
+        <script src="{{ asset('public/assets/admin/vendor/select2/select2.min.js') }}"></script>
+        <script src="{{ asset('public/assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
         <!-- Core plugin JavaScript-->
-        <script src="/bazardor-backend/public/assets/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+        <script src="{{ asset('public/assets/admin/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
         <!-- Custom scripts for all pages-->
-        <script src="/bazardor-backend/public/assets/admin/js/sb-admin-2.min.js"></script>
+        <script src="{{ asset('public/assets/admin/js/sb-admin-2.min.js') }}"></script>
 
         <!-- Toastr JS -->
         <script src="{{ asset('public/assets/admin/vendor/toastr/toastr.js') }}"></script>

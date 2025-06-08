@@ -43,14 +43,14 @@
 
     <!-- Nav Item - Categories -->
     <li class="nav-item {{ request()->is('admin/categories*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
-            <i class="fas fa-fw fa-tags"></i>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="{{ request()->is('admin/categories*') ? 'true' : 'false' }}" aria-controls="collapseCategories">
+            <i class="fas fa-fw fa-images"></i>
             <span>{{translate('messages.Categories') }}</span>
         </a>
-        <div id="collapseCategories" class="collapse" aria-labelledby="headingCategories" data-parent="#accordionSidebar">
+        <div id="collapseCategories" class="collapse{{ request()->is('admin/categories*') ? ' show' : '' }}" aria-labelledby="headingCategories" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{url('/admin/categories')}}">{{translate('messages.All Categories') }}</a>
-                <a class="collapse-item" href="{{url('/admin/categories/create')}}">{{translate('messages.Add Category') }}</a>
+                <a class="collapse-item {{ request()->is('admin/categories') ? 'active' : '' }}" href="{{route('admin.categories.index')}}">{{translate('messages.All Categories') }}</a>
+                <a class="collapse-item {{ request()->is('admin/categories/create') ? 'active' : '' }}" href="{{route('admin.categories.create')}}">{{translate('messages.Add Category') }}</a>
             </div>
         </div>
     </li>

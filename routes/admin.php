@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
@@ -12,6 +13,9 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
     Route::resource('units', UnitController::class);
     Route::resource('banners', BannerController::class);
     Route::post('banners/status/{banner}', [BannerController::class, 'status'])->name('banners.status');
+    
+    Route::resource('categories', CategoryController::class);
+    Route::post('categories/status/{category}', [CategoryController::class, 'status'])->name('categories.status');
 
     Route::group(["prefix"=> "settings", "as"=> "settings."], function () {
         Route::get("/", [SettingController::class, 'index'])->name('index');

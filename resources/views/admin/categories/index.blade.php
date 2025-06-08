@@ -5,9 +5,6 @@
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">{{ translate('messages.Categories') }}</h1>
-    <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-plus fa-sm text-white-50"></i> {{ translate('messages.Add New Category') }}
-    </a>
 </div>
 <p class="mb-4">{{ translate('messages.Manage product categories in your catalog.') }}</p>
 
@@ -16,6 +13,9 @@
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Categories') }}</h6>
         <div class="d-flex">
+            <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-primary mr-2">
+                <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add New Category') }}
+            </a>          
             <a href="#" class="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#importCategoryModal">
                 <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
             </a>
@@ -60,7 +60,7 @@
                         <th>{{ translate('messages.ID') }}</th>
                         <th>{{ translate('messages.Name') }}</th>
                         <th>{{ translate('messages.Slug') }}</th>
-                        <th>{{ translate('messages.Icon') }}</th>
+                        <th>{{ translate('messages.Image') }}</th>
                         <th>{{ translate('messages.Parent') }}</th>
                         <th>{{ translate('messages.Status') }}</th>
                         <th>{{ translate('messages.Created') }}</th>
@@ -74,13 +74,17 @@
                             <td>{{ $category->name }}</td>
                             <td>{{ $category->slug }}</td>
                             <td>
-                                <i class="{{ $category->icon }}"></i>
-                            </td>
+                                @if($category->image_path)
+                                    <img src="{{ asset('public/storage/categories/' . $category->image_path) }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
+                                @else
+                                    <img src="{{ asset('public/storage/categories/default.png') }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
+                                @endif
+                            </td>   
                             <td>
                                 {{ $category->parent ? $category->parent->name : translate('messages.None') }}
                             </td>
                             <td>
-                                @if($category->status === 'active')
+                                @if($category->is_active === 'active')
                                     <span class="badge badge-success">{{ translate('messages.Active') }}</span>
                                 @else
                                     <span class="badge badge-danger">{{ translate('messages.Inactive') }}</span>

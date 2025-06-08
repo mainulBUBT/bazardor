@@ -40,33 +40,7 @@
                 </div>
             </div>
 
-            <!-- Category Icon Card -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Category Icon') }}</h6>
-                </div>
-                <div class="card-body">
-                    <label class="form-label mb-2">{{ translate('messages.Select an icon for this category:') }}</label>
-                    <div class="icon-selection">
-                        <!-- Font Awesome Icons -->
-                        <div class="icon-option active" data-icon="fas fa-tag"><i class="fas fa-tag"></i></div>
-                        <div class="icon-option" data-icon="fas fa-carrot"><i class="fas fa-carrot"></i></div>
-                        <div class="icon-option" data-icon="fas fa-lemon"><i class="fas fa-lemon"></i></div>
-                        <div class="icon-option" data-icon="fas fa-seedling"><i class="fas fa-seedling"></i></div>
-                        <div class="icon-option" data-icon="fas fa-pepper-hot"><i class="fas fa-pepper-hot"></i></div>
-                        <div class="icon-option" data-icon="fas fa-cheese"><i class="fas fa-cheese"></i></div>
-                        <div class="icon-option" data-icon="fas fa-bread-slice"><i class="fas fa-bread-slice"></i></div>
-                        <div class="icon-option" data-icon="fas fa-drumstick-bite"><i class="fas fa-drumstick-bite"></i></div>
-                        <div class="icon-option" data-icon="fas fa-fish"><i class="fas fa-fish"></i></div>
-                        <div class="icon-option" data-icon="fas fa-wine-bottle"><i class="fas fa-wine-bottle"></i></div>
-                        <div class="icon-option" data-icon="fas fa-cookie-bite"><i class="fas fa-cookie-bite"></i></div>
-                        <div class="icon-option" data-icon="fas fa-box"><i class="fas fa-box"></i></div>
-                        <div class="icon-option" data-icon="fas fa-shopping-basket"><i class="fas fa-shopping-basket"></i></div>
-                        <div class="icon-option" data-icon="fas fa-store"><i class="fas fa-store"></i></div>
-                    </div>
-                    <input type="hidden" id="selectedIcon" name="icon" value="fas fa-tag">
-                </div>
-            </div>
+
         </div>
         
         <div class="col-lg-4">
@@ -88,17 +62,29 @@
 
             <!-- Image Upload Card -->
             <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Category Image') }}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="form-group mb-0">
-                        <label for="categoryImage">{{ translate('messages.Upload Image') }} ({{ translate('messages.Optional') }})</label>
-                        <input type="file" class="form-control-file" id="categoryImage" name="image">
-                        <small class="form-text text-muted">{{ translate('messages.Recommended size: 200x200px') }}</small>
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Category Image') }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="categoryImage" class="form-label">{{ translate('messages.Upload Image') }} <span class="text-danger">*</span></label>
+                            <div class="custom-file">
+                                <input type="file" name="image" class="custom-file-input" id="categoryImage" accept="image/*" required>
+                                <label class="custom-file-label" for="categoryImage" id="categoryImageLabel">{{ translate('messages.Choose file...') }}</label>
+                            </div>
+                            <small class="text-muted">{{ translate('messages.Recommended: 1200x400px, Max 2MB') }}</small>
+                        </div>
+
+                        <div class="image-preview-container mt-3" id="imagePreviewContainer">
+                            <div class="image-preview" id="imagePreview">
+                                <i class="fas fa-image"></i>
+                                <span>{{ translate('messages.Click to Upload or Preview') }}</span>
+                                <img id="imgPreviewElem" src="#" alt="{{ translate('messages.Image Preview') }}" class="d-none"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+
         </div>
     </div>
     
@@ -118,100 +104,51 @@
 @endsection
 
 @push('scripts')
-<style>
-    .icon-selection {
-        margin-bottom: 1rem;
-    }
-    
-    .icon-option {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        background-color: #f8f9fc;
-        border: 1px solid #e3e6f0;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        margin: 4px;
-    }
-    
-    .icon-option i {
-        font-size: 1.5rem;
-        color: #4e73df; /* Primary color */
-    }
-    
-    .icon-option:hover {
-        background-color: #eaecf4;
-    }
-    
-    .icon-option.active {
-        background-color: #4e73df;
-        border-color: #2e59d9;
-    }
-    
-    .icon-option.active i {
-        color: #fff;
-    }
-</style>
+
 
 <script>
     $(document).ready(function() {
         // Initialize Select2 for Parent Category
         $('#parentCategory').select2({
-            placeholder: "{{ translate('messages.Select a parent category') }}",
+            placeholder: '{{ translate("messages.Select a parent category") }}', // Adjusted quotes
             allowClear: true
-        });
-
-        // Generate Slug from Name
-        const categoryName = document.getElementById('categoryName');
-        const categorySlug = document.getElementById('categorySlug');
-
-        function generateSlug(text) {
-            return text.toString().toLowerCase()
-                .replace(/\s+/g, '-')           // Replace spaces with -
-                .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-                .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-                .replace(/^-+/, '')             // Trim - from start of text
-                .replace(/-+$/, '');            // Trim - from end of text
-        }
-
-        categoryName.addEventListener('input', function() {
-            // Only auto-update slug if the slug field is empty or matches the generated slug
-            const currentSlug = categorySlug.value.trim();
-            const generatedSlug = generateSlug(this.value.trim());
-            if (!currentSlug || currentSlug === generateSlug(categoryName.value.trim().slice(0, -1))) {
-                categorySlug.value = generatedSlug;
-            }
         });
         
         // Status Switch Label Update
         $('#categoryStatusSwitch').on('change', function() {
             const label = $(this).next('.custom-control-label');
             if ($(this).is(':checked')) {
-                label.text('{{ translate('messages.Active') }}');
+                label.text('{{ translate("messages.Active") }}'); // Adjusted quotes
             } else {
-                label.text('{{ translate('messages.Inactive') }}');
+                label.text('{{ translate("messages.Inactive") }}'); // Adjusted quotes
             }
         });
 
-        // Handle icon selection
-        const iconOptions = document.querySelectorAll('.icon-option');
-        const selectedIconInput = document.getElementById('selectedIcon');
+        $('#categoryImage').on('change', function() {
+                const file = this.files[0];
+                const reader = new FileReader();
+                const $previewElement = $('#imgPreviewElem');
+                const $previewPlaceholder = $('#imagePreview').find('i, span');
+                const $label = $('#categoryImageLabel');
 
-        iconOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove active class from all options
-                iconOptions.forEach(opt => opt.classList.remove('active'));
-                // Add active class to clicked option
-                this.classList.add('active');
-                // Get the icon class from data attribute
-                const iconClass = this.dataset.icon;
-                // Update the hidden input
-                selectedIconInput.value = iconClass;
+                if (file) {
+                    reader.onload = function(e) {
+                        $previewElement.attr('src', e.target.result).removeClass('d-none');
+                        $previewPlaceholder.addClass('d-none');
+                    }
+                    reader.readAsDataURL(file);
+                    $label.text(file.name); // Update label text
+                } else {
+                    $previewElement.attr('src', '#').addClass('d-none');
+                    $previewPlaceholder.removeClass('d-none');
+                    $label.text('Choose file...');
+                }
             });
-        });
+
+            // Trigger file input when preview container is clicked
+            $('#imagePreviewContainer').on('click', function() {
+                $('#categoryImage').click();
+            });
     });
 </script>
 @endpush

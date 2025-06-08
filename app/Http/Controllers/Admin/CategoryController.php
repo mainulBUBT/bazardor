@@ -3,16 +3,27 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\CategoryStoreUpdateRequest;
+use App\Services\CategoryService;
+use Brian2694\Toastr\Facades\Toastr;
 
 class CategoryController extends Controller
 {
+
+    public function __construct(protected CategoryService $categoryService)
+    {
+        
+    }
+    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view("admin.categories.index");
+        $categories = $this->categoryService->getCategories();
+        $parents = $this->categoryService->getCategories()->where('parent_id', 0);
+
+        return view("admin.categories.index", compact("categories", "parents"));
     }
 
     /**
@@ -20,23 +31,20 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view("admin.categories.create");
+        $categories = $this->categoryService->getCategories()->where('parent_id', 0);
+        return view("admin.categories.create", compact("categories"));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryStoreUpdateRequest $request)
     {
-        //
-    }
+        $data = $request->validated();
+        $this->categoryService->store($data);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        Toastr::success(translate("messages.category_created_successfully"));
+        return redirect()->route('admin.categories.index');
     }
 
     /**
@@ -44,22 +52,30 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category = $this->categoryService->findById($id);
+        $parentCategories = $this->categoryService->getCategories(parentId: $category->parent_id); 
+        return view("admin.categories.edit", compact("parentCategories", "category"));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoryStoreUpdateRequest $request, string $id)
     {
-        //
-    }
+        $data = $request->validated();
+        $this->categoryService->update((int)$id, $data);
 
+        Toastr::success(translate("messages.category_updated_successfully"));
+        return redirect()->route('admin.categories.index');
+    }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $this->categoryService->delete((int)$id);
+
+        Toastr::success(translate("messages.category_deleted_successfully"));
+        return redirect()->route('admin.categories.index');
     }
 }

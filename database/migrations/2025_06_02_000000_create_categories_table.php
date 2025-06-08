@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('image_path')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->foreignId('parent_id')->nullable();
             $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();
