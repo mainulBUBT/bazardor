@@ -21,6 +21,8 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
 
     Route::resource('markets', MarketController::class);
     Route::post('markets/status/{market}', [MarketController::class, 'status'])->name('markets.status');
+    Route::get('markets/get-districts/{division}', [MarketController::class, 'getDistricts'])->name('markets.get-districts');
+    Route::get('markets/get-thanas/{division}/{district}', [MarketController::class, 'getThanas'])->name('markets.get-thanas');
 
     Route::group(["prefix"=> "settings", "as"=> "settings."], function () {
         Route::get("/", [SettingController::class, 'index'])->name('index');
