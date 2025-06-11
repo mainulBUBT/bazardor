@@ -31,8 +31,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $categories = $this->categoryService->getCategories()->where('parent_id', 0);
-        return view("admin.categories.create", compact("categories"));
+        $parentCategories = $this->categoryService->getCategories()->where('parent_id', 0);
+        return view("admin.categories.create", compact("parentCategories"));
     }
 
     /**

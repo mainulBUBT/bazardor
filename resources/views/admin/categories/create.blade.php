@@ -34,7 +34,9 @@
                         <label for="parentCategory">{{ translate('messages.Parent Category') }}</label>
                         <select class="form-control" id="parentCategory" name="parent_id">
                             <option value="" selected>{{ translate('messages.None (Main Category)') }}</option>
-                            <!-- Parent categories will be populated here -->
+                                @foreach($parentCategories as $parent)
+                                    <option value="{{ $parent->id }}">{{ $parent->name }}</option>
+                                @endforeach
                         </select>
                     </div>
                 </div>

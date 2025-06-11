@@ -84,7 +84,7 @@
                     <div class="image-preview-container mt-3" id="imagePreviewContainer" data-has-existing-image="{{ !empty($category->image_path) ? 'true' : 'false' }}">
                         <div class="image-preview" id="imagePreview">
                             @if($category->image_path)
-                                <img id="imgPreviewElem" src="{{ asset('storage/categories/' . $category->image_path) }}" alt="{{ translate('messages.Current Image') }}" style="max-width: 100%; height: auto; display: block;"/>
+                                <img id="imgPreviewElem" src="{{ asset('public/storage/categories/' . $category->image_path) }}" alt="{{ translate('messages.Current Image') }}" style="max-width: 100%; height: auto; display: block;"/>
                             @else
                                 <i class="fas fa-image"></i>
                                 <span>{{ translate('messages.Click to Upload or Preview') }}</span>
@@ -132,7 +132,7 @@
         });
 
         // Store original image URL and flag in JS
-        const originalImage = "{{ $category->image_path ? asset('public/storage/categories/' . $category->image_path) : '' }}";
+        const originalImage = "{{ $category->image_path ? asset('storage/' . $category->image_path) : '' }}";
         const hasExistingImage = "{{ $category->image_path ? 'true' : 'false' }}";
 
         $('#categoryImage').on('change', function() {

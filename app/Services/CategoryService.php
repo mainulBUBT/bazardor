@@ -35,7 +35,8 @@ class CategoryService
     public function store(array $data): Category
     {
         if (isset($data['image']) && $data['image']->isValid()) {
-            $data['image_path'] = handle_file_upload('categories/', $data['image']->getClientOriginalExtension());
+            $imageName = handle_file_upload('categories/', $data['image']->getClientOriginalExtension(), $data['image']);
+            $data['image_path'] = $imageName;
         }
         unset($data['image']);
 
@@ -59,12 +60,15 @@ class CategoryService
     {
         $category = $this->findById($categoryId);
         $oldImagePath = $category->image_path;
-        if (isset($data['image']) && $data['image']->isValid()) {
-            $newImagePath = handle_file_upload('categories/', $data['image']->getClientOriginalExtension(), $data['image']);
-            $data['image_name'] = $newImagePath;
 
-            if ($oldImagePath && $newImagePath) {
-                handle_file_upload('categories/', '', null, $oldImagePath);
+        if (isset($data['image']) && $data['image']->isValid()) {
+            $imageName = handle_file_upload('categories/', $data['image']->getClientOriginalExtension(), $data['image'],  $oldImagePath);
+            $data['image_path'] = $imageName;
+
+            if ($oldImagePath) {
+                // Extract filename from old path for deletion
+                $oldFilename = basename($oldImagePath);
+                handle_file_upload('categories/', '', null, $oldFilename);
             }
         }
         unset($data['image']);
@@ -72,7 +76,7 @@ class CategoryService
         $category->slug = $data['slug'] ?? $category->slug;
         $category->parent_id = $data['parent_id'] ?? $category->parent_id;
         $category->position = $data['position'] ?? $category->position;
-        $category->image_path = $data['image_name'] ?? $category->image_path;
+        $category->image_path = $data['image_path'] ?? $category->image_path;
         $category->is_active = $data['is_active'] ?? $category->is_active;
         $category->save();
        
@@ -88,7 +92,9 @@ class CategoryService
     {
         $category = $this->findById($categoryId);
         if ($category->image_path) {
-            handle_file_upload('categories/', '', null, $category->image_path);
+            // Extract filename from full path for deletion
+            $filename = basename($category->image_path);
+            handle_file_upload('categories/', '', null, $filename);
         }
         $category->delete();
     }
