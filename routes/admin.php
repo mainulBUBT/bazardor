@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\MarketController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
@@ -16,6 +18,9 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
     
     Route::resource('categories', CategoryController::class);
     Route::post('categories/status/{category}', [CategoryController::class, 'status'])->name('categories.status');
+
+    Route::resource('markets', MarketController::class);
+    Route::post('markets/status/{market}', [MarketController::class, 'status'])->name('markets.status');
 
     Route::group(["prefix"=> "settings", "as"=> "settings."], function () {
         Route::get("/", [SettingController::class, 'index'])->name('index');

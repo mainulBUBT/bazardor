@@ -254,6 +254,44 @@ footer.sticky-footer {
     border-color: #1cc88a;
 }
 
+/* Market Add/Edit Image Preview Styles */
+.image-preview-container {
+    border: 1px dashed #e3e6f0;
+    border-radius: .35rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    background-color: #f8f9fc;
+    cursor: pointer;
+}
+.image-preview {
+    text-align: center;
+    color: #858796;
+}
+.image-preview i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: .2rem;
+}
+#mapPlaceholder {
+    height: 250px;
+    background-color: #eaecf4;
+    border-radius: .35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #858796;
+    text-align: center;
+    border: 1px solid #e3e6f0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     #wrapper {

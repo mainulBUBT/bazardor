@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->string('website')->nullable();
-            $table->json('opening_hours')->nullable();
             $table->decimal('rating', 3, 2)->nullable();
             $table->integer('rating_count')->default(0);
             $table->boolean('is_active')->default(true);

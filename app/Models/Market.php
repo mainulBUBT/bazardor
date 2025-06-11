@@ -112,4 +112,12 @@ class Market extends Model
                     ->having('distance', '<=', $radius)
                     ->orderBy('distance');
     }
+
+    /**
+     * Get the opening hours associated with the market.
+     */
+    public function openingHours()
+    {
+        return $this->hasMany(MarketOpeningHour::class);
+    }
 }

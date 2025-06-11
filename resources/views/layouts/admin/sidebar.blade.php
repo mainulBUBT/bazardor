@@ -77,8 +77,8 @@
         </a>
         <div id="collapseMarkets" class="collapse" aria-labelledby="headingMarkets" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{url('/admin/markets')}}">{{translate('messages.All Markets') }}</a>
-                <a class="collapse-item" href="{{url('/admin/markets/create')}}">{{translate('messages.Add Market') }}</a>
+                <a class="collapse-item" href="{{ route('admin.markets.index') }}">{{translate('messages.All Markets') }}</a>
+                <a class="collapse-item" href="{{route('admin.markets.create')}}">{{translate('messages.Add Market') }}</a>
             </div>
         </div>
     </li>
