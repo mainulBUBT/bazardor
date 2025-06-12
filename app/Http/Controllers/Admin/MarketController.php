@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MarketStoreUpdateRequest;
+use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use App\Enums\Location;
 use App\Models\Market;
@@ -11,6 +12,10 @@ use App\Services\MarketService;
 
 class MarketController extends Controller
 {
+    public function __construct(protected MarketService $marketService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,10 +36,12 @@ class MarketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(MarketStoreUpdateRequest $request, MarketService $marketService)
+    public function store(MarketStoreUpdateRequest $request)
     {
-        $marketService->store($request->validated(), $request);
-        return redirect()->route('admin.markets.index')->with('success', 'Market created successfully!');
+        $this->marketService->store($request->validated());
+        
+        Toastr::success(translate("messages.market_created_successfully"));
+        return redirect()->route('admin.markets.index');
     }
 
     /**

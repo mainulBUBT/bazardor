@@ -5,63 +5,74 @@ namespace App\Services;
 use App\Models\Market;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Str;
 
 class MarketService
 {
     /**
      * Store a new market.
      *
-     * @param array $validatedData
-     * @param Request $request
+     * @param array $data
      * @return Market
      * @throws \Exception
      */
-    public function store(array $validatedData, Request $request): Market
+    public function store(array $data): Market
     {
         DB::beginTransaction();
         try {
             $market = new Market();
-            $market->name = $validatedData['name'];
-            $market->slug = $validatedData['slug'] ?? null; // The model will auto-generate if empty
-            $market->type = $validatedData['type'];
-            $market->description = $validatedData['description'] ?? null;
-            $market->address = $validatedData['address'];
-            $market->latitude = $validatedData['latitude'] ?? null;
-            $market->longitude = $validatedData['longitude'] ?? null;
-            $market->is_active = $validatedData['status'] === 'active';
-            $market->featured = $validatedData['featured'] ?? false;
-
-            // Combine location fields into a single JSON object
-            $market->location = json_encode([
-                'division' => $validatedData['division'],
-                'district' => $validatedData['district'],
-                'upazila' => $validatedData['upazila'] ?? null,
-            ]);
-
-            // Process operating hours
-            $hours_data = [];
-            foreach ($validatedData['opening_hours'] as $day => $hours) {
-                $is_closed = isset($hours['is_closed']);
-                $hours_data[$day] = [
-                    'opening_time' => $is_closed ? null : ($hours['opening_time'] ?? null),
-                    'closing_time' => $is_closed ? null : ($hours['closing_time'] ?? null),
-                    'is_closed' => $is_closed,
-                ];
-            }
-            $market->opening_hours = json_encode($hours_data);
-
-            if ($request->hasFile('image')) {
-                $market->image_path = handle_file_upload($request->file('image'), 'markets');
-            }
+            $market->name = $data['name'];
+            $market->slug = $data['slug'] ?? null;
+            $market->type = $data['type'];
+            $market->description = $data['description'] ?? null;
+            $market->address = $data['address'];
+            $market->latitude = $data['latitude'] ?? null;
+            $market->longitude = $data['longitude'] ?? null;
+            $market->is_active = $data['status'] === 'active';
+            $market->featured = $data['featured'] ?? false;
+            $market->division = $data['division'] ?? null;
+            $market->district = $data['district'] ?? null;
+            $market->upazila_or_thana = $data['upazila'] ?? null;
+            $market->visibility = $data['visibility'] === 'public' ? 1 : 0;
 
             $market->save();
 
-            DB::commit();
+            // Handle market image
+            if (isset($data['image']) && $data['image']->isValid()) {
+                $market->image_path = handle_file_upload('markets/', $data['image']->getClientOriginalExtension(), $data['image']);
+                $market->save();
+            }
 
+            // Handle market information
+            $market->marketInformation()->updateOrCreate(
+                ['market_id' => $market->id],
+                [
+                    'is_non_veg' => $data['is_non_veg'] ?? 0,
+                    'is_halal' => $data['is_halal'] ?? 0,
+                    'is_parking' => $data['is_parking'] ?? 0,
+                    'is_restroom' => $data['is_restroom'] ?? 0,
+                    'is_home_delivery' => $data['is_home_delivery'] ?? 0
+                ]
+            );
+
+            // Handle operating hours for all days
+            $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            foreach ($days as $day) {
+                $hours = $data['opening_hours'][$day] ?? ['is_closed' => true];
+                $is_closed = isset($hours['is_closed']) ? (bool)$hours['is_closed'] : true;
+
+                $market->openingHours()->create([
+                    'day' => $day,
+                    'opening' => $is_closed ? null : ($hours['opening_time'] ?? null),
+                    'closing' => $is_closed ? null : ($hours['closing_time'] ?? null),
+                    'is_closed' => $is_closed,
+                ]);
+            }
+
+            DB::commit();
             return $market;
         } catch (\Exception $e) {
             DB::rollBack();
-            // Re-throw the exception to be caught in the controller
             throw $e;
         }
     }
@@ -69,53 +80,69 @@ class MarketService
     /**
      * Update an existing market.
      *
-     * @param array $validatedData
+     * @param array $data
      * @param Request $request
      * @param string $id
      * @return Market
      * @throws \Exception
      */
-    public function update(array $validatedData, Request $request, string $id): Market
+    public function update(array $data, Request $request, string $id): Market
     {
         DB::beginTransaction();
         try {
             $market = Market::findOrFail($id);
 
-            $market->name = $validatedData['name'];
-            $market->slug = $validatedData['slug'] ?? null;
-            $market->type = $validatedData['type'];
-            $market->description = $validatedData['description'] ?? null;
-            $market->address = $validatedData['address'];
-            $market->latitude = $validatedData['latitude'] ?? null;
-            $market->longitude = $validatedData['longitude'] ?? null;
-            $market->is_active = $validatedData['status'] === 'active';
-            $market->featured = $validatedData['featured'] ?? false;
-
-            $market->location = json_encode([
-                'division' => $validatedData['division'],
-                'district' => $validatedData['district'],
-                'upazila' => $validatedData['upazila'] ?? null,
-            ]);
-
-            $hours_data = [];
-            foreach ($validatedData['opening_hours'] as $day => $hours) {
-                $is_closed = isset($hours['is_closed']);
-                $hours_data[$day] = [
-                    'opening_time' => $is_closed ? null : ($hours['opening_time'] ?? null),
-                    'closing_time' => $is_closed ? null : ($hours['closing_time'] ?? null),
-                    'is_closed' => $is_closed,
-                ];
-            }
-            $market->opening_hours = json_encode($hours_data);
-
-            if ($request->hasFile('image')) {
-                $market->image_path = handle_file_upload($request->file('image'), 'markets', $market->image_path);
-            }
+            $market->name = $data['name'];
+            $market->slug = $data['slug'] ?? null;
+            $market->type = $data['type'];
+            $market->description = $data['description'] ?? null;
+            $market->address = $data['address'];
+            $market->latitude = $data['latitude'] ?? null;
+            $market->longitude = $data['longitude'] ?? null;
+            $market->is_active = $data['status'] === 'active';
+            $market->featured = $data['featured'] ?? false;
+            $market->division = $data['division'] ?? null;
+            $market->district = $data['district'] ?? null;
+            $market->upazila_or_thana = $data['upazila'] ?? null;
+            $market->visibility = $data['visibility'] === 'public' ? 1 : 0;
 
             $market->save();
 
-            DB::commit();
+            // Handle market image update if present
+            if ($request->hasFile('image')) {
+                $market->image_path = handle_file_upload($request->file('image'), 'markets', $market->image_path);
+                $market->save();
+            }
 
+            // Handle market information
+            $market->marketInformation()->updateOrCreate(
+                ['market_id' => $market->id],
+                [
+                    'is_non_veg' => $data['is_non_veg'] ?? 0,
+                    'is_halal' => $data['is_halal'] ?? 0,
+                    'is_parking' => $data['is_parking'] ?? 0,
+                    'is_restroom' => $data['is_restroom'] ?? 0,
+                    'is_home_delivery' => $data['is_home_delivery'] ?? 0
+                ]
+            );
+
+            // Update operating hours for all days
+            $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            foreach ($days as $day) {
+                $hours = $data['opening_hours'][$day] ?? ['is_closed' => true];
+                $is_closed = isset($hours['is_closed']) ? (bool)$hours['is_closed'] : true;
+
+                $market->openingHours()->updateOrCreate(
+                    ['day' => $day],
+                    [
+                        'opening' => $is_closed ? null : ($hours['opening_time'] ?? null),
+                        'closing' => $is_closed ? null : ($hours['closing_time'] ?? null),
+                        'is_closed' => $is_closed,
+                    ]
+                );
+            }
+
+            DB::commit();
             return $market;
         } catch (\Exception $e) {
             DB::rollBack();

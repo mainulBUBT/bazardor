@@ -13,8 +13,9 @@
         </div>
     </div>
 
-    <form action="{{ route('admin.markets.store') }}" method="POST" enctype="multipart/form-data" id="addMarketForm">
+    <form action="{{ route('admin.markets.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        
         <div class="row">
             <!-- Main Market Details Column -->
             <div class="col-lg-8">
@@ -177,23 +178,23 @@
                     </div>
                     <div class="card-body">
                         <div class="custom-control custom-switch mb-2">
-                            <input type="checkbox" class="custom-control-input" id="nonVegSwitch">
+                            <input type="checkbox" name="is_non_veg" class="custom-control-input" id="nonVegSwitch">
                             <label class="custom-control-label" for="nonVegSwitch">{{ translate('messages.Non-Veg Items Available') }}</label>
                         </div>
                         <div class="custom-control custom-switch mb-2">
-                            <input type="checkbox" class="custom-control-input" id="halalSwitch">
+                            <input type="checkbox" name="is_halal" class="custom-control-input" id="halalSwitch">
                             <label class="custom-control-label" for="halalSwitch">{{ translate('messages.Halal Items Available') }}</label>
                         </div>
                         <div class="custom-control custom-switch mb-2">
-                            <input type="checkbox" class="custom-control-input" id="parkingSwitch">
+                            <input type="checkbox" name="is_parking" class="custom-control-input" id="parkingSwitch">
                             <label class="custom-control-label" for="parkingSwitch">{{ translate('messages.Parking Available') }}</label>
                         </div>
                             <div class="custom-control custom-switch mb-2">
-                            <input type="checkbox" class="custom-control-input" id="restroomSwitch">
+                            <input type="checkbox" name="is_restroom" class="custom-control-input" id="restroomSwitch">
                             <label class="custom-control-label" for="restroomSwitch">{{ translate('messages.Restroom Available') }}</label>
                         </div>
                         <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="deliverySwitch">
+                            <input type="checkbox" name="is_home_delivery" class="custom-control-input" id="deliverySwitch">
                             <label class="custom-control-label" for="deliverySwitch">{{ translate('messages.Home Delivery Offered') }}</label>
                         </div>
                     </div>

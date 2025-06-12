@@ -29,11 +29,13 @@ class Market extends Model
         'phone',
         'email',
         'website',
-        'opening_hours',
-        'rating',
-        'rating_count',
         'is_active',
+        'visibility',
+        'featured',
         'position',
+        'division',
+        'district',
+        'upazila_or_thana',
     ];
 
     /**
@@ -42,8 +44,11 @@ class Market extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'opening_hours' => 'json',
-        'is_active' => 'boolean',
+        'is_active' => 'integer',
+        'featured' => 'integer',
+        'division' => 'string',
+        'district' => 'string',
+        'upazila_or_thana' => 'string',
         'rating' => 'float',
         'rating_count' => 'integer',
         'position' => 'integer',
@@ -52,25 +57,18 @@ class Market extends Model
     ];
 
     /**
-     * Boot the model.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($market) {
-            if (empty($market->slug)) {
-                $market->slug = Str::slug($market->name);
-            }
-        });
-    }
-
-    /**
      * Get the products associated with the market.
      */
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+    /**
+     * Get the market information associated with the market.
+     */
+    public function marketInformation()
+    {
+        return $this->hasOne(MarketInformation::class);
     }
 
     /**
@@ -118,6 +116,20 @@ class Market extends Model
      */
     public function openingHours()
     {
-        return $this->hasMany(MarketOpeningHour::class);
+        return $this->hasMany(MarketOperatingHour::class);
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($market) {
+            if (empty($market->slug)) {
+                $market->slug = Str::slug($market, '-').Str::random(5);
+            }
+        });
     }
 }

@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('market_opening_hours', function (Blueprint $table) {
+        Schema::create('market_operating_hours', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('market_id')->constrained()->onDelete('cascade');
+            $table->foreignId('market_id');
             $table->string('day'); // e.g. Monday, Tuesday
             $table->time('opening')->nullable();
             $table->time('closing')->nullable();
@@ -21,6 +21,6 @@ return new class extends Migration
     }
     public function down(): void
     {
-        Schema::dropIfExists('market_opening_hours');
+        Schema::dropIfExists('market_operating_hours');
     }
 };

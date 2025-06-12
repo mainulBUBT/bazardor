@@ -27,8 +27,12 @@ return new class extends Migration
             $table->string('website')->nullable();
             $table->decimal('rating', 3, 2)->nullable();
             $table->integer('rating_count')->default(0);
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(0);
+            $table->boolean('visibility')->default(0);
             $table->integer('position')->default(0);
+            $table->string('division')->nullable();
+            $table->string('district')->nullable();
+            $table->string('upazila_or_thana')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
