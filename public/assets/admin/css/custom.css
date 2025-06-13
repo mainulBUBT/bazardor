@@ -292,6 +292,111 @@ footer.sticky-footer {
     border: 1px solid #e3e6f0;
 }
 
+/* Market Details Page Styles */
+.market-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.market-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+}
+
+.info-card {
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.info-card .card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.market-stat {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    background-color: #f8f9fc;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    transition: all 0.3s ease;
+}
+
+.market-stat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.market-stat h3 {
+    margin-bottom: 0.2rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.market-stat p {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.market-stat i {
+    margin-bottom: 1rem;
+}
+
+.amenity-badge {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+}
+
+.hours-table th, .hours-table td {
+    padding: 0.5rem;
+    vertical-align: middle;
+}
+
+.location-info {
+    margin-bottom: 1.5rem;
+}
+
+.location-info i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.5rem;
+    color: #4e73df;
+}
+
+.list-group-item-action {
+    transition: all 0.2s;
+}
+
+.list-group-item-action:hover {
+    background-color: #f8f9fc;
+    transform: translateX(5px);
+}
+
+.list-group-item-action i {
+    color: #4e73df;
+}
+
+/* Map styles */
+#location_map_div {
+    height: 350px;
+    border-radius: 8px;
+    box-shadow: 0 0.15rem 0.5rem 0 rgba(58, 59, 69, 0.15);
+    margin-bottom: 1rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     #wrapper {
@@ -322,5 +427,14 @@ footer.sticky-footer {
     
     .sidebar.toggled ~ #content-wrapper {
         width: 100%;
+    }
+    
+    .market-stat {
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+    
+    .market-image {
+        height: 150px;
     }
 }

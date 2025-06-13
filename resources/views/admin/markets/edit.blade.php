@@ -166,13 +166,13 @@
                         <div class="form-group mb-3">
                             <label for="marketVisibility">{{ translate('messages.Visibility') }}</label>
                             <select name="visibility" id="marketVisibility" class="form-control">
-                                <option value="public" {{ old('visibility', $market->visibility) == '0' ? 'selected' : '' }}>{{ translate('messages.Public') }}</option>
-                                <option value="private" {{ old('visibility', $market->visibility) == '1' ? 'selected' : '' }}>{{ translate('messages.Private') }}</option>
+                                <option value="public" {{ $market->visibility == '1' ? 'selected' : '' }}>{{ translate('messages.Public') }}</option>
+                                <option value="private" {{ $market->visibility == '0' ? 'selected' : '' }}>{{ translate('messages.Private') }}</option>
                             </select>
                         </div>
                         <div class="form-group mb-0">
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" name="is_featured" value="1" class="custom-control-input" id="featuredSwitch" {{ old('is_featured', $market->is_featured) ? 'checked' : '' }}>
+                                <input type="checkbox" name="featured" value="1" class="custom-control-input" id="featuredSwitch" {{ $market->is_featured ? 'checked' : '' }}>
                                 <label class="custom-control-label" for="featuredSwitch">{{ translate('messages.Featured Market') }}</label>
                             </div>
                         </div>
@@ -342,39 +342,88 @@
 
     // Add a draggable marker
     let marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
-    // Initial call to set lat/lng inputs if they are empty or different from marker
-    updateLatLngInputs(marker.getLatLng()); 
 
-    // --- GeoSearch Control (using window.GeoSearch for consistency with create.blade.php) ---
-    const { GeoSearchControl, OpenStreetMapProvider } = window.GeoSearch;
+    // Add GeoSearch control
+    const { OpenStreetMapProvider, GeoSearchControl } = window.GeoSearch;
     const provider = new OpenStreetMapProvider({
         params: {
             'accept-language': 'en', // for language consistency
             countrycodes: 'bd', // limit search to Bangladesh
-        },
+        }
     });
-
     const searchControl = new GeoSearchControl({
         provider: provider,
         style: 'bar',
-        showMarker: false, // We use our own marker
-        showPopup: false,
-        autoClose: true,
-        retainZoomLevel: false,
+        showMarker: false,
+        retainZoomLevel: true,
         animateZoom: true,
-        keepResult: true,
-        searchLabel: 'Search for an address...',
+        searchLabel: '{{ translate("messages.Search for address...") }}',
+        notFoundMessage: '{{ translate("messages.No results found") }}',
     });
     map.addControl(searchControl);
 
-    map.on('geosearch/showlocation', function(result) {
-        // result.location is {x, y, label, bounds, raw}
-        const latlng = { lat: result.location.y, lng: result.location.x };
-        marker.setLatLng(latlng);
-        map.panTo(latlng); // Pan map to the new location
-        updateLatLngInputs(latlng);
-        addressInput.value = result.location.label; // Use address from search result
+    // Update marker position and inputs when location is found
+    map.on('geosearch/showlocation', (event) => {
+        const { location } = event;
+        marker.setLatLng([location.y, location.x]);
+        updateLatLngInputs(location);
+        updateAddressInput(location);
     });
+
+    // Update inputs when marker is dragged
+    marker.on('dragend', function(e) {
+        const position = marker.getLatLng();
+        updateLatLngInputs(position);
+        updateAddressInput(position);
+    });
+
+    // Update marker position and inputs when map is clicked
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        updateLatLngInputs(e.latlng);
+        updateAddressInput(e.latlng);
+    });
+
+    // Update marker position when lat/lng inputs change
+    let latLngTimeout;
+    function updateMarkerFromInputs() {
+        const lat = parseFloat(latInput.value);
+        const lng = parseFloat(lngInput.value);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            marker.setLatLng([lat, lng]);
+            map.setView([lat, lng]);
+        }
+    }
+
+    latInput.addEventListener('input', function() {
+        clearTimeout(latLngTimeout);
+        latLngTimeout = setTimeout(updateMarkerFromInputs, 1000);
+    });
+
+    lngInput.addEventListener('input', function() {
+        clearTimeout(latLngTimeout);
+        latLngTimeout = setTimeout(updateMarkerFromInputs, 1000);
+    });
+
+    function updateLatLngInputs(latlng) {
+        latInput.value = latlng.lat.toFixed(6);
+        lngInput.value = latlng.lng.toFixed(6);
+    }
+
+    function updateAddressInput(latlng) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.display_name) {
+                    addressInput.value = data.display_name;
+                }
+            })
+            .catch(error => console.error('Error fetching address:', error));
+    }
+
+    // Initial updates
+    updateLatLngInputs(marker.getLatLng());
+    updateAddressInput(marker.getLatLng());
 
     // Update lat/lng and address on marker drag
     marker.on('dragend', function(event) {

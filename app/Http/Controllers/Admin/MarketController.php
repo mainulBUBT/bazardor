@@ -70,10 +70,10 @@ class MarketController extends Controller
      */
     public function update(MarketStoreUpdateRequest $request, string $id)
     {
-        $this->marketService->update($request->validated(), $request, $id);
+        $this->marketService->update($request->validated(), $id);
         Toastr::success(translate("messages.market_updated_successfully"));
         
-        return redirect()->route('admin.markets.index');
+        return redirect()->back();
     }
 
     /**

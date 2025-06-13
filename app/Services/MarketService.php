@@ -94,13 +94,12 @@ class MarketService
     /**
      * Update an existing market.
      *
-     * @param array $data
-     * @param Request $request
+
      * @param string $id
      * @return Market
      * @throws \Exception
      */
-    public function update(array $data, Request $request, string $id): Market
+    public function update(array $data, string $id): Market
     {
         DB::beginTransaction();
         try {
@@ -123,8 +122,8 @@ class MarketService
             $market->save();
 
             // Handle market image update if present
-            if ($request->hasFile('image')) {
-                $market->image_path = handle_file_upload($request->file('image'), 'markets', $market->image_path);
+            if (isset($data['image']) && $data['image']->isValid()) {
+                $market->image_path = handle_file_upload('markets/', $data['image']->getClientOriginalExtension(), $data['image'], $market->image_path);
                 $market->save();
             }
 

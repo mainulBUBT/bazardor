@@ -127,7 +127,7 @@
                                 <span class="text-muted">({{ $market->rating_count ?? 0 }} {{ Str::plural('review', $market->rating_count ?? 0) }})</span>
                             </td>
                         <td>
-                            @if($market->is_active === 'active')
+                            @if($market->is_active == '1')
                                 <span class="badge badge-success">{{ translate('messages.Active') }}</span>
                             @else
                                 <span class="badge badge-danger">{{ translate('messages.Inactive') }}</span>
