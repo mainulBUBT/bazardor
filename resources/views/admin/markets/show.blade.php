@@ -3,11 +3,7 @@
 @section('title', translate('messages.Market Details'))
 
 @push('css_or_js')
-    <style>
-        #location_map_div {
-            height: 350px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
 @endpush
 
 @section('content')
@@ -76,7 +72,7 @@
                         <h5 class="card-title">{{ translate('messages.market_location') }}</h5>
                     </div>
                     <div class="card-body">
-                        <div id="location_map_div"></div>
+                        <div id="location_map_div" style="height: 350px"></div>
                     </div>
                 </div>
             </div>
@@ -108,25 +104,49 @@
     </div>
 @endsection
 
-@push('script_2')
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('app.google_maps_api_key') }}&libraries=places"></script>
-    <script>
-        function initMap() {
-            var lat = @json($market->latitude ?? '23.8103');
-            var lng = @json($market->longitude ?? '90.4125');
-            var myLatlng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
-            var mapOptions = {
-                zoom: 13,
-                center: myLatlng,
-                mapTypeId: 'roadmap'
-            };
-            var map = new google.maps.Map(document.getElementById("location_map_div"), mapOptions);
-            var marker = new google.maps.Marker({
-                position: myLatlng,
-                map: map,
-                title: "{{ $market->name }}"
-            });
+@push('scripts')
+    <script id="map-data" type="application/json">
+        {
+            "lat": @json($market->latitude),
+            "lng": @json($market->longitude),
+            "name": @json($market->name),
+            "noLocationMessage": @json(translate('messages.location_data_not_available'))
         }
-        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mapDiv = document.getElementById('location_map_div');
+            const mapDataElement = document.getElementById('map-data');
+            const mapData = JSON.parse(mapDataElement.textContent);
+
+            const lat = parseFloat(mapData.lat);
+            const lng = parseFloat(mapData.lng);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const map = L.map('location_map_div').setView([lat, lng], 13);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                const marker = L.marker([lat, lng]).addTo(map);
+
+                marker.bindPopup(`<b>${mapData.name}</b>`).openPopup();
+
+                // Disable all map interactions
+                map.dragging.disable();
+                map.touchZoom.disable();
+                map.doubleClickZoom.disable();
+                map.scrollWheelZoom.disable();
+                map.boxZoom.disable();
+                map.keyboard.disable();
+                if (map.tap) map.tap.disable();
+                mapDiv.style.cursor = 'default';
+
+            } else {
+                mapDiv.innerHTML = `<div class="text-center p-5">${mapData.noLocationMessage}</div>`;
+            }
+        });
     </script>
 @endpush

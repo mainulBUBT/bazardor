@@ -349,4 +349,7 @@
   'location' => 'Location',
   'amenities' => 'Amenities',
   'get_directions' => 'Get directions',
+  'location_data_not_available' => 'Location data not available',
+  'Select District' => 'Select District',
+  'Select Upazila' => 'Select Upazila',
 );

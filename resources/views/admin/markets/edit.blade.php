@@ -215,14 +215,47 @@
 @endsection
 
 @push('scripts')
-
+<script id="market-edit-data" type="application/json">
+    {
+        "lat": @json(old('latitude', $market->latitude ?? '23.8103')),
+        "lng": @json(old('longitude', $market->longitude ?? '90.4125')),
+        "get_districts_url": @json(url('admin/markets/get-districts')),
+        "get_thanas_url": @json(url('admin/markets/get-thanas')),
+        "select_district_message": @json(translate('messages.Select District')),
+        "select_upazila_message": @json(translate('messages.Select Upazila')),
+        "loading_address_message": @json(translate('messages.Loading address...')),
+        "address_not_found_message": @json(translate('messages.Address not found. Please enter manually.')),
+        "could_not_fetch_address_message": @json(translate('messages.Could not fetch address. Please enter manually.')),
+        "division_to_load": @json(old('division', $market->division)),
+        "district_to_select": @json(old('district', $market->district)),
+        "upazila_to_select": @json(old('upazila', $market->upazila))
+    }
+</script>
 <script>
-    $(document).ready(function() {
-        // Image Preview & File Input Handling
-        const $fileInput = $('#marketImage');
+document.addEventListener('DOMContentLoaded', function () {
+    const editData = JSON.parse(document.getElementById('market-edit-data').textContent);
+
+    // Slug generator
+    const marketNameInput = document.getElementById('marketName');
+    if (marketNameInput) {
+        marketNameInput.addEventListener('keyup', function() {
+            let name = this.value;
+            let slug = name.toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\u0621-\u064A\u0660-\u0669\w-]+/g, '')
+                .replace(/--+/g, '-')
+                .replace(/^-+/, '')
+                .replace(/-+$/, '');
+            document.getElementById('marketSlug').value = slug;
+        });
+    }
+
+    // Image Preview & File Input Handling
+    const $fileInput = $('#marketImage');
+    if ($fileInput.length) {
         const $fileLabel = $('#marketImageLabel');
         const $previewContainer = $('#imagePreview');
-        const originalPreviewHTML = $previewContainer.html(); // Save original state
+        const originalPreviewHTML = $previewContainer.html();
 
         $fileInput.on('change', function() {
             const file = this.files[0];
@@ -236,82 +269,74 @@
                 reader.readAsDataURL(file);
                 $fileLabel.text(file.name);
             } else {
-                // User canceled file selection, revert to original
                 $previewContainer.html(originalPreviewHTML);
                 $fileLabel.text($fileLabel.data('default-text'));
             }
         });
+    }
 
-        // Operating Hours
-        $('#operatingHoursTable').on('change', '.is-closed', function() {
-            var row = $(this).closest('tr');
-            var isChecked = $(this).is(':checked');
-            row.find('.opening-time, .closing-time').prop('disabled', isChecked);
-            if(isChecked) {
+    // Operating Hours
+    const $operatingHoursTable = $('#operatingHoursTable');
+    if ($operatingHoursTable.length) {
+        $operatingHoursTable.on('change', '.is-closed', function() {
+            const row = $(this).closest('tr');
+            row.find('.opening-time, .closing-time').prop('disabled', this.checked);
+            if(this.checked) {
                 row.find('.opening-time, .closing-time').val('');
             }
         });
         $('.is-closed').trigger('change');
 
         $('#applyHoursToAll').on('click', function() {
-            var firstRow = $('#operatingHoursTable tbody tr:first');
-            var openingTime = firstRow.find('.opening-time').val();
-            var closingTime = firstRow.find('.closing-time').val();
-            var isClosed = firstRow.find('.is-closed').is(':checked');
+            const firstRow = $('#operatingHoursTable tbody tr:first');
+            const openingTime = firstRow.find('.opening-time').val();
+            const closingTime = firstRow.find('.closing-time').val();
+            const isClosed = firstRow.find('.is-closed').is(':checked');
 
             $('#operatingHoursTable tbody tr').each(function() {
-                var row = $(this);
+                const row = $(this);
                 row.find('.opening-time').val(openingTime);
                 row.find('.closing-time').val(closingTime);
                 row.find('.is-closed').prop('checked', isClosed).trigger('change');
             });
         });
-    });
+    }
 
-    
+    // Dependent dropdowns
     function getDistricts(division, selectedDistrict = null, selectedUpazila = null) {
-    const districtSelect = document.getElementById('marketDistrict');
-    const upazilaSelect = document.getElementById('marketUpazila');
-    districtSelect.innerHTML = '<option></option>';
-    districtSelect.disabled = true;
-    upazilaSelect.innerHTML = '<option></option>';
-    upazilaSelect.disabled = true;
+        const districtSelect = document.getElementById('marketDistrict');
+        const upazilaSelect = document.getElementById('marketUpazila');
+        districtSelect.innerHTML = `<option value="">${editData.select_district_message}</option>`;
+        districtSelect.disabled = true;
+        upazilaSelect.innerHTML = `<option value="">${editData.select_upazila_message}</option>`;
+        upazilaSelect.disabled = true;
 
-    if (!division) {
-        $(districtSelect).val('').trigger('change');
-        $(upazilaSelect).val('').trigger('change');
-        return;
-    };
+        if (!division) return;
 
-    let url = `{{ url('admin/markets/get-districts') }}/${division}`;
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            districtSelect.disabled = false;
-            data.forEach(district => {
-                const option = new Option(district, district, false, district === selectedDistrict);
-                districtSelect.appendChild(option);
-            });
-            $(districtSelect).val(selectedDistrict).trigger('change');
-            if (selectedDistrict) {
-                getThanas(division, selectedDistrict, selectedUpazila);
-            }
-        })
-        .catch(error => console.error('Error fetching districts:', error));
+        fetch(`${editData.get_districts_url}/${division}`)
+            .then(response => response.json())
+            .then(data => {
+                districtSelect.disabled = false;
+                data.forEach(district => {
+                    const option = new Option(district, district, false, district === selectedDistrict);
+                    districtSelect.appendChild(option);
+                });
+                $(districtSelect).val(selectedDistrict).trigger('change');
+                if (selectedDistrict) {
+                    getThanas(division, selectedDistrict, selectedUpazila);
+                }
+            })
+            .catch(error => console.error('Error fetching districts:', error));
     }
 
     function getThanas(division, district, selectedUpazila = null) {
         const upazilaSelect = document.getElementById('marketUpazila');
-        upazilaSelect.innerHTML = '<option></option>';
+        upazilaSelect.innerHTML = `<option value="">${editData.select_upazila_message}</option>`;
         upazilaSelect.disabled = true;
 
-        if (!district) {
-            $(upazilaSelect).val('').trigger('change');
-            return
-        };
+        if (!district) return;
 
-        let url = `{{ url('admin/markets/get-thanas') }}/${division}/${district}`;
-        fetch(url)
+        fetch(`${editData.get_thanas_url}/${division}/${district}`)
             .then(response => response.json())
             .then(data => {
                 upazilaSelect.disabled = false;
@@ -324,138 +349,41 @@
             .catch(error => console.error('Error fetching thanas:', error));
     }
 
+    $('#marketDivision').on('change', function() {
+        getDistricts($(this).val());
+    });
 
-    // Leaflet Map
+    $('#marketDistrict').on('change', function() {
+        const division = $('#marketDivision').val();
+        getThanas(division, $(this).val());
+    });
+
+    // --- Leaflet Map --- //
     const latInput = document.getElementById('marketLatitude');
     const lngInput = document.getElementById('marketLongitude');
     const addressInput = document.getElementById('marketAddress');
 
-    // Initialize map centered on existing market location or Dhaka, Bangladesh
-    const initialLat = {{ old('latitude', $market->latitude ?? 23.8103) }};
-    const initialLng = {{ old('longitude', $market->longitude ?? 90.4125) }};
+    const initialLat = parseFloat(editData.lat);
+    const initialLng = parseFloat(editData.lng);
     const map = L.map('map').setView([initialLat, initialLng], 13);
 
-    // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Add a draggable marker
-    let marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
-
-    // Add GeoSearch control
-    const { OpenStreetMapProvider, GeoSearchControl } = window.GeoSearch;
-    const provider = new OpenStreetMapProvider({
-        params: {
-            'accept-language': 'en', // for language consistency
-            countrycodes: 'bd', // limit search to Bangladesh
-        }
-    });
-    const searchControl = new GeoSearchControl({
-        provider: provider,
-        style: 'bar',
-        showMarker: false,
-        retainZoomLevel: true,
-        animateZoom: true,
-        searchLabel: '{{ translate("messages.Search for address...") }}',
-        notFoundMessage: '{{ translate("messages.No results found") }}',
-    });
-    map.addControl(searchControl);
-
-    // Update marker position and inputs when location is found
-    map.on('geosearch/showlocation', (event) => {
-        const { location } = event;
-        marker.setLatLng([location.y, location.x]);
-        updateLatLngInputs(location);
-        updateAddressInput(location);
-    });
-
-    // Update inputs when marker is dragged
-    marker.on('dragend', function(e) {
-        const position = marker.getLatLng();
-        updateLatLngInputs(position);
-        updateAddressInput(position);
-    });
-
-    // Update marker position and inputs when map is clicked
-    map.on('click', function(e) {
-        marker.setLatLng(e.latlng);
-        updateLatLngInputs(e.latlng);
-        updateAddressInput(e.latlng);
-    });
-
-    // Update marker position when lat/lng inputs change
-    let latLngTimeout;
-    function updateMarkerFromInputs() {
-        const lat = parseFloat(latInput.value);
-        const lng = parseFloat(lngInput.value);
-        if (!isNaN(lat) && !isNaN(lng)) {
-            marker.setLatLng([lat, lng]);
-            map.setView([lat, lng]);
-        }
-    }
-
-    latInput.addEventListener('input', function() {
-        clearTimeout(latLngTimeout);
-        latLngTimeout = setTimeout(updateMarkerFromInputs, 1000);
-    });
-
-    lngInput.addEventListener('input', function() {
-        clearTimeout(latLngTimeout);
-        latLngTimeout = setTimeout(updateMarkerFromInputs, 1000);
-    });
-
-    function updateLatLngInputs(latlng) {
-        latInput.value = latlng.lat.toFixed(6);
-        lngInput.value = latlng.lng.toFixed(6);
-    }
-
-    function updateAddressInput(latlng) {
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.display_name) {
-                    addressInput.value = data.display_name;
-                }
-            })
-            .catch(error => console.error('Error fetching address:', error));
-    }
-
-    // Initial updates
-    updateLatLngInputs(marker.getLatLng());
-    updateAddressInput(marker.getLatLng());
-
-    // Update lat/lng and address on marker drag
-    marker.on('dragend', function(event) {
-        const position = marker.getLatLng();
-        updateLatLngInputs(position);
-        updateAddressInput(position);
-    });
-
-    // Update marker, lat/lng, and address on map click
-    map.on('click', function(e) {
-        marker.setLatLng(e.latlng);
-        updateLatLngInputs(e.latlng);
-        updateAddressInput(e.latlng);
-    });
+    const marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
 
     function updateLatLngInputs(latlng) {
         const newLat = latlng.lat.toFixed(6);
         const newLng = latlng.lng.toFixed(6);
-        // Only update if the value is different to prevent re-triggering 'input' event
-        if (latInput.value !== newLat) {
-            latInput.value = newLat;
-        }
-        if (lngInput.value !== newLng) {
-            lngInput.value = newLng;
-        }
+        if (latInput.value !== newLat) latInput.value = newLat;
+        if (lngInput.value !== newLng) lngInput.value = newLng;
     }
 
     function updateAddressInput(latlng) {
-        addressInput.value = '{{ translate('messages.Loading address...') }}';
+        addressInput.value = editData.loading_address_message;
         addressInput.classList.add('address-loading');
 
-        // Using Nominatim for reverse geocoding
         const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`;
         fetch(url)
             .then(response => response.json())
@@ -463,19 +391,33 @@
                 if (data && data.display_name) {
                     addressInput.value = data.display_name;
                 } else {
-                    addressInput.value = '{{ translate('messages.Address not found. Please enter manually.') }}';
+                    addressInput.value = editData.address_not_found_message;
                 }
             })
             .catch(err => {
                 console.error('Error fetching address:', err);
-                addressInput.value = '{{ translate('messages.Could not fetch address. Please enter manually.') }}';
+                addressInput.value = editData.could_not_fetch_address_message;
             })
             .finally(() => {
                 addressInput.classList.remove('address-loading');
             });
     }
 
-    // --- Two-way binding for Lat/Lng inputs ---
+    updateLatLngInputs(marker.getLatLng());
+    updateAddressInput(marker.getLatLng());
+
+    marker.on('dragend', function(event) {
+        const position = marker.getLatLng();
+        updateLatLngInputs(position);
+        updateAddressInput(position);
+    });
+
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        updateLatLngInputs(e.latlng);
+        updateAddressInput(e.latlng);
+    });
+
     let debounceTimeout;
     function updateMapFromInputs() {
         clearTimeout(debounceTimeout);
@@ -485,32 +427,21 @@
 
             if (!isNaN(lat) && !isNaN(lng)) {
                 const newLatLng = L.latLng(lat, lng);
-                // Use a tolerance for float comparison to avoid infinite loops
-                if (!marker.getLatLng().equals(newLatLng, 1e-6)) { 
+                if (!marker.getLatLng().equals(newLatLng, 1e-6)) {
                      marker.setLatLng(newLatLng);
                      map.panTo(newLatLng);
                 }
             }
-        }, 800); // 800ms delay
+        }, 800);
     }
 
     latInput.addEventListener('input', updateMapFromInputs);
     lngInput.addEventListener('input', updateMapFromInputs);
 
-    // --- Initialize dependent dropdowns if old data exists ---
-    const oldDivisionEdit = "{{ old('division', $market->division) }}";
-    const oldDistrictEdit = "{{ old('district', $market->district) }}";
-    const oldUpazilaEdit = "{{ old('upazila', $market->upazila) }}";
-
-    if (oldDivisionEdit) {
-        getDistricts(oldDivisionEdit, oldDistrictEdit, oldUpazilaEdit);
-    } else {
-        // If no old division, but market has a division, load its districts/upazilas
-        const marketDivision = "{{ $market->division }}";
-        if (marketDivision) {
-             getDistricts(marketDivision, "{{ $market->district }}", "{{ $market->upazila }}");
-        }
+    // --- Initialize dependent dropdowns ---
+    if (editData.division_to_load) {
+        getDistricts(editData.division_to_load, editData.district_to_select, editData.upazila_to_select);
     }
-
+});
 </script>
 @endpush
