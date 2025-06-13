@@ -159,7 +159,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="marketVisibility" class="form-label">{{ translate('messages.Visibility') }}</label>
-                            <select class="form-control" id="marketVisibility">
+                            <select name="visibility" class="form-control" id="marketVisibility">
                                 <option value="public" selected>{{ translate('messages.Public') }}</option>
                                 <option value="private">{{ translate('messages.Private (Admin only)') }}</option>
                             </select>

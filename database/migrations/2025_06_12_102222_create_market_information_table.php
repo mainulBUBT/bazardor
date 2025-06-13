@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('market_information', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('market_id');
             $table->boolean('is_non_veg')->default(true);
-            $table->boolean('is_halalal')->default(false);
+            $table->boolean('is_halal')->default(false);
             $table->boolean('is_parking')->default(false);
             $table->boolean('is_restroom')->default(false);
             $table->boolean('is_home_delivery')->default(false);

@@ -37,7 +37,7 @@
     <li class="nav-item {{ request()->is('admin/units*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('admin.units.index') }}">
             <i class="fas fa-fw fa-ruler-combined"></i>
-            <span>{{translate('messages.Units') }}</span>
+            <span>{{translate('messages.Units') }}</span>   
         </a>
     </li>
 
@@ -71,14 +71,14 @@
 
     <!-- Nav Item - Markets -->
     <li class="nav-item {{ request()->is('admin/markets*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMarkets" aria-expanded="false" aria-controls="collapseMarkets">
-            <i class="fas fa-fw fa-store"></i>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMarkets" aria-expanded="{{ request()->is('admin/markets*') ? 'true' : 'false' }}" aria-controls="collapseMarkets">
+            <i class="fas fa-fw fa-images"></i>
             <span>{{translate('messages.Markets') }}</span>
         </a>
-        <div id="collapseMarkets" class="collapse" aria-labelledby="headingMarkets" data-parent="#accordionSidebar">
+        <div id="collapseMarkets" class="collapse{{ request()->is('admin/markets*') ? ' show' : '' }}" aria-labelledby="headingMarkets" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('admin.markets.index') }}">{{translate('messages.All Markets') }}</a>
-                <a class="collapse-item" href="{{route('admin.markets.create')}}">{{translate('messages.Add Market') }}</a>
+                <a class="collapse-item {{ request()->is('admin/markets') ? 'active' : '' }}" href="{{route('admin.markets.index')}}">{{translate('messages.All Markets') }}</a>
+                <a class="collapse-item {{ request()->is('admin/markets/create') ? 'active' : '' }}" href="{{route('admin.markets.create')}}">{{translate('messages.Add Market') }}</a>
             </div>
         </div>
     </li>

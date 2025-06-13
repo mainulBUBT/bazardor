@@ -39,6 +39,7 @@ class MarketStoreUpdateRequest extends FormRequest
             'status' => 'required|in:active,inactive,pending',
             'featured' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'visibility' => 'required',
             'opening_hours' => 'nullable|array|size:7',
             'opening_hours.*.opening_time' => 'nullable|date_format:H:i|required_with:opening_hours.*.closing_time',
             'opening_hours.*.closing_time' => 'nullable|date_format:H:i|after_or_equal:opening_hours.*.opening_time|required_with:opening_hours.*.opening_time',
@@ -54,6 +55,7 @@ class MarketStoreUpdateRequest extends FormRequest
             'address.required' => 'Please enter the market address.',
             'division.required' => 'Please select a division.',
             'district.required' => 'Please select a district.',
+            'visibility.required' => 'Please select a visibility.',
             'opening_hours.*.opening_time.date_format' => 'The :attribute must be in a valid HH:MM format.',
             'opening_hours.*.closing_time.date_format' => 'The :attribute must be in a valid HH:MM format.',
         ];

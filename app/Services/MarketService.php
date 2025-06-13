@@ -9,6 +9,20 @@ use Str;
 
 class MarketService
 {
+    public function __construct(private Market $market) {
+    }
+
+    public function getMarkets($search = null, array $with = [])
+    {
+        return $this->market
+        ->when(!empty($with), function ($query) use ($with) {
+            $query->with($with);
+        })
+        ->when($search, function ($query) use ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        })
+        ->latest()->paginate(pagination_limit());
+    }
     /**
      * Store a new market.
      *
@@ -29,7 +43,7 @@ class MarketService
             $market->latitude = $data['latitude'] ?? null;
             $market->longitude = $data['longitude'] ?? null;
             $market->is_active = $data['status'] === 'active';
-            $market->featured = $data['featured'] ?? false;
+            $market->is_featured = $data['featured'] ?? false;
             $market->division = $data['division'] ?? null;
             $market->district = $data['district'] ?? null;
             $market->upazila_or_thana = $data['upazila'] ?? null;
@@ -90,7 +104,7 @@ class MarketService
     {
         DB::beginTransaction();
         try {
-            $market = Market::findOrFail($id);
+            $market = $this->findById($id);
 
             $market->name = $data['name'];
             $market->slug = $data['slug'] ?? null;
@@ -149,4 +163,18 @@ class MarketService
             throw $e;
         }
     }
+
+    /**
+     * Summary of findById
+     * @param mixed $id
+     * @return Market|\Illuminate\Database\Eloquent\Collection<int, Market>
+     */
+    public function findById($id, array $with = [])
+    {
+        $query = $this->market->when(!empty($with), function ($query) use ($with) {
+            $query->with($with);
+        })->findOrFail($id);
+
+        return $query; 
+    }   
 }

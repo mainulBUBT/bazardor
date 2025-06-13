@@ -109,7 +109,47 @@
                     </thead>
 
                     <tbody>
-                       
+                       @foreach($markets as $market)
+                       <tr>
+                        <td>{{ $market->id }}</td>
+                        <td>
+                            @if($market->image)
+                                <img src="{{ asset('public/storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-fluid" width="100" height="100">
+                            @else
+                                <img src="{{ asset('public/storage/markets/default.png') }}" alt="{{ $market->name }}" class="img-fluid">
+                            @endif
+                        </td>
+                        <td>{{ $market->name }}</td>
+                        <td>{{ Str::limit($market->address, 20) }}</td>
+                        <td>{{ $market->type }}</td>
+                                                    <td>
+                                {{ $market->rating }} <br>
+                                <span class="text-muted">({{ $market->rating_count ?? 0 }} {{ Str::plural('review', $market->rating_count ?? 0) }})</span>
+                            </td>
+                        <td>
+                            @if($market->is_active === 'active')
+                                <span class="badge badge-success">{{ translate('messages.Active') }}</span>
+                            @else
+                                <span class="badge badge-danger">{{ translate('messages.Inactive') }}</span>
+                            @endif
+                        </td>   
+                        <td>
+                            <a href="{{ route('admin.markets.show', $market->id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>    
+                            <a href="{{ route('admin.markets.edit', $market->id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>        
+                            <form action="{{ route('admin.markets.destroy', $market->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                       </tr>
+                       @endforeach
                     </tbody>
                 </table>
             </div>

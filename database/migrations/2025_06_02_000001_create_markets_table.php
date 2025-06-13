@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('division')->nullable();
             $table->string('district')->nullable();
             $table->string('upazila_or_thana')->nullable();
+            $table->boolean('is_featured')->default(0);
             $table->timestamps();
             $table->softDeletes();
 

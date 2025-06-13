@@ -152,22 +152,31 @@
 
             <!-- Sidebar Column -->
             <div class="col-lg-4">
-                <!-- Status & Visibility Card -->
+                <!-- Settings Card (Copied from create) -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Settings') }}</h6>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label for="marketStatus" class="form-label">{{ translate('messages.Status') }}</label>
-                            <select name="status" class="form-control" id="marketStatus">
-                                <option value="active" {{ old('status', $market->is_active ? 'active' : 'inactive') == 'active' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
-                                <option value="inactive" {{ old('status', $market->is_active ? 'active' : 'inactive') == 'inactive' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                        <div class="form-group mb-3">
+                            <label for="marketStatus">{{ translate('messages.Status') }}</label>
+                            <select name="is_active" id="marketStatus" class="form-control">
+                                <option value="1" {{ old('is_active', $market->is_active) == 1 ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                <option value="0" {{ old('is_active', $market->is_active) == 0 ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
                             </select>
                         </div>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" name="featured" value="1" class="custom-control-input" id="featuredSwitch" {{ old('featured', $market->featured) ? 'checked' : '' }}>
-                            <label class="custom-control-label" for="featuredSwitch">{{ translate('messages.Featured Market') }}</label>
+                        <div class="form-group mb-3">
+                            <label for="marketVisibility">{{ translate('messages.Visibility') }}</label>
+                            <select name="visibility" id="marketVisibility" class="form-control">
+                                <option value="public" {{ old('visibility', $market->visibility) == 'public' ? 'selected' : '' }}>{{ translate('messages.Public') }}</option>
+                                <option value="private" {{ old('visibility', $market->visibility) == 'private' ? 'selected' : '' }}>{{ translate('messages.Private') }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-0">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" name="is_featured" value="1" class="custom-control-input" id="featuredSwitch" {{ old('is_featured', $market->is_featured) ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="featuredSwitch">{{ translate('messages.Featured Market') }}</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -178,15 +187,21 @@
                         <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Market Image') }}</h6>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <div class="custom-file">
-                                <input type="file" name="image" class="custom-file-input" id="customFile" onchange="previewImage(event)">
-                                <label class="custom-file-label" for="customFile">{{ translate('messages.Choose file') }}</label>
+                        <div class="form-group">
+                            <label for="marketImage" class="d-block">{{ translate('messages.Upload Image') }}</label>
+                            <div class="image-upload-wrap" style="position: relative; width: 100%; min-height: 180px; border: 2px dashed #e3e6f0; border-radius: 0.35rem; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <input type="file" name="image" id="marketImage" class="d-none" accept="image/*">
+                                <div id="imagePreview" class="text-center w-100">
+                                    @if($market->image_path)
+                                        <img src="{{ asset('storage/' . $market->image_path) }}" alt="Market image preview" class="img-fluid" style="max-height: 160px;">
+                                    @else
+                                        <i class="fas fa-camera fa-2x text-secondary"></i>
+                                        <div>{{ translate('messages.Click to Upload Image') }}</div>
+                                    @endif
+                                </div>
+                                <label for="marketImage" class="stretched-link" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;"></label>
                             </div>
-                        </div>
-                        <div class="text-center">
-                            <img id="imagePreview" src="{{ $market->image_path ? asset('storage/' . $market->image_path) : asset('assets/admin/img/400x400/img2.jpg') }}"
-                                 alt="Market image preview" class="img-thumbnail" style="max-width: 100%; height: auto; max-height: 200px;">
+                            <small class="form-text text-muted mt-2">{{ translate('messages.Recommended size: 400x400 pixels. Max size: 2MB.') }}</small>
                         </div>
                     </div>
                 </div>
@@ -209,20 +224,31 @@
 <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
 
 <script>
-    // Image Preview
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function(){
-            var output = document.getElementById('imagePreview');
-            output.src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-        var fileName = event.target.files[0].name;
-        $(event.target).next('.custom-file-label').html(fileName);
-    }
-
-    // Operating Hours
     $(document).ready(function() {
+        // Image Preview & File Input Handling (Copied from create)
+        $('#marketImage').on('change', function() {
+            const file = this.files[0];
+            const reader = new FileReader();
+            const $previewContainer = $('#imagePreview');
+            const $wrap = $(this).closest('.image-upload-wrap');
+
+            if (file) {
+                reader.onload = function(e) {
+                    $previewContainer.html('<img src="' + e.target.result + '" alt="Image Preview" class="img-fluid" style="max-height: 160px;">');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                $previewContainer.html('<i class="fas fa-camera fa-2x text-secondary"></i><div>{{ translate('messages.Click to Upload Image') }}</div>');
+            }
+        });
+
+        // Allow clicking preview area to open file dialog
+        $(document).on('click', '.image-upload-wrap .stretched-link', function(e) {
+            e.preventDefault();
+            $('#marketImage').trigger('click');
+        });
+
+        // Operating Hours
         $('#operatingHoursTable').on('change', '.is-closed', function() {
             var row = $(this).closest('tr');
             var isChecked = $(this).is(':checked');

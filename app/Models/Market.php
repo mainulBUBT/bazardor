@@ -31,7 +31,7 @@ class Market extends Model
         'website',
         'is_active',
         'visibility',
-        'featured',
+        'is_featured',
         'position',
         'division',
         'district',
@@ -45,7 +45,7 @@ class Market extends Model
      */
     protected $casts = [
         'is_active' => 'integer',
-        'featured' => 'integer',
+        'is_featured' => 'integer',
         'division' => 'string',
         'district' => 'string',
         'upazila_or_thana' => 'string',

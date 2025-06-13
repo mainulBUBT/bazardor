@@ -21,7 +21,8 @@ class MarketController extends Controller
      */
     public function index()
     {
-        return view("admin.markets.index");
+        $markets = $this->marketService->getMarkets();
+        return view("admin.markets.index", compact('markets'));
     }
 
     /**
@@ -49,16 +50,15 @@ class MarketController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $market = $this->marketService->findById($id, ['marketInformation', 'openingHours']);
+        return view('admin.markets.show', compact('market'));
     }
 
     public function edit(string $id)
     {
-        $market = Market::findOrFail($id);
+        $market = $this->marketService->findById($id, ['marketInformation', 'openingHours']);
         $divisions = Location::getDivisions();
-        // Decode JSON fields for easier use in the view
-        $market->location = json_decode($market->location);
-        $market->opening_hours = json_decode($market->opening_hours, true);
+
 
         return view('admin.markets.edit', compact('market', 'divisions'));
     }
@@ -66,14 +66,12 @@ class MarketController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(MarketStoreUpdateRequest $request, MarketService $marketService, string $id)
+    public function update(MarketStoreUpdateRequest $request, string $id)
     {
-        try {
-            $marketService->update($request->validated(), $request, $id);
-            return redirect()->route('admin.markets.index')->with('success', 'Market updated successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to update market: ' . $e->getMessage())->withInput();
-        }
+        $this->marketService->update($request->validated(), $request, $id);
+        Toastr::success(translate("messages.market_updated_successfully"));
+        
+        return redirect()->route('admin.markets.index');
     }
 
     /**
@@ -81,7 +79,10 @@ class MarketController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->marketService->delete($id);
+        Toastr::success(translate('messages.market_deleted_successfully'));
+        
+        return redirect()->route('admin.markets.index');
     }
 
     /**
