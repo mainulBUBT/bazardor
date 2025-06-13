@@ -294,4 +294,7 @@
   'Enable geolocation services' => 'Enable geolocation services',
   'status_updated_successfully' => 'Status updated successfully',
   'market_updated_successfully' => 'Market updated successfully',
+  'Loading address...' => 'Loading address...',
+  'Address not found. Please enter manually.' => 'Address not found. Please enter manually.',
+  'Could not fetch address. Please enter manually.' => 'Could not fetch address. Please enter manually.',
 );

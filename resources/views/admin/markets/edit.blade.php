@@ -330,44 +330,60 @@
     const lngInput = document.getElementById('marketLongitude');
     const addressInput = document.getElementById('marketAddress');
 
-    var map = L.map('map').setView([{{ old('latitude', $market->latitude ?? 23.8041) }}, {{ old('longitude', $market->longitude ?? 90.4152) }}], 13);
+    // Initialize map centered on existing market location or Dhaka, Bangladesh
+    const initialLat = {{ old('latitude', $market->latitude ?? 23.8103) }};
+    const initialLng = {{ old('longitude', $market->longitude ?? 90.4125) }};
+    const map = L.map('map').setView([initialLat, initialLng], 13);
+
+    // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-    var marker = L.marker([{{ old('latitude', $market->latitude ?? 23.8041) }}, {{ old('longitude', $market->longitude ?? 90.4152) }}], {draggable: true}).addTo(map);
 
-    // --- Map Logic ---
-    const provider = new GeoSearch.OpenStreetMapProvider({
+    // Add a draggable marker
+    let marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
+    // Initial call to set lat/lng inputs if they are empty or different from marker
+    updateLatLngInputs(marker.getLatLng()); 
+
+    // --- GeoSearch Control (using window.GeoSearch for consistency with create.blade.php) ---
+    const { GeoSearchControl, OpenStreetMapProvider } = window.GeoSearch;
+    const provider = new OpenStreetMapProvider({
         params: {
-            'accept-language': 'en',
-            countrycodes: 'bd',
+            'accept-language': 'en', // for language consistency
+            countrycodes: 'bd', // limit search to Bangladesh
         },
     });
 
-    const searchControl = new GeoSearch.GeoSearchControl({
+    const searchControl = new GeoSearchControl({
         provider: provider,
         style: 'bar',
-        showMarker: false,
+        showMarker: false, // We use our own marker
         showPopup: false,
         autoClose: true,
         retainZoomLevel: false,
         animateZoom: true,
         keepResult: true,
+        searchLabel: 'Search for an address...',
     });
     map.addControl(searchControl);
 
     map.on('geosearch/showlocation', function(result) {
-        marker.setLatLng(result.location);
-        updateLatLngInputs(result.location);
-        updateAddressInput(result.location);
+        // result.location is {x, y, label, bounds, raw}
+        const latlng = { lat: result.location.y, lng: result.location.x };
+        marker.setLatLng(latlng);
+        map.panTo(latlng); // Pan map to the new location
+        updateLatLngInputs(latlng);
+        addressInput.value = result.location.label; // Use address from search result
     });
 
+    // Update lat/lng and address on marker drag
     marker.on('dragend', function(event) {
         const position = marker.getLatLng();
         updateLatLngInputs(position);
         updateAddressInput(position);
     });
 
+    // Update marker, lat/lng, and address on map click
     map.on('click', function(e) {
         marker.setLatLng(e.latlng);
         updateLatLngInputs(e.latlng);
@@ -375,31 +391,76 @@
     });
 
     function updateLatLngInputs(latlng) {
-        latInput.value = latlng.lat.toFixed(6);
-        lngInput.value = latlng.lng.toFixed(6);
+        const newLat = latlng.lat.toFixed(6);
+        const newLng = latlng.lng.toFixed(6);
+        // Only update if the value is different to prevent re-triggering 'input' event
+        if (latInput.value !== newLat) {
+            latInput.value = newLat;
+        }
+        if (lngInput.value !== newLng) {
+            lngInput.value = newLng;
+        }
     }
 
     function updateAddressInput(latlng) {
-        addressInput.value = 'Loading address...';
+        addressInput.value = '{{ translate('messages.Loading address...') }}';
         addressInput.classList.add('address-loading');
-        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lon}`;
 
+        // Using Nominatim for reverse geocoding
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 if (data && data.display_name) {
                     addressInput.value = data.display_name;
                 } else {
-                    addressInput.value = 'Address not found. Please enter manually.';
+                    addressInput.value = '{{ translate('messages.Address not found. Please enter manually.') }}';
                 }
             })
-            .catch(error => {
-                console.error('Error fetching address:', error);
-                addressInput.value = 'Could not fetch address';
+            .catch(err => {
+                console.error('Error fetching address:', err);
+                addressInput.value = '{{ translate('messages.Could not fetch address. Please enter manually.') }}';
             })
             .finally(() => {
                 addressInput.classList.remove('address-loading');
             });
+    }
+
+    // --- Two-way binding for Lat/Lng inputs ---
+    let debounceTimeout;
+    function updateMapFromInputs() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const newLatLng = L.latLng(lat, lng);
+                // Use a tolerance for float comparison to avoid infinite loops
+                if (!marker.getLatLng().equals(newLatLng, 1e-6)) { 
+                     marker.setLatLng(newLatLng);
+                     map.panTo(newLatLng);
+                }
+            }
+        }, 800); // 800ms delay
+    }
+
+    latInput.addEventListener('input', updateMapFromInputs);
+    lngInput.addEventListener('input', updateMapFromInputs);
+
+    // --- Initialize dependent dropdowns if old data exists ---
+    const oldDivisionEdit = "{{ old('division', $market->division) }}";
+    const oldDistrictEdit = "{{ old('district', $market->district) }}";
+    const oldUpazilaEdit = "{{ old('upazila', $market->upazila) }}";
+
+    if (oldDivisionEdit) {
+        getDistricts(oldDivisionEdit, oldDistrictEdit, oldUpazilaEdit);
+    } else {
+        // If no old division, but market has a division, load its districts/upazilas
+        const marketDivision = "{{ $market->division }}";
+        if (marketDivision) {
+             getDistricts(marketDivision, "{{ $market->district }}", "{{ $market->upazila }}");
+        }
     }
 
 </script>

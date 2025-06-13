@@ -78,4 +78,5 @@ class UnitController extends Controller
         Toastr::success(translate("messages.Unit deleted successfully"));
         return redirect()->route("admin.units.index");
     }
+    
 }
