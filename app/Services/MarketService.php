@@ -114,7 +114,7 @@ class MarketService
             $market->latitude = $data['latitude'] ?? null;
             $market->longitude = $data['longitude'] ?? null;
             $market->is_active = $data['status'] === 'active';
-            $market->featured = $data['featured'] ?? false;
+            $market->is_featured = $data['featured'] ?? false;
             $market->division = $data['division'] ?? null;
             $market->district = $data['district'] ?? null;
             $market->upazila_or_thana = $data['upazila'] ?? null;

@@ -154,7 +154,6 @@
                             <select name="status" class="form-control" id="marketStatus">
                                 <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
                                 <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
-                                <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>{{ translate('messages.Pending Review') }}</option>
                             </select>
                         </div>
                         <div class="mb-3">

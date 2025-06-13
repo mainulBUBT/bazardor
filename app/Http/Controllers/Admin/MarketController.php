@@ -58,9 +58,11 @@ class MarketController extends Controller
     {
         $market = $this->marketService->findById($id, ['marketInformation', 'openingHours']);
         $divisions = Location::getDivisions();
+        $districts = Location::getDistricts($market->division);
+        $upazilas = Location::getThanas($market->division, $market->district);
 
 
-        return view('admin.markets.edit', compact('market', 'divisions'));
+        return view('admin.markets.edit', compact('market', 'divisions', 'districts', 'upazilas'));
     }
 
     /**

@@ -25,9 +25,12 @@ class MarketStoreUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $marketParam = $this->route('market');
+        $marketId = $marketParam ? (is_object($marketParam) ? $marketParam->id : $marketParam) : '';
+
         return [
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:markets,slug,' . ($this->market->id ?? ''),
+            'slug' => 'nullable|string|max:255|unique:markets,slug,' . $marketId,
             'type' => ['required', new Enum(MarketType::class)],
             'description' => 'nullable|string',
             'address' => 'required|string|max:500',
@@ -36,7 +39,7 @@ class MarketStoreUpdateRequest extends FormRequest
             'upazila' => 'nullable|string',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'status' => 'required|in:active,inactive,pending',
+            'status' => 'required|in:active,inactive',
             'featured' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'visibility' => 'required',

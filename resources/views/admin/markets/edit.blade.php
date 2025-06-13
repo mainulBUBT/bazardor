@@ -15,15 +15,7 @@
     <form action="{{ route('admin.markets.update', $market->id) }}" method="POST" enctype="multipart/form-data" id="editMarketForm">
         @csrf
         @method('PUT')
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+
         <div class="row">
             <!-- Main Market Details Column -->
             <div class="col-lg-8">
@@ -77,7 +69,7 @@
                                 <select class="form-control select2" id="marketDivision" name="division" onchange="getDistricts(this.value)" required>
                                     <option></option>
                                     @foreach($divisions as $division)
-                                        <option value="{{ $division }}" {{ old('division', $market->location->division ?? '') == $division ? 'selected' : '' }}>{{ $division }}</option>
+                                        <option value="{{ $division }}" {{ old('division', $division ?? '') == $division ? 'selected' : '' }}>{{ $division }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -85,12 +77,18 @@
                                 <label for="marketDistrict" class="form-label">{{ translate('messages.District') }} <span class="text-danger">*</span></label>
                                 <select class="form-control select2" id="marketDistrict" name="district" onchange="getThanas(document.getElementById('marketDivision').value, this.value)" required>
                                     <option></option>
+                                    @foreach($districts as $district)
+                                        <option value="{{ $district }}" {{ old('district', $district ?? '') == $district ? 'selected' : '' }}>{{ $district }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="marketUpazila" class="form-label">{{ translate('messages.Upazila/Thana') }}</label>
                                 <select class="form-control select2" id="marketUpazila" name="upazila">
                                     <option></option>
+                                    @foreach($upazilas as $upazila)
+                                        <option value="{{ $upazila }}" {{ old('upazila', $upazila ?? '') == $upazila ? 'selected' : '' }}>{{ $upazila }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -160,16 +158,16 @@
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label for="marketStatus">{{ translate('messages.Status') }}</label>
-                            <select name="is_active" id="marketStatus" class="form-control">
-                                <option value="1" {{ old('is_active', $market->is_active) == 1 ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
-                                <option value="0" {{ old('is_active', $market->is_active) == 0 ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                            <select name="status" id="marketStatus" class="form-control">
+                                <option value="active" {{ $market->is_active == '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                <option value="inactive" {{ $market->is_active == '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
                             </select>
                         </div>
                         <div class="form-group mb-3">
                             <label for="marketVisibility">{{ translate('messages.Visibility') }}</label>
                             <select name="visibility" id="marketVisibility" class="form-control">
-                                <option value="public" {{ old('visibility', $market->visibility) == 'public' ? 'selected' : '' }}>{{ translate('messages.Public') }}</option>
-                                <option value="private" {{ old('visibility', $market->visibility) == 'private' ? 'selected' : '' }}>{{ translate('messages.Private') }}</option>
+                                <option value="public" {{ old('visibility', $market->visibility) == '0' ? 'selected' : '' }}>{{ translate('messages.Public') }}</option>
+                                <option value="private" {{ old('visibility', $market->visibility) == '1' ? 'selected' : '' }}>{{ translate('messages.Private') }}</option>
                             </select>
                         </div>
                         <div class="form-group mb-0">
@@ -181,28 +179,27 @@
                     </div>
                 </div>
 
-                <!-- Image Card -->
-                <div class="card shadow mb-4">
+               <!-- Market Image Card -->
+               <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Market Image') }}</h6>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="marketImage" class="d-block">{{ translate('messages.Upload Image') }}</label>
-                            <div class="image-upload-wrap" style="position: relative; width: 100%; min-height: 180px; border: 2px dashed #e3e6f0; border-radius: 0.35rem; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                <input type="file" name="image" id="marketImage" class="d-none" accept="image/*">
-                                <div id="imagePreview" class="text-center w-100">
-                                    @if($market->image_path)
-                                        <img src="{{ asset('storage/' . $market->image_path) }}" alt="Market image preview" class="img-fluid" style="max-height: 160px;">
-                                    @else
-                                        <i class="fas fa-camera fa-2x text-secondary"></i>
-                                        <div>{{ translate('messages.Click to Upload Image') }}</div>
-                                    @endif
-                                </div>
-                                <label for="marketImage" class="stretched-link" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;"></label>
+                        <div class="image-preview-container mb-3" style="cursor: pointer;" onclick="document.getElementById('marketImage').click();">
+                            <div class="image-preview" id="imagePreview">
+                                @if($market->image_path)
+                                    <img src="{{ asset('public/storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-fluid" style="max-height: 160px; border-radius: 8px;">
+                                @else
+                                    <i class="fas fa-camera fa-2x text-secondary"></i>
+                                    <div class="mt-2">{{ translate('messages.Click to Upload Image') }}</div>
+                                @endif
                             </div>
-                            <small class="form-text text-muted mt-2">{{ translate('messages.Recommended size: 400x400 pixels. Max size: 2MB.') }}</small>
                         </div>
+                        <div class="custom-file">
+                            <input type="file" name="image" class="custom-file-input" id="marketImage" accept="image/*"> <!-- Default input is now visually replaced by the label -->
+                            <label class="custom-file-label" for="marketImage" id="marketImageLabel" data-default-text="{{ translate('messages.Choose file...') }}">{{ translate('messages.Choose file...') }}</label>
+                        </div>
+                        <small class="form-text text-muted mt-2">{{ translate('messages.Recommended: 1200x800px, Max 2MB') }}</small>
                     </div>
                 </div>
 
@@ -218,34 +215,31 @@
 @endsection
 
 @push('scripts')
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css" />
-<script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
 
 <script>
     $(document).ready(function() {
-        // Image Preview & File Input Handling (Copied from create)
-        $('#marketImage').on('change', function() {
-            const file = this.files[0];
-            const reader = new FileReader();
-            const $previewContainer = $('#imagePreview');
-            const $wrap = $(this).closest('.image-upload-wrap');
+        // Image Preview & File Input Handling
+        const $fileInput = $('#marketImage');
+        const $fileLabel = $('#marketImageLabel');
+        const $previewContainer = $('#imagePreview');
+        const originalPreviewHTML = $previewContainer.html(); // Save original state
 
+        $fileInput.on('change', function() {
+            const file = this.files[0];
             if (file) {
+                const reader = new FileReader();
                 reader.onload = function(e) {
-                    $previewContainer.html('<img src="' + e.target.result + '" alt="Image Preview" class="img-fluid" style="max-height: 160px;">');
+                    $previewContainer.html(
+                        `<img src="${e.target.result}" alt="Image Preview" class="img-fluid" style="max-height: 160px; border-radius: 8px;">`
+                    );
                 }
                 reader.readAsDataURL(file);
+                $fileLabel.text(file.name);
             } else {
-                $previewContainer.html('<i class="fas fa-camera fa-2x text-secondary"></i><div>{{ translate('messages.Click to Upload Image') }}</div>');
+                // User canceled file selection, revert to original
+                $previewContainer.html(originalPreviewHTML);
+                $fileLabel.text($fileLabel.data('default-text'));
             }
-        });
-
-        // Allow clicking preview area to open file dialog
-        $(document).on('click', '.image-upload-wrap .stretched-link', function(e) {
-            e.preventDefault();
-            $('#marketImage').trigger('click');
         });
 
         // Operating Hours
@@ -274,125 +268,139 @@
         });
     });
 
-    // Location Dropdowns
-    var selectedDivision = '{{ old('division', $market->location->division ?? '') }}';
-    var selectedDistrict = '{{ old('district', $market->location->district ?? '') }}';
-    var selectedUpazila = '{{ old('upazila', $market->location->upazila ?? '') }}';
+    
+    function getDistricts(division, selectedDistrict = null, selectedUpazila = null) {
+    const districtSelect = document.getElementById('marketDistrict');
+    const upazilaSelect = document.getElementById('marketUpazila');
+    districtSelect.innerHTML = '<option></option>';
+    districtSelect.disabled = true;
+    upazilaSelect.innerHTML = '<option></option>';
+    upazilaSelect.disabled = true;
 
-    function getDistricts(division, targetDistrict = null) {
-        if (!division) {
-            $('#marketDistrict').html('<option></option>').prop('disabled', true);
-            $('#marketUpazila').html('<option></option>').prop('disabled', true);
-            return;
-        }
-        $.ajax({
-            url: '{{ url("/admin/locations/districts") }}/' + division,
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                var districtSelect = $('#marketDistrict');
-                districtSelect.html('<option></option>');
-                $.each(data, function(index, district) {
-                    districtSelect.append($('<option>', {
-                        value: district,
-                        text: district
-                    }));
-                });
-                districtSelect.prop('disabled', false);
-                if (targetDistrict) {
-                    districtSelect.val(targetDistrict).trigger('change');
-                }
+    if (!division) {
+        $(districtSelect).val('').trigger('change');
+        $(upazilaSelect).val('').trigger('change');
+        return;
+    };
+
+    let url = `{{ url('admin/markets/get-districts') }}/${division}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            districtSelect.disabled = false;
+            data.forEach(district => {
+                const option = new Option(district, district, false, district === selectedDistrict);
+                districtSelect.appendChild(option);
+            });
+            $(districtSelect).val(selectedDistrict).trigger('change');
+            if (selectedDistrict) {
+                getThanas(division, selectedDistrict, selectedUpazila);
             }
-        });
+        })
+        .catch(error => console.error('Error fetching districts:', error));
     }
 
-    function getThanas(division, district, targetThana = null) {
-        if (!division || !district) {
-            $('#marketUpazila').html('<option></option>').prop('disabled', true);
-            return;
-        }
-        $.ajax({
-            url: '{{ url("/admin/locations/thanas") }}/' + division + '/' + district,
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                var upazilaSelect = $('#marketUpazila');
-                upazilaSelect.html('<option></option>');
-                $.each(data, function(index, thana) {
-                    upazilaSelect.append($('<option>', {
-                        value: thana,
-                        text: thana
-                    }));
+    function getThanas(division, district, selectedUpazila = null) {
+        const upazilaSelect = document.getElementById('marketUpazila');
+        upazilaSelect.innerHTML = '<option></option>';
+        upazilaSelect.disabled = true;
+
+        if (!district) {
+            $(upazilaSelect).val('').trigger('change');
+            return
+        };
+
+        let url = `{{ url('admin/markets/get-thanas') }}/${division}/${district}`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                upazilaSelect.disabled = false;
+                data.forEach(thana => {
+                    const option = new Option(thana, thana, false, thana === selectedUpazila);
+                    upazilaSelect.appendChild(option);
                 });
-                upazilaSelect.prop('disabled', false);
-                if (targetThana) {
-                    upazilaSelect.val(targetThana).trigger('change');
-                }
-            }
-        });
+                $(upazilaSelect).val(selectedUpazila).trigger('change');
+            })
+            .catch(error => console.error('Error fetching thanas:', error));
     }
 
-    $(document).ready(function() {
-        $('.select2').select2({
-            placeholder: 'Select an option'
-        });
-
-        if (selectedDivision) {
-            $('#marketDivision').val(selectedDivision).trigger('change');
-            getDistricts(selectedDivision, selectedDistrict);
-        }
-
-        $('#marketDistrict').on('change', function() {
-            var division = $('#marketDivision').val();
-            var district = $(this).val();
-            if(district === selectedDistrict) {
-                 getThanas(division, district, selectedUpazila);
-            } else {
-                 getThanas(division, district);
-            }
-        });
-    });
 
     // Leaflet Map
+    const latInput = document.getElementById('marketLatitude');
+    const lngInput = document.getElementById('marketLongitude');
+    const addressInput = document.getElementById('marketAddress');
+
     var map = L.map('map').setView([{{ old('latitude', $market->latitude ?? 23.8041) }}, {{ old('longitude', $market->longitude ?? 90.4152) }}], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-
     var marker = L.marker([{{ old('latitude', $market->latitude ?? 23.8041) }}, {{ old('longitude', $market->longitude ?? 90.4152) }}], {draggable: true}).addTo(map);
 
-    marker.on('dragend', function(event) {
-        var position = marker.getLatLng();
-        $('#marketLatitude').val(position.lat);
-        $('#marketLongitude').val(position.lng);
+    // --- Map Logic ---
+    const provider = new GeoSearch.OpenStreetMapProvider({
+        params: {
+            'accept-language': 'en',
+            countrycodes: 'bd',
+        },
     });
 
-    map.on('click', function(e) {
-        marker.setLatLng(e.latlng);
-        $('#marketLatitude').val(e.latlng.lat);
-        $('#marketLongitude').val(e.latlng.lng);
-    });
-
-    const provider = new GeoSearch.OpenStreetMapProvider();
     const searchControl = new GeoSearch.GeoSearchControl({
         provider: provider,
         style: 'bar',
-        showMarker: true,
+        showMarker: false,
         showPopup: false,
-        marker: {
-            icon: new L.Icon.Default(),
-            draggable: false,
-        },
         autoClose: true,
-        searchLabel: 'Enter address',
+        retainZoomLevel: false,
+        animateZoom: true,
+        keepResult: true,
     });
     map.addControl(searchControl);
 
     map.on('geosearch/showlocation', function(result) {
         marker.setLatLng(result.location);
-        $('#marketLatitude').val(result.location.lat);
-        $('#marketLongitude').val(result.location.lng);
+        updateLatLngInputs(result.location);
+        updateAddressInput(result.location);
     });
+
+    marker.on('dragend', function(event) {
+        const position = marker.getLatLng();
+        updateLatLngInputs(position);
+        updateAddressInput(position);
+    });
+
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        updateLatLngInputs(e.latlng);
+        updateAddressInput(e.latlng);
+    });
+
+    function updateLatLngInputs(latlng) {
+        latInput.value = latlng.lat.toFixed(6);
+        lngInput.value = latlng.lng.toFixed(6);
+    }
+
+    function updateAddressInput(latlng) {
+        addressInput.value = 'Loading address...';
+        addressInput.classList.add('address-loading');
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lon}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.display_name) {
+                    addressInput.value = data.display_name;
+                } else {
+                    addressInput.value = 'Address not found. Please enter manually.';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching address:', error);
+                addressInput.value = 'Could not fetch address';
+            })
+            .finally(() => {
+                addressInput.classList.remove('address-loading');
+            });
+    }
 
 </script>
 @endpush

@@ -112,8 +112,8 @@
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('app.google_maps_api_key') }}&libraries=places"></script>
     <script>
         function initMap() {
-            var lat = {{ json_encode($market->latitude ?? '23.8103') }};
-            var lng = {{ json_encode($market->longitude ?? '90.4125') }};
+            var lat = @json($market->latitude ?? '23.8103');
+            var lng = @json($market->longitude ?? '90.4125');
             var myLatlng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
             var mapOptions = {
                 zoom: 13,
