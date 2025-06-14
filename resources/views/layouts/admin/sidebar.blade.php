@@ -91,12 +91,17 @@
         {{translate('messages.Users Management') }}
     </div>
 
-    <!-- Nav Item - Users -->
-    <li class="nav-item {{ request()->is('admin/users*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{url('/admin/users')}}">
+    <!-- Users Management Collapsible Section -->
+    <li class="nav-item {{ request()->is('admin/users*') || request()->is('admin/volunteers*') || request()->is('admin/moderators*') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="{{ request()->is('admin/users*') || request()->is('admin/volunteers*') || request()->is('admin/moderators*') ? 'true' : 'false' }}" aria-controls="collapseUsers">
             <i class="fas fa-fw fa-users"></i>
-            <span>{{translate('messages.Users') }}</span>
+            <span>{{translate('messages.Users Management') }}</span>
         </a>
+        <div id="collapseUsers" class="collapse{{ request()->is('admin/users*') || request()->is('admin/volunteers*') || request()->is('admin/moderators*') ? ' show' : '' }}" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item {{ request()->is('admin/users*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">{{translate('messages.Users')}}</a>
+            </div>
+        </div>
     </li>
 
     <!-- Nav Item - Contributions -->

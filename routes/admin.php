@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MarketController;
 use App\Http\Controllers\Admin\ProductController;
 
+use App\Http\Controllers\Admin\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
@@ -31,5 +32,13 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
         Route::get("/", [SettingController::class, 'index'])->name('index');
         Route::post("/update", [SettingController::class, 'updateSettings'])->name('update');
         Route::post('/update-status', [SettingController::class,'updateStatus'])->name('update-status');
+    });
+
+    Route::group(["prefix"=> "users", "as"=> "users."], function () {
+        Route::get('/', [UserManagementController::class, 'index'])->name('index');
+        Route::get('create', [UserManagementController::class, 'create'])->name('create');
+        Route::post('/', [UserManagementController::class, 'store'])->name('store');
+        Route::get('{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
+        Route::put('{user}', [UserManagementController::class, 'update'])->name('update');
     });
 });

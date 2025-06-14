@@ -1,0 +1,28 @@
+@extends('layouts.admin.app')
+@section('title', translate('messages.Users Management'))
+
+@section('content')
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">{{ translate('messages.Users Management') }}</h1>
+    <p class="mb-4">{{ translate('messages.user_management_description') }}</p>
+
+    {{-- Stats Cards --}}
+    @include('admin.users.partials.cards', ['stats' => $userStats])
+
+    <!-- Tabs (as links) -->
+    <ul class="nav nav-tabs mb-3" id="userTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link {{ $role === App\Enums\Role::USER->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['role' => App\Enums\Role::USER->value]) }}">{{ translate('messages.users') }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ $role === App\Enums\Role::VOLUNTEER->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['role' => App\Enums\Role::VOLUNTEER->value]) }}">{{ translate('messages.volunteers') }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ $role === App\Enums\Role::MODERATOR->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['role' => App\Enums\Role::MODERATOR->value]) }}">{{ translate('messages.moderators') }}</a>
+        </li>
+    </ul>
+
+    
+    @include('admin.users.partials.table', ['users' => $users, 'type' => $role])
+</div>
+@endsection
