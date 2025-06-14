@@ -72,6 +72,19 @@ class ProductService
                 }
             }
 
+            // Save market prices if provided
+            if (!empty($data['market_prices']) && is_array($data['market_prices'])) {
+                foreach ($data['market_prices'] as $mp) {
+                    if (empty($mp['market_id']) || empty($mp['price'])) continue;
+                    $product->marketPrices()->create([
+                        'market_id' => $mp['market_id'],
+                        'price' => $mp['price'],
+                        'price_date' => $mp['price_date'] ?? now(),
+                        // 'discount_price' => null, // ignored as requested
+                    ]);
+                }
+            }
+
             // // Record creator information
             // if (auth()->check()) {
             //     EntityCreator::create([
@@ -122,6 +135,29 @@ class ProductService
                     if (!$tagText) continue;
                     $product->tags()->create(['tag' => $tagText]);
                 }
+            }
+
+            // Update or create market prices
+            if (isset($data['market_prices']) && is_array($data['market_prices'])) {
+                $keepIds = [];
+                foreach ($data['market_prices'] as $mp) {
+                    if (empty($mp['market_id']) || empty($mp['price'])) continue;
+                    $priceDate = $mp['price_date'] ?? now();
+                    $marketPrice = $product->marketPrices()
+                        ->firstOrCreate([
+                            'market_id' => $mp['market_id'],
+                            'price_date' => $priceDate,
+                        ], [
+                            'price' => $mp['price'],
+                        ]);
+                    // If already existed, update price if changed
+                    if ($marketPrice->price != $mp['price']) {
+                        $marketPrice->update(['price' => $mp['price']]);
+                    }
+                    $keepIds[] = $marketPrice->id;
+                }
+                // Remove old prices not in the new list
+                $product->marketPrices()->whereNotIn('id', $keepIds)->delete();
             }
 
             return $product;
