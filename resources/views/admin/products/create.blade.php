@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="productName">{{ translate('messages.Product Name') }} <span class="text-danger">*</span></label>
-                        <input type="text" name="name" id="productName" class="form-control" required>
+                        <input type="text" name="name" id="productName" class="form-control" required value="{{ old('name') }}">
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
@@ -27,7 +27,7 @@
                             <select name="category_id" id="productCategory" class="form-control select2" required>
                                 <option value="">{{ translate('messages.Select Category') }}</option>
                                 @foreach($categories as $c)
-                                    <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                    <option value="{{ $c->id }}" {{ old('category_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -36,14 +36,14 @@
                             <select name="unit_id" id="productUnit" class="form-control select2" required>
                                 <option value="">{{ translate('messages.Select Unit') }}</option>
                                 @foreach($units as $u)
-                                    <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->symbol }})</option>
+                                    <option value="{{ $u->id }}" {{ old('unit_id') == $u->id ? 'selected' : '' }}>{{ $u->name }} ({{ $u->symbol }})</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="productDescription">{{ translate('messages.Description') }}</label>
-                        <textarea name="description" id="productDescription" class="form-control" rows="4"></textarea>
+                        <textarea name="description" id="productDescription" class="form-control" rows="4">{{ old('description') }}</textarea>
                     </div>
                     <!-- TAGS -->
                     <div class="form-group">
@@ -57,7 +57,8 @@
                             </div>
                         </div>
                         <div class="product-tags" id="tagContainer"></div>
-                        <input type="hidden" name="tags" id="tagsHidden">
+                        <!-- Hidden tag inputs will be appended here by JS -->
+                        <div id="tagsHiddenInputs"></div>
                     </div>
                 </div>
             </div>
@@ -81,7 +82,7 @@
                                 </tr>
                             </thead>
                             <tbody id="marketPriceRows">
-                                <!-- Market price rows will be added here -->
+                                <!-- Market price rows will be added here by JS -->
                             </tbody>
                         </table>
                     </div>
@@ -98,20 +99,19 @@
                     <div class="form-group">
                         <label for="productStatus">{{ translate('messages.Status') }}</label>
                         <select name="status" id="productStatus" class="form-control">
-                            <option value="active" selected>{{ translate('messages.Active') }}</option>
-                            <option value="inactive">{{ translate('messages.Inactive') }}</option>
-                            <option value="draft">{{ translate('messages.Draft') }}</option>
+                            <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="productVisibility">{{ translate('messages.Visibility') }}</label>
                         <select name="is_visible" id="productVisibility" class="form-control">
-                            <option value="1" selected>{{ translate('messages.Public') }}</option>
-                            <option value="0">{{ translate('messages.Private') }}</option>
+                            <option value="1" {{ old('is_visible', '1') == '1' ? 'selected' : '' }}>{{ translate('messages.Public') }}</option>
+                            <option value="0" {{ old('is_visible') == '0' ? 'selected' : '' }}>{{ translate('messages.Private') }}</option>
                         </select>
                     </div>
                     <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input" id="featuredSwitch" name="is_featured" value="1">
+                        <input type="checkbox" class="custom-control-input" id="featuredSwitch" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}>
                         <label class="custom-control-label" for="featuredSwitch">{{ translate('messages.Featured Product') }}</label>
                     </div>
                 </div>
@@ -145,22 +145,22 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="productSKU">{{ translate('messages.SKU') }}</label>
-                        <input type="text" class="form-control" id="productSKU" name="sku" placeholder="SKU-001">
+                        <input type="text" class="form-control" id="productSKU" name="sku" placeholder="SKU-001" value="{{ old('sku') }}">
                     </div>
                     <div class="form-group">
                         <label for="productBarcode">{{ translate('messages.Barcode') }}</label>
-                        <input type="text" class="form-control" id="productBarcode" name="barcode" placeholder="Optional barcode">
+                        <input type="text" class="form-control" id="productBarcode" name="barcode" placeholder="Optional barcode" value="{{ old('barcode') }}">
                     </div>
                     <div class="form-group">
                         <label for="productBrand">{{ translate('messages.Brand') }}</label>
-                        <input type="text" class="form-control" id="productBrand" name="brand" placeholder="Brand name">
+                        <input type="text" class="form-control" id="productBrand" name="brand" placeholder="Brand name" value="{{ old('brand') }}">
                     </div>
                     <div class="form-group mb-0">
                         <label for="productCountry">{{ translate('messages.Country of Origin') }}</label>
                         <select class="form-control select2" id="productCountry" name="country_of_origin">
                             <option value="">{{ translate('messages.Select Country') }}</option>
-                            <option value="local">{{ translate('messages.Local') }}</option>
-                            <option value="imported">{{ translate('messages.Imported') }}</option>
+                            <option value="local" {{ old('country_of_origin') == 'local' ? 'selected' : '' }}>{{ translate('messages.Local') }}</option>
+                            <option value="imported" {{ old('country_of_origin') == 'imported' ? 'selected' : '' }}>{{ translate('messages.Imported') }}</option>
                         </select>
                     </div>
                 </div>
@@ -202,11 +202,17 @@ $(document).ready(function() {
     const tagInput = document.getElementById('productTagInput');
     const tagContainer = document.getElementById('tagContainer');
     const addTagBtn = document.getElementById('addTagBtn');
-    const tagsHidden = document.getElementById('tagsHidden');
+    const tagsHiddenInputs = document.getElementById('tagsHiddenInputs');
     let tags = [];
+
+    // Initialize tags from old input if present
+    @if(is_array(old('tags')) && count(old('tags')))
+        tags = @json(old('tags'));
+    @endif
 
     function renderTags() {
         tagContainer.innerHTML = '';
+        tagsHiddenInputs.innerHTML = '';
         tags.forEach(function(tag, idx) {
             const tagElem = document.createElement('span');
             tagElem.className = 'badge badge-primary mr-1 mb-1 p-2';
@@ -216,9 +222,16 @@ $(document).ready(function() {
                 renderTags();
             });
             tagContainer.appendChild(tagElem);
+            // Add hidden input for each tag
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'tags[]';
+            hiddenInput.value = tag;
+            tagsHiddenInputs.appendChild(hiddenInput);
         });
-        tagsHidden.value = tags.join(',');
     }
+
+    renderTags(); // Initial render (for old values)
 
     addTagBtn.addEventListener('click', function() {
         const tagText = tagInput.value.trim();
@@ -247,45 +260,79 @@ $(document).ready(function() {
     let marketRowCount = 0;
     const markets = @json(\App\Models\Market::select('id','name')->orderBy('name')->get());
 
-    function createMarketRow() {
+    function updateMarketSelectOptions() {
+        // Get all selected market_ids
+        const selectedMarkets = Array.from(document.querySelectorAll('.market-select')).map(sel => sel.value).filter(Boolean);
+        // For each select, disable options that are already selected in other selects
+        document.querySelectorAll('.market-select').forEach(function(select) {
+            const currentValue = select.value;
+            Array.from(select.options).forEach(function(option) {
+                if (!option.value) return; // skip placeholder
+                // Disable if selected in another select
+                option.disabled = selectedMarkets.includes(option.value) && option.value !== currentValue;
+            });
+        });
+    }
+
+    function createMarketRow(rowData = {}) {
         marketRowCount++;
         const tr = document.createElement('tr');
         tr.id = `marketRow-${marketRowCount}`;
-        let marketOptions = `<option value="">{{ translate('messages.Select Market') }}</option>`;
+        let marketOptions = `<option value=\"\">{{ translate('messages.Select Market') }}</option>`;
         markets.forEach(function(m) {
-            marketOptions += `<option value="${m.id}">${m.name}</option>`;
+            marketOptions += `<option value=\"${m.id}\" ${(rowData.market_id == m.id) ? 'selected' : ''}>${m.name}</option>`;
         });
         tr.innerHTML = `
             <td>
-                <select class="form-control select2 market-select" name="market_prices[${marketRowCount}][market_id]">
-                    ${marketOptions}
-                </select>
+                <select class=\"form-control select2 market-select\" name=\"market_prices[${marketRowCount}][market_id]\">${marketOptions}</select>
             </td>
             <td>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">$</span>
+                <div class=\"input-group\">
+                    <div class=\"input-group-prepend\">
+                        <span class=\"input-group-text\">$</span>
                     </div>
-                    <input type="number" class="form-control" name="market_prices[${marketRowCount}][price]" placeholder="0.00" step="0.01">
-                </div>
+                    <input type=\"number\" class=\"form-control\" name=\"market_prices[${marketRowCount}][price]\" placeholder=\"0.00\" step=\"0.01\" value=\"${rowData.price || ''}\">\n                </div>
             </td>
             <td>
-                <input type="date" class="form-control" name="market_prices[${marketRowCount}][price_date]" value="${new Date().toISOString().split('T')[0]}">
+                <input type=\"date\" class=\"form-control\" name=\"market_prices[${marketRowCount}][price_date]\" value=\"${rowData.price_date || (new Date().toISOString().split('T')[0])}\">
             </td>
             <td>
-                <button type="button" class="btn btn-sm btn-danger remove-market-row" data-row-id="${marketRowCount}">
-                    <i class="fas fa-trash"></i>
+                <button type=\"button\" class=\"btn btn-sm btn-danger remove-market-row\" data-row-id=\"${marketRowCount}\">\n                    <i class=\"fas fa-trash\"></i>
                 </button>
             </td>
         `;
         tr.querySelector('.remove-market-row').addEventListener('click', function() {
             tr.remove();
+            updateMarketSelectOptions();
         });
         marketPriceRows.appendChild(tr);
+        // Re-initialize select2 if used
+        if ($.fn.select2) {
+            $(tr).find('.select2').select2({width: '100%'});
+        }
+        // Add change event to update disables
+        tr.querySelector('.market-select').addEventListener('change', function() {
+            updateMarketSelectOptions();
+        });
+        updateMarketSelectOptions();
     }
-    // Add initial row on page load
-    createMarketRow();
+
+    // If old market_prices exist, render them; else, add one empty row
+    @if(is_array(old('market_prices')) && count(old('market_prices')))
+        @foreach(old('market_prices') as $mp)
+            createMarketRow(@json($mp));
+        @endforeach
+    @else
+        createMarketRow();
+    @endif
+
     addMarketRowBtn.addEventListener('click', function() {
+        // Prevent adding if all markets are already selected
+        const selectedMarkets = Array.from(document.querySelectorAll('.market-select')).map(sel => sel.value).filter(Boolean);
+        if (selectedMarkets.length >= markets.length) {
+            alert('{{ translate('messages.All markets have been added.') }}');
+            return;
+        }
         createMarketRow();
     });
 });

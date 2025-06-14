@@ -31,6 +31,12 @@ class ProductStoreUpdateRequest extends FormRequest
             'base_price' => 'nullable|numeric|min:0',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
+
+            // Market prices validation
+            'market_prices' => 'nullable|array',
+            'market_prices.*.market_id' => 'required_with:market_prices.*.price|exists:markets,id',
+            'market_prices.*.price' => 'required_with:market_prices.*.market_id|numeric|min:0',
+            'market_prices.*.price_date' => 'nullable|date',
         ];
     }
 
@@ -42,5 +48,18 @@ class ProductStoreUpdateRequest extends FormRequest
             'unit_id.required' => 'Please select a unit.',
             'status.required' => 'Please select a status.',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $marketPrices = $this->input('market_prices', []);
+            if (is_array($marketPrices)) {
+                $marketIds = array_filter(array_column($marketPrices, 'market_id'));
+                if (count($marketIds) !== count(array_unique($marketIds))) {
+                    $validator->errors()->add('market_prices', 'Each market can only be selected once.');
+                }
+            }
+        });
     }
 } 

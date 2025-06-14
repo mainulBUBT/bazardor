@@ -14,6 +14,43 @@
                 <a href="{{ route('admin.products.create') }}" class="btn btn-sm btn-primary mr-2">
                     <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add New Product') }}
                 </a>
+                <a href="#" class="btn btn-sm btn-success mr-2">
+                    <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
+                </a>
+                <div class="dropdown mr-2">
+                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.Export') }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                        <a class="dropdown-item" href="#" id="exportCSV">
+                            <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
+                        </a>
+                        <a class="dropdown-item" href="#" id="exportPDF">
+                            <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="dropdown mr-2">
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="filterDropdown">
+                        <div class="dropdown-header">{{ translate('messages.Filter By:') }}</div>
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-tag fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Category') }}
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-dollar-sign fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Price') }}
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-warehouse fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Stock Status') }}
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-undo fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Reset Filters') }}
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -36,9 +73,9 @@
                                 <td>{{ $product->id }}</td>
                                 <td>
                                     @if($product->image_path)
-                                        <img src="{{ asset('storage/products/'.$product->image_path) }}" alt="{{ $product->name }}" class="img-fluid" width="60">
+                                        <img src="{{ asset('public/storage/products/'.$product->image_path) }}" alt="{{ $product->name }}" class="img-fluid img-thumbnail" width="60">
                                     @else
-                                        <img src="{{ asset('adminpanel/img/product-placeholder.png') }}" class="img-fluid" width="60" alt="placeholder">
+                                        <img src="{{ asset('adminpanel/img/product-placeholder.png') }}" class="img-fluid img-thumbnail" width="60" alt="placeholder">
                                     @endif
                                 </td>
                                 <td>{{ $product->name }}</td>

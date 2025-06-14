@@ -393,4 +393,6 @@
   'Want to delete this unit?' => 'Want to delete this unit ',
   'Update Unit' => 'Update Unit',
   'product_created_successfully' => 'Product created successfully',
+  'Stock Status' => 'Stock Status',
+  'All markets have been added.' => 'All markets have been added.',
 );
