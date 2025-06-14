@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MarketController;
+use App\Http\Controllers\Admin\ProductController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,8 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
     Route::post('markets/status/{market}', [MarketController::class, 'status'])->name('markets.status');
     Route::get('markets/get-districts/{division}', [MarketController::class, 'getDistricts'])->name('markets.get-districts');
     Route::get('markets/get-thanas/{division}/{district}', [MarketController::class, 'getThanas'])->name('markets.get-thanas');
+
+    Route::resource('products', ProductController::class);
 
     Route::group(["prefix"=> "settings", "as"=> "settings."], function () {
         Route::get("/", [SettingController::class, 'index'])->name('index');

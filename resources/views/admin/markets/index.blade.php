@@ -112,12 +112,14 @@
                        @foreach($markets as $market)
                        <tr>
                         <td>{{ $market->id }}</td>
-                        <td>
-                            @if($market->image)
-                                <img src="{{ asset('public/storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-fluid" width="100" height="100">
-                            @else
-                                <img src="{{ asset('public/storage/markets/default.png') }}" alt="{{ $market->name }}" class="img-fluid">
-                            @endif
+                        <td class="text-center">
+                            <div class="market-thumbnail">
+                                @if($market->image_path)
+                                    <img src="{{ asset('public/storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                @else
+                                    <img src="{{ asset('public/storage/markets/default.png') }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                @endif
+                            </div>
                         </td>
                         <td>{{ $market->name }}</td>
                         <td>{{ Str::limit($market->address, 20) }}</td>

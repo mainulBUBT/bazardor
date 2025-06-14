@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function createdEntities()
+    {
+        return $this->hasMany(\App\Models\EntityCreator::class);
+    }
 }

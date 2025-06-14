@@ -51,6 +51,15 @@ class MarketService
 
             $market->save();
 
+            // Record creator information
+            // if (auth()->check()) {
+            //     \App\Models\EntityCreator::create([
+            //         'user_id' => auth()->id(),
+            //         'creatable_id' => $market->id,
+            //         'creatable_type' => \App\Models\Market::class,
+            //     ]);
+            // }
+
             // Handle market image
             if (isset($data['image']) && $data['image']->isValid()) {
                 $market->image_path = handle_file_upload('markets/', $data['image']->getClientOriginalExtension(), $data['image']);

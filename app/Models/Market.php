@@ -132,4 +132,9 @@ class Market extends Model
             }
         });
     }
+
+    public function creatorRecord()
+    {
+        return $this->morphOne(\App\Models\EntityCreator::class, 'creatable');
+    }
 }

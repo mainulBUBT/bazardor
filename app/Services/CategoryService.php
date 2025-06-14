@@ -120,5 +120,5 @@ class CategoryService
     public function findById(int $categoryId): Category
     {
         return $this->category->findOrFail($categoryId);
-    }   
+    }
 }

@@ -57,14 +57,14 @@
 
     <!-- Nav Item - Products -->
     <li class="nav-item {{ request()->is('admin/products*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="{{ request()->is('admin/products*') ? 'true' : 'false' }}" aria-controls="collapseProducts">
             <i class="fas fa-fw fa-box-open"></i>
             <span>{{translate('messages.Products') }}</span>
         </a>
-        <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
+        <div id="collapseProducts" class="collapse{{ request()->is('admin/products*') ? ' show' : '' }}" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{url('/admin/products')}}">{{translate('messages.All Products') }}</a>
-                <a class="collapse-item" href="{{url('/admin/products/create')}}">{{translate('messages.Add Product') }}</a>
+                <a class="collapse-item {{ request()->is('admin/products') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">{{translate('messages.All Products') }}</a>
+                <a class="collapse-item {{ request()->is('admin/products/create') ? 'active' : '' }}" href="{{ route('admin.products.create') }}">{{translate('messages.Add Product') }}</a>
             </div>
         </div>
     </li>

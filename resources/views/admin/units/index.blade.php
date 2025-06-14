@@ -103,9 +103,9 @@
                                 <td>{{ $unit->id }}</td>
                                 <td>{{ $unit->name }}</td>
                                 <td>{{ $unit->symbol }}</td>
-                                <td>{{ ucfirst($unit->type) }}</td>
+                                <td>{{ ucfirst($unit->unit_type) }}</td>
                                 <td>
-                                    @if($unit->status === 'active')
+                                    @if($unit->is_active == 1)
                                         <span class="badge badge-success">{{ translate('messages.Active') }}</span>
                                     @else
                                         <span class="badge badge-danger">{{ translate('messages.Inactive') }}</span>
@@ -117,12 +117,12 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form id="delete-unit-{{ $unit->id }}" action="" method="POST" class="d-inline">
-    @csrf
-    @method('DELETE')
-    <button type="button" onclick="formAlert('delete-unit-{{ $unit->id }}', '{{ translate('messages.Want to delete this unit?') }}')" class="btn btn-danger btn-circle btn-sm delete-unit">
-        <i class="fas fa-trash"></i>
-    </button>
-</form>
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="formAlert('delete-unit-{{ $unit->id }}', '{{ translate('messages.Want to delete this unit?') }}')" class="btn btn-danger btn-circle btn-sm delete-unit">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @empty

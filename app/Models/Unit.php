@@ -16,11 +16,7 @@ class Unit extends Model
      *
      * @var array<string>
      */
-    protected $fillable = [
-        'name',
-        'short_name',
-        'is_active',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be cast.
@@ -28,7 +24,7 @@ class Unit extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active' => 'integer',
     ];
 
     /**
