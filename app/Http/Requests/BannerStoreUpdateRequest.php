@@ -22,22 +22,27 @@ class BannerStoreUpdateRequest extends FormRequest
     public function rules(): array
     {
         $bannerId = $this->route('banner');
-        $imageRule = ($this->isMethod('post') && $this->type == 'general') ? 'required' : 'nullable';
+        $isUpdate = $this->isMethod('put') || $this->isMethod('patch');
+        $imageRule = $isUpdate ? 'nullable' : 'required';
         return [
             'title' => 'required|string|max:255',
             'image' => [$imageRule, 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-            'url' => 'required|url|max:255',
             'type' => 'required|in:general,featured',
-            'description' => 'required_if:type,general|string',
-            'badge_text' => 'required_if:type,featured|string|max:255',
-            'badge_color' => 'required_if:type,featured|string|max:50',
-            'badge_background_color' => 'required_if:type,featured|string|max:50',
-            'badge_icon' => 'required_if:type,featured|string|max:100',
-            'button_text' => 'required_if:type,featured|string|max:100',
-            'is_active' => 'sometimes|boolean',
-            'position' => 'required_if:type,general|integer',
-            'start_date' => 'required_if:type,general|date',
-            'end_date' => 'required_if:type,general|date|after_or_equal:start_date',
+            'is_active' => 'required|boolean',
+            'position' => 'required|integer|min:1',
+
+            // General banner fields
+            'description' => 'required_if:type,general|nullable|string',
+            'url' => 'required_if:type,general|nullable|url|max:255',
+            'start_date' => 'required_if:type,general|nullable|date',
+            'end_date' => 'required_if:type,general|nullable|date|after_or_equal:start_date',
+
+            // Featured banner fields
+            'badge_text' => 'required_if:type,featured|nullable|string|max:255',
+            'badge_color' => 'required_if:type,featured|nullable|string|max:50',
+            'badge_background_color' => 'required_if:type,featured|nullable|string|max:50',
+            'badge_icon' => 'nullable|string|max:100',
+            'button_text' => 'required_if:type,featured|nullable|string|max:100',
         ];
     }
 

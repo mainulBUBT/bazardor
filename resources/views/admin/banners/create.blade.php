@@ -11,9 +11,23 @@
                 class="fas fa-arrow-left fa-sm text-gray-700"></i> {{ translate('messages.Back to Banners') }}</a>
     </div>
 
+    <!-- Banner Type Toggle -->
+    <div class="mb-4">
+        <label class="font-weight-bold mr-3">{{ translate('messages.Banner Type') }}:</label>
+        <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="typeBanner" name="banner_type" class="custom-control-input" value="general" checked>
+            <label class="custom-control-label" for="typeBanner">{{ translate('messages.Banner') }}</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="typeFeatured" name="banner_type" class="custom-control-input" value="featured">
+            <label class="custom-control-label" for="typeFeatured">{{ translate('messages.Featured Banner') }}</label>
+        </div>
+    </div>
+
     <!-- Add Banner Form -->
     <form  action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data" id="addBannerForm">
         @csrf    
+        <input type="hidden" name="type" id="bannerTypeInput" value="general">
         <div class="row">
             <!-- Left Column: Banner Details -->
             <div class="col-lg-8">
@@ -57,6 +71,52 @@
                             <label for="bannerDescription" class="form-label">{{ translate('messages.Description') }}</label>
                             <textarea name="description" class="form-control" id="bannerDescription" rows="3" placeholder="{{ translate('messages.Internal description (optional)') }}"></textarea>
                         </div>
+
+                        <!-- Featured Banner Fields -->
+                        <div id="featuredFields" style="display:none;">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="bannerBadgeText" class="form-label">{{ translate('messages.Badge Text') }}</label>
+                                    <input type="text" name="badge_text" class="form-control" id="bannerBadgeText" placeholder="e.g., New, Hot, Special">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="bannerBadgeColor" class="form-label">{{ translate('messages.Badge Color') }}</label>
+                                    <select name="badge_color" class="form-control" id="bannerBadgeColor">
+                                        <option value="primary">Primary (Blue)</option>
+                                        <option value="secondary">Secondary (Gray)</option>
+                                        <option value="success">Success (Green)</option>
+                                        <option value="danger">Danger (Red)</option>
+                                        <option value="warning">Warning (Yellow)</option>
+                                        <option value="info">Info (Teal)</option>
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="bannerIcon" class="form-label">{{ translate('messages.Icon (Bootstrap Icons class)') }}</label>
+                                    <input type="text" name="badge_icon" class="form-control" id="bannerIcon" placeholder="e.g., bi-basket2-fill">
+                                    <small class="form-text text-muted">Find icons at <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>.</small>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="bannerBackground" class="form-label">{{ translate('messages.Background Style') }}</label>
+                                    <select name="badge_background_color" class="form-control" id="bannerBackground">
+                                        <option value="promo-banner-blue">Blue</option>
+                                        <option value="promo-banner-pink">Pink</option>
+                                        <option value="promo-banner-purple">Purple</option>
+                                        <option value="promo-banner-teal">Teal</option>
+                                        <option value="promo-banner-green">Green</option>
+                                        <option value="promo-banner-orange">Orange</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="bannerButtonText" class="form-label">{{ translate('messages.Button Text') }}</label>
+                                    <input type="text" name="button_text" class="form-control" id="bannerButtonText" placeholder="e.g., Shop Now">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Featured Banner Fields -->
                     </div>
                 </div>
             </div>
@@ -104,11 +164,10 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" name="type" value="general">
         <!-- Action Buttons -->
         <div class="row mb-4">
             <div class="col-12 d-flex justify-content-end">
-                <a href="banners.html" class="btn btn-secondary mr-2">{{ translate('messages.Cancel') }}</a>
+                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary mr-2">{{ translate('messages.Cancel') }}</a>
                 <button type="submit" class="btn btn-primary" id="saveBannerBtn">{{ translate('messages.Save Banner') }}</button>
             </div>
         </div>
@@ -120,6 +179,17 @@
     <!-- Page level custom scripts -->
     <script>
         $(document).ready(function() {
+            // Banner type toggle logic
+            $('input[name="banner_type"]').on('change', function() {
+                var type = $(this).val();
+                $('#bannerTypeInput').val(type);
+                if (type === 'featured') {
+                    $('#featuredFields').slideDown();
+                } else {
+                    $('#featuredFields').slideUp();
+                }
+            });
+
             // Image Preview Logic
             $('#bannerImage').on('change', function() {
                 const file = this.files[0];

@@ -40,10 +40,14 @@
                             <th>{{ translate('messages.ID') }}</th>
                             <th>{{ translate('messages.Image') }}</th>
                             <th>{{ translate('messages.Title') }}</th>
+                            <th>{{ translate('messages.Type') }}</th>
                             <th>{{ translate('messages.URL') }}</th>
                             <th>{{ translate('messages.Status') }}</th>
                             <th>{{ translate('messages.Start Date') }}</th>
                             <th>{{ translate('messages.End Date') }}</th>
+                            <th>{{ translate('messages.Badge') }}</th>
+                            <th>{{ translate('messages.Background') }}</th>
+                            <th>{{ translate('messages.Button Text') }}</th>
                             <th>{{ translate('messages.Actions') }}</th>
                         </tr>
                     </thead>
@@ -51,8 +55,15 @@
                         @forelse ($banners as $banner)
                         <tr>
                             <td>{{ $banner->id }}</td>
-                            <td><img src="{{ $banner->image_path }}" alt="Banner 1" class="banner-image"></td>
+                            <td><img src="{{ $banner->image_path }}" alt="Banner" class="banner-image"></td>
                             <td>{{ $banner->title }}</td>
+                            <td>
+                                @if($banner->type === 'featured')
+                                    <span class="badge badge-warning">{{ translate('messages.Featured') }}</span>
+                                @else
+                                    <span class="badge badge-info">{{ translate('messages.Banner') }}</span>
+                                @endif
+                            </td>
                             <td><a href="{{ $banner->url }}" target="_blank">{{ Str::limit($banner->url, 15) }}</a></td>
                             <td>
                                 <div class="custom-control custom-switch">
@@ -60,20 +71,46 @@
                                     <label class="custom-control-label" for="bannerStatus-{{ $banner->id }}"></label>
                                 </div>
                             </td>
-                            <td>{{ Carbon\Carbon::parse($banner->start_date)->format('d-m-Y') }}</td>
-                            <td>{{ Carbon\Carbon::parse($banner->end_date)->format('d-m-Y') }}</td>
+                            <td>{{ $banner->start_date ? Carbon\Carbon::parse($banner->start_date)->format('d-m-Y') : '-' }}</td>
+                            <td>{{ $banner->end_date ? Carbon\Carbon::parse($banner->end_date)->format('d-m-Y') : '-' }}</td>
                             <td>
-                                <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-info btn-circle btn-sm" title="{{ translate('messages.Edit') }}">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{{ route('admin.banners.destroy', $banner->id) }}" class="btn btn-danger btn-circle btn-sm" title="{{ translate('messages.Delete') }}">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                @if($banner->type === 'featured')
+                                    @if($banner->badge_text)
+                                        <span class="badge badge-{{ $banner->badge_color ?? 'primary' }}">{{ $banner->badge_text }}</span>
+                                    @endif
+                                    @if($banner->badge_icon)
+                                        <i class="{{ $banner->badge_icon }} ml-1"></i>
+                                    @endif
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @if($banner->type === 'featured')
+                                    {{ $banner->badge_background_color ?? '-' }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @if($banner->type === 'featured')
+                                    {{ $banner->button_text ?? '-' }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                                <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></button>
+                                </form>
                             </td>
                         </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">{{ translate('messages.No banners found') }}</td>
+                                <td colspan="12" class="text-center">{{ translate('messages.No banners found') }}</td>
                             </tr>   
                         @endforelse
                     </tbody>

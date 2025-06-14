@@ -36,13 +36,26 @@ class BannerService
         
         $this->banner->title = $data['title'];
         $this->banner->image_path = $data['image_path'];
-        $this->banner->url = $data['url'];
-        $this->banner->type = 'general';
-        $this->banner->description = $data['description'];
+        $this->banner->url = $data['url'] ?? null;
+        $this->banner->type = $data['type'] ?? 'general';
+        $this->banner->description = $data['description'] ?? null;
         $this->banner->is_active = $data['is_active'];
         $this->banner->position = $data['position'];
-        $this->banner->start_date = $data['start_date'];
-        $this->banner->end_date = $data['end_date'];
+        $this->banner->start_date = $data['start_date'] ?? null;
+        $this->banner->end_date = $data['end_date'] ?? null;
+        if (($data['type'] ?? 'general') === 'featured') {
+            $this->banner->badge_text = $data['badge_text'] ?? null;
+            $this->banner->badge_color = $data['badge_color'] ?? null;
+            $this->banner->badge_background_color = $data['badge_background_color'] ?? null;
+            $this->banner->badge_icon = $data['badge_icon'] ?? null;
+            $this->banner->button_text = $data['button_text'] ?? null;
+        } else {
+            $this->banner->badge_text = null;
+            $this->banner->badge_color = null;
+            $this->banner->badge_background_color = null;
+            $this->banner->badge_icon = null;
+            $this->banner->button_text = null;
+        }
         $this->banner->save();
         return $this->banner;
     }
@@ -58,13 +71,26 @@ class BannerService
         unset($data['image']);
         $banner->title = $data['title'];
         $banner->image_path = $data['image_path'];
-        $banner->url = $data['url'];
-        $banner->type = 'general';
-        $banner->description = $data['description'];
+        $banner->url = $data['url'] ?? null;
+        $banner->type = $data['type'] ?? 'general';
+        $banner->description = $data['description'] ?? null;
         $banner->is_active = $data['is_active'];
         $banner->position = $data['position'];
-        $banner->start_date = $data['start_date'];
-        $banner->end_date = $data['end_date'];
+        $banner->start_date = $data['start_date'] ?? null;
+        $banner->end_date = $data['end_date'] ?? null;
+        if (($data['type'] ?? 'general') === 'featured') {
+            $banner->badge_text = $data['badge_text'] ?? null;
+            $banner->badge_color = $data['badge_color'] ?? null;
+            $banner->badge_background_color = $data['badge_background_color'] ?? null;
+            $banner->badge_icon = $data['badge_icon'] ?? null;
+            $banner->button_text = $data['button_text'] ?? null;
+        } else {
+            $banner->badge_text = null;
+            $banner->badge_color = null;
+            $banner->badge_background_color = null;
+            $banner->badge_icon = null;
+            $banner->button_text = null;
+        }
         $banner->save();
         return $banner;
     }
