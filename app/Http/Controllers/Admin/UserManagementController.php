@@ -33,26 +33,52 @@ class UserManagementController extends Controller
         ));
     }
 
-    public function createUser()
+    /**
+     * Show the form for creating a new user.
+     *
+     * @param string $role
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function create(string $role)
     {
-        return view('admin.users.create');
+        return view('admin.users.create', compact('role'));
     }
 
+    /**
+     * Store a newly created user in storage.
+     *
+     * @param UserStoreUpdateRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(UserStoreUpdateRequest $request)
     {
-        $this->service->storeUser($request->validated());
+        $this->service->store($request->validated());
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
-    public function edit(User $user)
+    /**
+     * Show the form for editing the specified user.
+     *
+     * @param string $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(string $id)
     {
+        $user = $this->service->findById($id);
         return view('admin.users.edit', compact('user'));
     }
 
-    public function update(UserStoreUpdateRequest $request, User $user)
+    /**
+     * Update the specified user in storage.
+     *
+     * @param UserStoreUpdateRequest $request
+     * @param string $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(UserStoreUpdateRequest $request, string $id)
     {
-        $this->service->updateUser($user, $request->validated());
+        $this->service->update($id, $request->validated());
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }

@@ -36,7 +36,7 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
 
     Route::group(["prefix"=> "users", "as"=> "users."], function () {
         Route::get('/', [UserManagementController::class, 'index'])->name('index');
-        Route::get('create', [UserManagementController::class, 'create'])->name('create');
+        Route::get('create/{role}', [UserManagementController::class, 'create'])->name('create');
         Route::post('/', [UserManagementController::class, 'store'])->name('store');
         Route::get('{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
         Route::put('{user}', [UserManagementController::class, 'update'])->name('update');

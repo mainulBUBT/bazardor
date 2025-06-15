@@ -18,15 +18,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
-        'phone',
-        'password',
-        'role',
-        'image_path',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,8 +37,12 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
         'password' => 'hashed',
         'role' => Role::class,
+        'date_of_birth' => 'date',
+        'is_active' => 'boolean',
+        'subscribed_to_newsletter' => 'boolean',
     ];
 
     public function createdEntities()

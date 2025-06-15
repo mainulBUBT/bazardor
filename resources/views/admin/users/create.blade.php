@@ -1,100 +1,207 @@
 @extends('layouts.admin.app')
-@section('title', translate('messages.add_new_user'))
-
-@push('css_or_js')
-<style>
-    .avatar-upload {
-        position: relative;
-        max-width: 205px;
-        margin: 0 auto;
-    }
-    .avatar-upload .avatar-edit {
-        position: absolute;
-        right: 12px;
-        z-index: 1;
-        top: 10px;
-    }
-    .avatar-upload .avatar-edit input {
-        display: none;
-    }
-    .avatar-upload .avatar-edit label {
-        display: inline-block;
-        width: 34px;
-        height: 34px;
-        margin-bottom: 0;
-        border-radius: 100%;
-        background: #FFFFFF;
-        border: 1px solid transparent;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
-        cursor: pointer;
-        font-weight: normal;
-        transition: all .2s ease-in-out;
-    }
-    .avatar-upload .avatar-edit label:hover {
-        background: #f1f1f1;
-        border-color: #d6d6d6;
-    }
-    .avatar-upload .avatar-edit label:after {
-        content: "\f030";
-        font-family: 'Font Awesome 5 Free';
-        color: #757575;
-        position: absolute;
-        top: 7px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        margin: auto;
-    }
-    .avatar-upload .avatar-preview {
-        width: 192px;
-        height: 192px;
-        position: relative;
-        border-radius: 100%;
-        border: 6px solid #F8F8F8;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
-    }
-    .avatar-upload .avatar-preview > div {
-        width: 100%;
-        height: 100%;
-        border-radius: 100%;
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-image: url("{{asset('assets/admin/img/undraw_profile.svg')}}");
-    }
-    .password-toggle {
-        cursor: pointer;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #858796;
-    }
-    .form-group.required label:after {
-        content: " *";
-        color: #e74a3b;
-    }
-</style>
-@endpush
+@section('title', translate('messages.add_user'))
 
 @section('content')
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">{{translate('messages.add_new_user')}}</h1>
-    <p class="mb-4">{{translate('messages.add_user_description')}}</p>
 
-    <form action="{{route('admin.users.store')}}" method="post" enctype="multipart/form-data" id="addUserForm">
+    <h1 class="h3 mb-2 text-gray-800">{{ translate('messages.add_user') }}</h1>
+    <p class="mb-4">{{ translate('messages.Create a new user account by filling out the form below. All fields marked with an asterisk (*) are required.') }}</p>
+
+    <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        @include('admin.users.partials._form')
-    </form>
-</div>
-@endsection
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Basic Information Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.basic_information') }}</h6>
+                    </div>
+                    <div class="card-body">
+                            <div class="form-group required">
+                                <label for="name">{{ translate('messages.name') }}</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="username">{{ translate('messages.username') }}</label>
+                                        <input type="text" class="form-control" id="username" name="username" value="{{ old('username') }}" required>
+                                        <small class="form-text text-muted">{{ translate('messages.must_be_unique_and_contain_only_letters_numbers_and_underscores') }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="email">{{ translate('messages.email_address') }}</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="phone">{{ translate('messages.phone_number') }}</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required pattern="[0-9]{11}" placeholder="+880">
+                                        <small class="form-text text-muted">{{ translate('messages.format_11_digits_number') }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="role">{{ translate('messages.user_role') }}</label>
+                                        <select class="form-control select2" id="role" name="role" required>
+                                            <option value="">{{ translate('messages.select_role') }}</option>
+                                            <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>{{ translate('messages.user') }}</option>
+                                            <option value="volunteer" {{ old('role') == 'volunteer' ? 'selected' : '' }}>{{ translate('messages.volunteer') }}</option>
+                                            <option value="moderator" {{ old('role') == 'moderator' ? 'selected' : '' }}>{{ translate('messages.moderator') }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="password">{{ translate('messages.password') }}</label>
+                                        <div class="position-relative">
+                                            <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                                            <span class="password-toggle" onclick="togglePassword('password')">
+                                                <i class="fas fa-eye"></i>
+                                            </span>
+                                        </div>
+                                        <small class="form-text text-muted">{{ translate('messages.minimum_8_characters') }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="confirmPassword">{{ translate('messages.confirm_password') }}</label>
+                                        <div class="position-relative">
+                                            <input type="password" class="form-control" id="confirmPassword" name="password_confirmation" required>
+                                            <span class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                                <i class="fas fa-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
 
+                <!-- Additional Information Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.additional_information') }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dateOfBirth">{{ translate('messages.date_of_birth') }}</label>
+                                    <input type="date" class="form-control" id="dateOfBirth" name="date_of_birth" value="{{ old('date_of_birth') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="gender">{{ translate('messages.gender') }}</label>
+                                    <select class="form-control select2" id="gender" name="gender">
+                                        <option value="">{{ translate('messages.select_gender') }}</option>
+                                        <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>{{ translate('messages.male') }}</option>
+                                        <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>{{ translate('messages.female') }}</option>
+                                        <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>{{ translate('messages.other') }}</option>
+                                        <option value="prefer_not_to_say" {{ old('gender') == 'prefer_not_to_say' ? 'selected' : '' }}>{{ translate('messages.prefer_not_to_say') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">{{ translate('messages.address') }}</label>
+                            <textarea class="form-control" id="address" name="address" rows="3">{{ old('address') }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="city">{{ translate('messages.city') }}</label>
+                                    <input type="text" class="form-control" id="city" name="city" value="{{ old('city') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="division">{{ translate('messages.division') }}</label>
+                                    <select class="form-control select2" id="division" name="division">
+                                        <option value="">{{ translate('messages.select_division') }}</option>
+                                        @foreach(\App\Enums\Location::getDivisions() as $division)
+                                            <option value="{{ $division }}" {{ old('division') == $division ? 'selected' : '' }}>{{ $division }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <!-- Profile Picture Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.profile_picture') }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="avatar-upload">
+                            <div class="avatar-edit">
+                                <i class="fas fa-camera"></i>
+                                <input type='file' id="imageUpload" name="image" accept=".png, .jpg, .jpeg" />
+                                <label for="imageUpload"></label>
+                            </div>
+                            <div class="avatar-preview">
+                                <div id="imagePreview"></div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">{{ translate('messages.click_the_camera_icon_to_upload_a_profile_picture') }}<br>{{ translate('messages.maximum_file_size') }}: 2MB</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.settings') }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="custom-control custom-switch mb-3">
+                            <input type="checkbox" class="custom-control-input" id="emailVerified" name="email_verified" value="1" {{ old('email_verified') ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="emailVerified">{{ translate('messages.email_verified') }}</label>
+                        </div>
+                        <div class="custom-control custom-switch mb-3">
+                            <input type="checkbox" class="custom-control-input" id="activeStatus" name="is_active" value="1" @if($errors->any()) {{ old('is_active') ? 'checked' : '' }} @else checked @endif>
+                            <label class="custom-control-label" for="activeStatus">{{ translate('messages.active_status') }}</label>
+                        </div>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="newsletterSubscription" name="subscribed_to_newsletter" value="1" @if($errors->any()) {{ old('subscribed_to_newsletter') ? 'checked' : '' }} @else checked @endif>
+                            <label class="custom-control-label" for="newsletterSubscription">{{ translate('messages.newsletter_subscription') }}</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Action Buttons -->
+                <div class="row mb-4">
+                    <div class="col d-flex justify-content-end">
+                        <a href="{{ route('admin.users.index', ['role' => 'user']) }}" class="btn btn-secondary mr-2">
+                            <i class="fas fa-times"></i> {{ translate('messages.cancel') }}
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> {{ translate('messages.create_user') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+@endsection
 @push('scripts')
 <script>
     function readURL(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
+                
             reader.onload = function(e) {
                 $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
                 $('#imagePreview').hide();
@@ -111,6 +218,7 @@
     function togglePassword(inputId) {
         const input = document.getElementById(inputId);
         const icon = input.nextElementSibling.querySelector('i');
+            
         if (input.type === "password") {
             input.type = "text";
             icon.classList.remove("fa-eye");
@@ -122,13 +230,14 @@
         }
     }
 
-    $('#addUserForm').on('submit', function(e) {
-        const password = $('#password').val();
-        const confirmPassword = $('#password_confirmation').val();
-        if (password !== confirmPassword) {
-            e.preventDefault();
-            alert("{{translate('messages.passwords_do_not_match')}}");
-        }
+        // Username validation
+        $('#username').on('input', function() {
+            this.value = this.value.replace(/[^a-zA-Z0-9_]/g, '');
+        });
+
+        // Phone number validation
+        $('#phone').on('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
     });
 </script>
 @endpush
