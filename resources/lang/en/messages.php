@@ -577,4 +577,9 @@
   'last' => 'Last',
   'next' => 'Next',
   'previous' => 'Previous',
+  'invalid_referral_code' => 'Invalid referral code',
+  'referral_code' => 'Referral code',
+  'your_referral_code' => 'Your referral code',
+  'enter_referral_code' => 'Enter referral code',
+  'optional_referral_code' => 'Optional referral code',
 );

@@ -182,9 +182,15 @@
                             <input type="checkbox" class="custom-control-input" id="activeStatus" name="is_active" value="1" checked>
                             <label class="custom-control-label" for="activeStatus">{{ translate('messages.active_status') }}</label>
                         </div>
-                        <div class="custom-control custom-switch">
+                        <div class="custom-control custom-switch mb-3">
                             <input type="checkbox" class="custom-control-input" id="newsletterSubscription" name="subscribed_to_newsletter" value="1" checked>
                             <label class="custom-control-label" for="newsletterSubscription">{{ translate('messages.newsletter_subscription') }}</label>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label for="referred_by">{{ translate('messages.referral_code') }}</label>
+                            <input type="text" class="form-control" id="referred_by" name="referred_by" placeholder="{{ translate('messages.enter_referral_code') }}">
+                            <small class="form-text text-muted">{{ translate('messages.optional_referral_code') }}</small>
                         </div>
                     </div>
                 </div>

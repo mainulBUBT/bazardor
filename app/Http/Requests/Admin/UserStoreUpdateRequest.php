@@ -13,11 +13,34 @@ use Illuminate\Support\Str;
 class UserStoreUpdateRequest extends FormRequest
 {
     /**
+     * The prepared input for the request.
+     *
+     * @var array
+     */
+    protected $preparedInput;
+
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->preparedInput = $this->all();
+        
+        // Set default values for nullable fields
+        $this->preparedInput['referred_by'] = $this->input('referred_by', null);
+        $this->preparedInput['referral_code'] = $this->input('referral_code', Str::random(8));
+        
+        $this->replace($this->preparedInput);
     }
 
     /**
@@ -59,6 +82,31 @@ class UserStoreUpdateRequest extends FormRequest
             'subscribed_to_newsletter' => ['nullable', 'boolean'],
             'referral_code' => ['nullable', 'string', 'max:255', Rule::unique('users')->ignore($userId)],
             'referred_by' => ['nullable', 'string', 'max:255', Rule::exists('users', 'referral_code')],
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'referred_by' => translate('messages.referral_code'),
+            'referral_code' => translate('messages.your_referral_code'),
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'referred_by.exists' => translate('messages.invalid_referral_code'),
         ];
     }
 }
