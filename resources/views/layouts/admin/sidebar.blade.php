@@ -97,14 +97,14 @@
             <i class="fas fa-fw fa-users"></i>
             <span>{{translate('messages.Users Management') }}</span>
         </a>
-        <div id="collapseUsers" class="collapse{{ request()->is('admin/users*') || request()->is('admin/volunteers*') || request()->is('admin/moderators*') ? ' show' : '' }}" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item {{ request()->is('admin/users*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">{{translate('messages.Users')}}</a>
+        <div id="collapseUsers" class="collapse{{ request()->is('admin/users*') || request()->is('admin/volunteers*') || request()->is('admin/moderators*') ? ' show' : '' }}" aria-labelledby="headingUsers" data-parent="#accordionSidebar">                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item {{ request()->is('admin/users*') && !request()->is('admin/users/pending') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">{{translate('messages.Users')}}</a>
+                    <a class="collapse-item {{ request()->is('admin/users/pending') ? 'active' : '' }}" href="{{ route('admin.users.pending') }}">{{translate('messages.Pending Users')}}</a>
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
 
-    <!-- Nav Item - Contributions -->
+        <!-- Nav Item - Contributions -->
     <li class="nav-item {{ request()->is('admin/contributions*') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/contributions')}}">
             <i class="fas fa-fw fa-chart-line"></i>

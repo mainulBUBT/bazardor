@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('subscribed_to_newsletter')->default(0)->after('is_active');
             $table->string('referral_code')->nullable()->after('subscribed_to_newsletter');
             $table->string('referred_by')->nullable()->after('referral_code');
+            $table->string('status')->default('pending')->after('referred_by');
 
         });
     }

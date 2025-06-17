@@ -1,18 +1,20 @@
-<!-- Users Table Card -->
+<!-- Users Table Card (Consistent with Markets Table) -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">{{ $role == 'user' ? translate('messages.users_list') : ($role == 'volunteer' ? translate('messages.volunteers_list') : translate('messages.moderators_list')) }}</h6>
+        <h6 class="m-0 font-weight-bold text-primary">
+            {{ $role == 'user' ? translate('messages.users_list') : ($role == 'volunteer' ? translate('messages.volunteers_list') : translate('messages.moderators_list')) }}
+        </h6>
         <div class="d-flex">
             @if($role == 'user')
                 <a href="{{ route('admin.users.create', ['role' => 'user']) }}" class="btn btn-sm btn-primary mr-2">
                     <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_user') }}
                 </a>
             @elseif($role == 'volunteer')
-                <a href="" class="btn btn-sm btn-primary mr-2">
+                <a href="{{ route('admin.users.create', ['role' => 'volunteer']) }}" class="btn btn-sm btn-primary mr-2">
                     <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_volunteer') }}
                 </a>
             @elseif($role == 'moderator')
-                <a href="" class="btn btn-sm btn-primary mr-2">
+                <a href="{{ route('admin.users.create', ['role' => 'moderator']) }}" class="btn btn-sm btn-primary mr-2">
                     <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_moderator') }}
                 </a>
             @endif
@@ -25,32 +27,56 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
                     <a class="dropdown-item" href="#" id="exportCSV">
-                        <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.csv') }}
+                        <i class="fas fa-file-csv fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.csv') }}
                     </a>
                     <a class="dropdown-item" href="#" id="exportPDF">
-                        <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.pdf') }}
+                        <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.pdf') }}
                     </a>
                 </div>
             </div>
-            <div class="dropdown mr-2">
+            <div class="dropdown">
                 <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-filter fa-sm"></i> {{ translate('messages.filter') }}
                 </button>
-                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="filterDropdown">
-                    <div class="dropdown-header">{{ translate('messages.filter_by') }}:</div>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-user-tag fa-sm fa-fw text-gray-400"></i> {{ translate('messages.role') }}
-                    </a>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-toggle-on fa-sm fa-fw text-gray-400"></i> {{ translate('messages.status') }}
-                    </a>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-check-circle fa-sm fa-fw text-gray-400"></i> {{ translate('messages.verification') }}
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-undo fa-sm fa-fw text-gray-400"></i> {{ translate('messages.reset_filters') }}
-                    </a>
+                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 300px;">
+                    <h6 class="dropdown-header">{{ translate('messages.filter_users') }}</h6>
+                    <form id="filterFormDropdown">
+                        <div class="mb-2">
+                            <label for="filterRoleDropdown" class="form-label small">{{ translate('messages.role') }}</label>
+                            <select class="form-control form-control-sm" id="filterRoleDropdown">
+                                <option value="" selected>{{ translate('messages.all_roles') }}</option>
+                                <option value="user">{{ translate('messages.user') }}</option>
+                                <option value="volunteer">{{ translate('messages.volunteer') }}</option>
+                                <option value="moderator">{{ translate('messages.moderator') }}</option>
+                                <option value="admin">{{ translate('messages.admin') }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label for="filterStatusDropdown" class="form-label small">{{ translate('messages.status') }}</label>
+                            <select class="form-control form-control-sm" id="filterStatusDropdown">
+                                <option value="" selected>{{ translate('messages.all_status') }}</option>
+                                <option value="active">{{ translate('messages.active') }}</option>
+                                <option value="pending">{{ translate('messages.pending') }}</option>
+                                <option value="blocked">{{ translate('messages.blocked') }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label for="filterVerificationDropdown" class="form-label small">{{ translate('messages.verification') }}</label>
+                            <select class="form-control form-control-sm" id="filterVerificationDropdown">
+                                <option value="" selected>{{ translate('messages.all_verification') }}</option>
+                                <option value="verified">{{ translate('messages.verified') }}</option>
+                                <option value="unverified">{{ translate('messages.unverified') }}</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersDropdownBtn">
+                                <i class="fas fa-undo fa-sm"></i> {{ translate('messages.reset') }}
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary" id="applyFiltersDropdownBtn">
+                                <i class="fas fa-filter fa-sm"></i> {{ translate('messages.apply') }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -60,6 +86,8 @@
             <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
+                        <th>{{ translate('messages.id') }}</th>
+                        <th>{{ translate('messages.image') }}</th>
                         <th>{{ translate('messages.user') }}</th>
                         <th>{{ translate('messages.role') }}</th>
                         <th>{{ translate('messages.email') }}</th>
@@ -72,27 +100,32 @@
                 <tbody>
                     @forelse($users as $user)
                         <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="{{ $user->image_path ? asset('storage/app/public/user/' . $user->image_path) : asset('assets/admin/img/undraw_profile.svg') }}"
-                                         onerror="this.src='{{ asset('assets/admin/img/undraw_profile.svg') }}'"
-                                         class="user-avatar mr-2" alt="User Image">
-                                    <div>
-                                        <div class="font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</div>
-                                        <div class="small text-muted">@{{ $user->username ?? Str::slug($user->first_name . $user->last_name) }}</div>
-                                    </div>
+                            <td>{{ $user->id }}</td>
+                            <td class="text-center">
+                                <div class="user-thumbnail">
+                                    @if($user->image_path)
+                                        <img src="{{ asset('storage/app/public/users/' . $user->image_path) }}" alt="{{ $user->first_name }}" class="img-thumbnail" style="width: 48px; height: 48px; object-fit: cover;">
+                                    @else
+                                        <img src="{{ asset('assets/admin/img/undraw_profile.svg') }}" alt="{{ $user->first_name }}" class="img-thumbnail" style="width: 48px; height: 48px; object-fit: cover;">
+                                    @endif
                                 </div>
                             </td>
                             <td>
-                                @if($user->role->value === 'volunteer')
+                                <div class="font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                <div class="small text-muted">{{'@'.$user->username ?? translate('messages.not_created') }}</div>
+                            </td>
+                            <td>
+                                @if($user->role === 'volunteer')
                                     <span class="badge badge-volunteer">{{ translate('messages.volunteer') }}</span>
                                     <div class="small mt-1">
                                         <span class="points-badge">
-                                            <i class="fas fa-star fa-sm"></i> {{ $user->points ?? 0 }} pts
+                                            <i class="fas fa-star fa-sm"></i> {{ $user->points ?? 0 }} {{ translate('messages.pts') }}
                                         </span>
                                     </div>
-                                @elseif($user->role->value === 'admin')
+                                @elseif($user->role === 'admin')
                                     <span class="badge badge-admin">{{ translate('messages.admin') }}</span>
+                                @elseif($user->role === 'moderator')
+                                    <span class="badge badge-moderator">{{ translate('messages.moderator') }}</span>
                                 @else
                                     <span class="badge badge-user">{{ translate('messages.user') }}</span>
                                 @endif
@@ -100,24 +133,35 @@
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->phone }}</td>
                             <td>
-                                <span class="badge badge-{{ $user->status == 'active' ? 'success' : ($user->status == 'pending' ? 'warning' : 'secondary') }}">
-                                    {{ translate('messages.' . $user->status) }}
-                                </span>
+                                @if($user->is_active == 0)
+                                    <span class="badge badge-success">{{ translate('messages.active') }}</span>
+                                @elseif($user->is_active == 1)
+                                    <span class="badge badge-warning">{{ translate('messages.pending') }}</span>
+                                @else
+                                    <span class="badge badge-secondary">{{ translate('messages.unknown') }}</span>
+                                @endif
                             </td>
                             <td>{{ $user->created_at->format('Y-m-d') }}</td>
                             <td>
-                                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-primary btn-circle btn-sm" title="{{ translate('messages.edit') }}">
+                                <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info" title="{{ translate('messages.view_profile') }}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary" title="{{ translate('messages.edit') }}">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-info btn-circle btn-sm" title="{{ translate('messages.view_profile') }}">
-                                    <i class="fas fa-user"></i>
-                                </a>
+                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" title="{{ translate('messages.delete') }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                                 @if($user->status == 'pending')
-                                    <a href="#" class="btn btn-success btn-circle btn-sm" title="{{ translate('messages.verify') }}">
+                                    <a href="#" class="btn btn-sm btn-success" title="{{ translate('messages.verify') }}">
                                         <i class="fas fa-check"></i>
                                     </a>
-                                @else
-                                    <a href="#" class="btn btn-danger btn-circle btn-sm" title="{{ translate('messages.block') }}">
+                                @elseif($user->status == 'active')
+                                    <a href="#" class="btn btn-sm btn-danger" title="{{ translate('messages.block') }}">
                                         <i class="fas fa-ban"></i>
                                     </a>
                                 @endif
@@ -125,7 +169,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4">{{ translate('messages.no_users_found') }}</td>
+                            <td colspan="9" class="text-center py-4">{{ translate('messages.no_users_found') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

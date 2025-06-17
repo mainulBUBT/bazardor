@@ -27,7 +27,11 @@ class UserStoreUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('user') ? $this->route('user')->id : $this->input('id');
+        $routeUser = $this->route('user');
+        $userId = is_object($routeUser) ? $routeUser->id : $routeUser;
+        if (!$userId) {
+            $userId = $this->input('id');
+        }
 
         $passwordRules = 'required|string|min:8|confirmed';
 
@@ -36,14 +40,15 @@ class UserStoreUpdateRequest extends FormRequest
         }
 
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
             'phone' => ['required', 'string', 'max:20', Rule::unique('users')->ignore($userId)],
             'role' => ['required', new Enum(Role::class)],
             'password' => $passwordRules,
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($userId)],
-            'date_of_birth' => ['nullable', 'date', 'before_or_equal:today', 'after_or_equal:1900-01-01'],
+            'dob' => ['nullable', 'date', 'before_or_equal:today', 'after_or_equal:1900-01-01'],
             'gender' => ['nullable', 'string', Rule::in(['male', 'female', 'other', 'prefer_not_to_say'])],
             'address' => ['nullable', 'string', 'max:1000'],
             'city' => ['nullable', 'string', 'max:255'],
@@ -52,6 +57,8 @@ class UserStoreUpdateRequest extends FormRequest
             'phone_verified' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
             'subscribed_to_newsletter' => ['nullable', 'boolean'],
+            'referral_code' => ['nullable', 'string', 'max:255', Rule::unique('users')->ignore($userId)],
+            'referred_by' => ['nullable', 'string', 'max:255', Rule::exists('users', 'referral_code')],
         ];
     }
 }

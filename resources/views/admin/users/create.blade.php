@@ -16,22 +16,32 @@
                         <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.basic_information') }}</h6>
                     </div>
                     <div class="card-body">
-                            <div class="form-group required">
-                                <label for="name">{{ translate('messages.name') }}</label>
-                                <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="first_name">{{ translate('messages.first_name') }}</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group required">
+                                        <label for="last_name">{{ translate('messages.last_name') }}</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group required">
                                         <label for="username">{{ translate('messages.username') }}</label>
-                                        <input type="text" class="form-control" id="username" name="username" value="{{ old('username') }}" required>
+                                        <input type="text" class="form-control" id="username" name="username" required>
                                         <small class="form-text text-muted">{{ translate('messages.must_be_unique_and_contain_only_letters_numbers_and_underscores') }}</small>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group required">
                                         <label for="email">{{ translate('messages.email_address') }}</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
+                                        <input type="email" class="form-control" id="email" name="email" required>
                                     </div>
                                 </div>
                             </div>
@@ -39,7 +49,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group required">
                                         <label for="phone">{{ translate('messages.phone_number') }}</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required pattern="[0-9]{11}" placeholder="+880">
+                                        <input type="tel" class="form-control" id="phone" name="phone" required pattern="[0-9]{11}" placeholder="+880">
                                         <small class="form-text text-muted">{{ translate('messages.format_11_digits_number') }}</small>
                                     </div>
                                 </div>
@@ -93,7 +103,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="dateOfBirth">{{ translate('messages.date_of_birth') }}</label>
-                                    <input type="date" class="form-control" id="dateOfBirth" name="date_of_birth" value="{{ old('date_of_birth') }}">
+                                    <input type="date" class="form-control" id="dateOfBirth" name="dob">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -101,10 +111,8 @@
                                     <label for="gender">{{ translate('messages.gender') }}</label>
                                     <select class="form-control select2" id="gender" name="gender">
                                         <option value="">{{ translate('messages.select_gender') }}</option>
-                                        <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>{{ translate('messages.male') }}</option>
-                                        <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>{{ translate('messages.female') }}</option>
-                                        <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>{{ translate('messages.other') }}</option>
-                                        <option value="prefer_not_to_say" {{ old('gender') == 'prefer_not_to_say' ? 'selected' : '' }}>{{ translate('messages.prefer_not_to_say') }}</option>
+                                        <option value="male">{{ translate('messages.male') }}</option>
+                                        <option value="female">{{ translate('messages.female') }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -112,14 +120,14 @@
 
                         <div class="form-group">
                             <label for="address">{{ translate('messages.address') }}</label>
-                            <textarea class="form-control" id="address" name="address" rows="3">{{ old('address') }}</textarea>
+                            <textarea class="form-control" id="address" name="address" rows="3"></textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="city">{{ translate('messages.city') }}</label>
-                                    <input type="text" class="form-control" id="city" name="city" value="{{ old('city') }}">
+                                    <input type="text" class="form-control" id="city" name="city">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -128,7 +136,7 @@
                                     <select class="form-control select2" id="division" name="division">
                                         <option value="">{{ translate('messages.select_division') }}</option>
                                         @foreach(\App\Enums\Location::getDivisions() as $division)
-                                            <option value="{{ $division }}" {{ old('division') == $division ? 'selected' : '' }}>{{ $division }}</option>
+                                            <option value="{{ $division }}">{{ $division }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -167,15 +175,15 @@
                     </div>
                     <div class="card-body">
                         <div class="custom-control custom-switch mb-3">
-                            <input type="checkbox" class="custom-control-input" id="emailVerified" name="email_verified" value="1" {{ old('email_verified') ? 'checked' : '' }}>
+                            <input type="checkbox" class="custom-control-input" id="emailVerified" name="email_verified" value="1">
                             <label class="custom-control-label" for="emailVerified">{{ translate('messages.email_verified') }}</label>
                         </div>
                         <div class="custom-control custom-switch mb-3">
-                            <input type="checkbox" class="custom-control-input" id="activeStatus" name="is_active" value="1" @if($errors->any()) {{ old('is_active') ? 'checked' : '' }} @else checked @endif>
+                            <input type="checkbox" class="custom-control-input" id="activeStatus" name="is_active" value="1" checked>
                             <label class="custom-control-label" for="activeStatus">{{ translate('messages.active_status') }}</label>
                         </div>
                         <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="newsletterSubscription" name="subscribed_to_newsletter" value="1" @if($errors->any()) {{ old('subscribed_to_newsletter') ? 'checked' : '' }} @else checked @endif>
+                            <input type="checkbox" class="custom-control-input" id="newsletterSubscription" name="subscribed_to_newsletter" value="1" checked>
                             <label class="custom-control-label" for="newsletterSubscription">{{ translate('messages.newsletter_subscription') }}</label>
                         </div>
                     </div>
