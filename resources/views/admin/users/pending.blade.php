@@ -46,42 +46,20 @@
                                 <td>
                                     <span class="badge badge-warning">{{ translate('messages.pending') }}</span>
                                 </td>
-                                <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.users.show', $user->id) }}" 
-                                           class="btn btn-info btn-sm" 
-                                           title="{{ translate('messages.view') }}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.users.edit', $user->id) }}" 
-                                           class="btn btn-primary btn-sm"
-                                           title="{{ translate('messages.edit') }}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.users.approve', $user->id) }}" 
-                                              method="POST" 
-                                              class="d-inline-block">
-                                            @csrf
-                                            <button type="submit" 
-                                                    class="btn btn-success btn-sm"
-                                                    title="{{ translate('messages.approve') }}"
-                                                    onclick="return confirm('{{ translate('messages.are_you_sure_to_approve') }}')">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin.users.reject', $user->id) }}" 
-                                              method="POST" 
-                                              class="d-inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="btn btn-danger btn-sm"
-                                                    title="{{ translate('messages.reject') }}"
-                                                    onclick="return confirm('{{ translate('messages.are_you_sure_to_reject') }}')">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                <td>
+                                    <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info" title="{{ translate('messages.view_profile') }}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="{{ translate('messages.delete') }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                        <a href="{{ route('admin.users.approve', $user->id) }}" class="btn btn-sm btn-success" title="{{ translate('messages.verify') }}">
+                                        <i class="fas fa-check"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

@@ -99,7 +99,7 @@ class UserManagementService
         $data['password'] = bcrypt($data['password']);
 
         if (isset($data['image']) && $data['image']->isValid()) {
-            $imageName = handle_file_upload('users/', $data['image']->getClientOriginalExtension(), $data['image']);
+            $imageName = handle_file_upload('users/', $data['image']->getClientOriginalExtension(), $data['image'],  null);
             $data['image_path'] = $imageName;
         }
         unset($data['image']);

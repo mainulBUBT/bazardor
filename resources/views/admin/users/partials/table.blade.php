@@ -156,15 +156,6 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
-                                @if($user->status == 'pending')
-                                    <a href="#" class="btn btn-sm btn-success" title="{{ translate('messages.verify') }}">
-                                        <i class="fas fa-check"></i>
-                                    </a>
-                                @elseif($user->status == 'active')
-                                    <a href="#" class="btn btn-sm btn-danger" title="{{ translate('messages.block') }}">
-                                        <i class="fas fa-ban"></i>
-                                    </a>
-                                @endif
                             </td>
                         </tr>
                     @empty

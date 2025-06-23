@@ -46,7 +46,7 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
         
         // Pending Users Routes
         Route::get('pending', [UserManagementController::class, 'pending'])->name('pending');
-        Route::post('{user}/approve', [UserManagementController::class, 'approve'])->name('approve');
-        Route::delete('{user}/reject', [UserManagementController::class, 'reject'])->name('reject');
+        Route::get('{user}/approve', [UserManagementController::class, 'approve'])->name('approve');
+        Route::get('{user}/reject', [UserManagementController::class, 'reject'])->name('reject');
     });
 });
