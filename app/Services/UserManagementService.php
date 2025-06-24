@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\User;
 use App\Enums\Role;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role as SpatieRole;
+
 class UserManagementService
 {
     public function __construct(private User $user)
@@ -123,6 +125,16 @@ class UserManagementService
             'email_verified_at' => !empty($data['email_verified']) ? now() : null,
         ]);
 
+        // Assign role using Spatie
+        if (isset($data['role'])) {
+            $user->assignRole($data['role']);
+        }
+
+        // Assign custom role if specified
+        if (isset($data['custom_role'])) {
+            $user->assignRole($data['custom_role']);
+        }
+
         $user->update([
             'referral_code' => $this->generateReferralCode(),
             'referred_by' => $data['referred_by'],
@@ -174,6 +186,19 @@ class UserManagementService
             'subscribed_to_newsletter' => !empty($data['subscribed_to_newsletter']),
             'email_verified_at' => !empty($data['email_verified']) ? now() : null,
         ]);
+
+        // Update roles
+        if (isset($data['role'])) {
+            // Remove all roles first
+            $user->syncRoles([]);
+            // Assign the main role
+            $user->assignRole($data['role']);
+        }
+
+        // Assign custom role if specified
+        if (isset($data['custom_role'])) {
+            $user->assignRole($data['custom_role']);
+        }
 
         return $user;
     }
@@ -255,6 +280,18 @@ class UserManagementService
     public function rejectUser(string $id): bool
     {
         $user = $this->user->findOrFail($id);
-        return $user->delete();
+        return $user->update([
+            'status' => 'rejected'
+        ]);
+    }
+
+    /**
+     * Get all available roles for assignment
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllRoles()
+    {
+        return SpatieRole::all();
     }
 }

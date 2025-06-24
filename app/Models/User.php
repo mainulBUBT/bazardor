@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\Role;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -56,7 +57,6 @@ class User extends Authenticatable
         return $this->role === Role::SUPER_ADMIN->value;
     }
 
-
     public function isModerator(): bool
     {
         return $this->role === Role::MODERATOR;
@@ -72,8 +72,13 @@ class User extends Authenticatable
         return $this->role === Role::USER->value;
     }
 
+    // Legacy method for backward compatibility
     public function hasPermission(\App\Enums\Permission $permission): bool
     {   
+        if ($this->hasPermissionTo($permission->value)) {
+            return true;
+        }
+        
         $rolePermissions = config('roles')[$this->role] ?? [];
         return in_array($permission->value, $rolePermissions);
     }

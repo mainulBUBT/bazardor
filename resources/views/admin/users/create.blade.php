@@ -67,6 +67,18 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="custom_role">{{ translate('messages.custom_role') }}</label>
+                                        <select class="form-control select2" id="custom_role" name="custom_role">
+                                            <option value="">{{ translate('messages.select_custom_role') }}</option>
+                                            @foreach(\Spatie\Permission\Models\Role::whereNotIn('name', ['super_admin', 'moderator', 'volunteer', 'user'])->get() as $customRole)
+                                                <option value="{{ $customRole->name }}" {{ old('custom_role') == $customRole->name ? 'selected' : '' }}>{{ ucfirst($customRole->name) }}</option>
+                                            @endforeach
+                                        </select>
+                                        <small class="form-text text-muted">{{ translate('messages.optional_custom_role_with_specific_permissions') }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="form-group required">
                                         <label for="password">{{ translate('messages.password') }}</label>
                                         <div class="position-relative">
@@ -78,6 +90,8 @@
                                         <small class="form-text text-muted">{{ translate('messages.minimum_8_characters') }}</small>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group required">
                                         <label for="confirmPassword">{{ translate('messages.confirm_password') }}</label>

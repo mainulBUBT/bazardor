@@ -604,4 +604,9 @@
   'optional_referral_code' => 'Optional referral code',
   'back' => 'Back',
   'referred_by' => 'Referred by',
+  'Roles & Permissions' => 'Roles & Permissions',
+  'Pending Moderators' => 'Pending Moderators',
+  'custom_role' => 'Custom role',
+  'select_custom_role' => 'Select custom role',
+  'optional_custom_role_with_specific_permissions' => 'Optional custom role with specific permissions',
 );

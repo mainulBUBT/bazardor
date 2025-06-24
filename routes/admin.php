@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\MarketController;
 use App\Http\Controllers\Admin\ProductController;
 
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
@@ -48,5 +49,15 @@ Route::group(["prefix"=> "admin", "as"=> "admin."], function () {
         Route::get('pending', [UserManagementController::class, 'pending'])->name('pending');
         Route::get('{user}/approve', [UserManagementController::class, 'approve'])->name('approve');
         Route::get('{user}/reject', [UserManagementController::class, 'reject'])->name('reject');
+    });
+
+    // Role Management Routes
+    Route::group(["prefix"=> "roles", "as"=> "roles."], function () {
+        Route::get('/', [RoleController::class, 'index'])->name('index');
+        Route::get('create', [RoleController::class, 'create'])->name('create');
+        Route::post('/', [RoleController::class, 'store'])->name('store');
+        Route::get('{role}/edit', [RoleController::class, 'edit'])->name('edit');
+        Route::put('{role}', [RoleController::class, 'update'])->name('update');
+        Route::delete('{role}', [RoleController::class, 'destroy'])->name('destroy');
     });
 });
