@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UserStoreUpdateRequest;
+use App\Http\Requests\UserStoreUpdateRequest;
 use Illuminate\Http\Request;
 use App\Services\UserManagementService;
 use Brian2694\Toastr\Facades\Toastr;
@@ -39,7 +39,7 @@ class UserManagementController extends Controller
      *
      * @param string $role
      * @return \Illuminate\Contracts\View\View
-     */
+    */
     public function create(string $role)
     {
         return view('admin.users.create', compact('role'));

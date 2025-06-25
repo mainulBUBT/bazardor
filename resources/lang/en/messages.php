@@ -609,4 +609,11 @@
   'custom_role' => 'Custom role',
   'select_custom_role' => 'Select custom role',
   'optional_custom_role_with_specific_permissions' => 'Optional custom role with specific permissions',
+  'email_is_required' => 'Email address is required',
+  'please_enter_valid_email' => 'Please enter a valid email address',
+  'password_is_required' => 'Password is required',
+  'login_successful' => 'Login successful',
+  'you_do_not_have_permission_to_access_admin_panel' => 'You do not have permission to access admin panel',
+  'invalid_email_or_password' => 'Invalid email or password',
+  'logged_out_successfully' => 'Logged out successfully',
 );
