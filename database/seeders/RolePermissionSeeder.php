@@ -21,7 +21,7 @@ class RolePermissionSeeder extends Seeder
 
         // Create permissions
         foreach (PermissionEnum::cases() as $permissionEnum) {
-            Permission::create(['name' => $permissionEnum->value]);
+            Permission::firstOrCreate(['name' => $permissionEnum->value]);
         }
 
         // Create roles and assign permissions
@@ -33,8 +33,8 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($roles as $roleName => $permissions) {
-            $role = Role::create(['name' => $roleName]);
-            $role->givePermissionTo($permissions);
+            $role = Role::firstOrCreate(['name' => $roleName]);
+            $role->syncPermissions($permissions);
         }
 
         // Assign roles to existing users

@@ -616,4 +616,5 @@
   'you_do_not_have_permission_to_access_admin_panel' => 'You do not have permission to access admin panel',
   'invalid_email_or_password' => 'Invalid email or password',
   'logged_out_successfully' => 'Logged out successfully',
+  'you_do_not_have_permission_to_access_panel' => 'You do not have permission to access panel',
 );
