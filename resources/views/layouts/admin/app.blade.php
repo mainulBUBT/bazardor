@@ -26,6 +26,26 @@
                 background-repeat: no-repeat;
                 background-position: right 10px center;
             }
+            
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            #page-top {
+                min-height: 100vh;
+            }
+            
+            /* Additional sidebar fixes */
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .sidebar .nav-item:last-child {
+                margin-top: auto;
+            }
         </style>
         <link href="{{ asset('public/assets/admin/css/custom.css') }}" rel="stylesheet">
         <!-- Toastr CSS -->
@@ -206,6 +226,63 @@
                 }
             })
         }
+        </script>
+
+        <script>
+        $(document).ready(function() {
+            // Mobile sidebar toggle functionality
+            function handleSidebarToggle() {
+                if ($(window).width() <= 768) {
+                    // Mobile behavior
+                    $('#sidebarToggleTop').on('click', function(e) {
+                        e.preventDefault();
+                        $('.sidebar').toggleClass('toggled');
+                        $('body').toggleClass('sidebar-toggled');
+                        
+                        // Add overlay
+                        if ($('.sidebar').hasClass('toggled')) {
+                            if (!$('.sidebar-overlay').length) {
+                                $('body').append('<div class="sidebar-overlay"></div>');
+                            }
+                            $('.sidebar-overlay').addClass('show');
+                        } else {
+                            $('.sidebar-overlay').removeClass('show');
+                        }
+                    });
+                    
+                    // Close sidebar when clicking overlay
+                    $(document).on('click', '.sidebar-overlay', function() {
+                        $('.sidebar').removeClass('toggled');
+                        $('body').removeClass('sidebar-toggled');
+                        $(this).removeClass('show');
+                    });
+                    
+                    // Close sidebar when clicking outside on mobile
+                    $(document).on('click', function(e) {
+                        if ($(window).width() <= 768 && 
+                            !$(e.target).closest('.sidebar').length && 
+                            !$(e.target).closest('#sidebarToggleTop').length &&
+                            $('.sidebar').hasClass('toggled')) {
+                            $('.sidebar').removeClass('toggled');
+                            $('body').removeClass('sidebar-toggled');
+                            $('.sidebar-overlay').removeClass('show');
+                        }
+                    });
+                }
+            }
+            
+            // Initialize
+            handleSidebarToggle();
+            
+            // Re-initialize on window resize
+            $(window).on('resize', function() {
+                if ($(window).width() > 768) {
+                    $('.sidebar').removeClass('toggled');
+                    $('body').removeClass('sidebar-toggled');
+                    $('.sidebar-overlay').removeClass('show');
+                }
+            });
+        });
         </script>
 
         @if ($errors->any())
