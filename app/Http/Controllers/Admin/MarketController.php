@@ -9,20 +9,23 @@ use Illuminate\Http\Request;
 use App\Enums\Location;
 use App\Models\Market;
 use App\Services\MarketService;
+use App\Services\ZoneService;
 
 class MarketController extends Controller
 {
-    public function __construct(protected MarketService $marketService)
+    public function __construct(protected MarketService $marketService, protected ZoneService $zoneService)
     {
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the markets.
+     *
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
-        $markets = $this->marketService->getMarkets();
-        return view("admin.markets.index", compact('markets'));
+        $markets = $this->marketService->getMarkets(['zone']);
+        return view('admin.markets.index', compact('markets'));
     }
 
     /**
@@ -31,17 +34,21 @@ class MarketController extends Controller
     public function create()
     {
         $divisions = Location::getDivisions();
-        return view("admin.markets.create", compact('divisions'));
+        $zones = $this->zoneService->getZones();
+        return view("admin.markets.create", compact('divisions', 'zones'));
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(MarketStoreUpdateRequest $request)
     {
         $this->marketService->store($request->validated());
-        
-        Toastr::success(translate("messages.market_created_successfully"));
+        Toastr::success(translate('messages.market_created_successfully'));
+
         return redirect()->route('admin.markets.index');
     }
 
@@ -54,34 +61,48 @@ class MarketController extends Controller
         return view('admin.markets.show', compact('market'));
     }
 
-    public function edit(string $id)
+    /**
+     * Show the form for editing the specified market.
+     *
+     * @param int $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit($id)
     {
-        $market = $this->marketService->findById($id, ['marketInformation', 'openingHours']);
+        $market = $this->marketService->findById($id);
+        
+        // Get location data for dropdowns
         $divisions = Location::getDivisions();
-        $districts = Location::getDistricts($market->division);
-        $upazilas = Location::getThanas($market->division, $market->district);
-
-
-        return view('admin.markets.edit', compact('market', 'divisions', 'districts', 'upazilas'));
+        $districts = Location::getDistricts($market->division ?? '');
+        $upazilas = Location::getThanas($market->division ?? '', $market->district ?? '');
+        $zones = $this->zoneService->getZones();
+        
+        return view('admin.markets.edit', compact('market', 'divisions', 'districts', 'upazilas', 'zones'));
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function update(MarketStoreUpdateRequest $request, string $id)
+    public function update(Request $request, $id)
     {
         $this->marketService->update($request->validated(), $id);
-        Toastr::success(translate("messages.market_updated_successfully"));
+        Toastr::success(translate('messages.market_updated_successfully'));
         
-        return redirect()->back();
+        return redirect()->route('admin.markets.index');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Summary of destroy
+     * @param string $id
+     * @return mixed|\Illuminate\Http\RedirectResponse
      */
     public function destroy(string $id)
     {
-        $this->marketService->delete($id);
+        $this->marketService->findById($id)->delete();
         Toastr::success(translate('messages.market_deleted_successfully'));
         
         return redirect()->route('admin.markets.index');
@@ -109,4 +130,5 @@ class MarketController extends Controller
         $thanas = Location::getThanas($division, $district);
         return response()->json($thanas);
     }
+    
 }

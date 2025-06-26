@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\Role;
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserStoreUpdateRequest;
 use Illuminate\Http\Request;
 use App\Services\UserManagementService;
+use App\Services\RoleService;
 use Brian2694\Toastr\Facades\Toastr;
+use Spatie\Permission\Models\Role;
 
 class UserManagementController extends Controller
 {
-    public function __construct(protected UserManagementService $userService) {
-
+    public function __construct(
+        protected UserManagementService $userService,
+        protected RoleService $roleService
+    ) {
     }
 
     /**
@@ -23,7 +27,7 @@ class UserManagementController extends Controller
      */
     public function index(Request $request)
     {   
-        $role = $request->input('role', Role::USER->value);
+        $role = $request->input('role', UserType::USER->value);
         $users = $this->userService->getUsers($role, $request->search);
         $userStats = $this->userService->getUserStats();
 
@@ -42,7 +46,14 @@ class UserManagementController extends Controller
     */
     public function create(string $role)
     {
-        return view('admin.users.create', compact('role'));
+        $functionalRoles = $this->roleService->getRoles()->whereNotIn('name', [
+            UserType::SUPER_ADMIN->value,
+            UserType::MODERATOR->value,
+            UserType::VOLUNTEER->value,
+            UserType::USER->value
+        ]);
+        
+        return view('admin.users.create', compact('role', 'functionalRoles'));
     }
 
     /**
@@ -53,7 +64,14 @@ class UserManagementController extends Controller
      */
     public function store(UserStoreUpdateRequest $request)
     {
-        $this->userService->store($request->validated());
+        $data = $request->validated();
+        
+        // Handle functional roles if provided
+        if ($request->has('functional_roles')) {
+            $data['functional_roles'] = $request->functional_roles;
+        }
+        
+        $this->userService->store($data);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
@@ -67,7 +85,14 @@ class UserManagementController extends Controller
     public function edit(string $id)
     {
         $user = $this->userService->findById($id);
-        return view('admin.users.edit', compact('user'));
+        $functionalRoles = $this->roleService->getRoles()->whereNotIn('name', [
+            UserType::SUPER_ADMIN->value,
+            UserType::MODERATOR->value,
+            UserType::VOLUNTEER->value,
+            UserType::USER->value
+        ]);
+        
+        return view('admin.users.edit', compact('user', 'functionalRoles'));
     }
 
     /**
@@ -79,7 +104,14 @@ class UserManagementController extends Controller
      */
     public function update(UserStoreUpdateRequest $request, string $id)
     {
-        $this->userService->update($id, $request->validated());
+        $data = $request->validated();
+        
+        // Handle functional roles if provided
+        if ($request->has('functional_roles')) {
+            $data['functional_roles'] = $request->functional_roles;
+        }
+        
+        $this->userService->update($id, $data);
         Toastr::success(translate('messages.user_updated_successfully'));
 
         return redirect()->route('admin.users.index', ['role' => $request->role ?? 'user']);
@@ -92,7 +124,7 @@ class UserManagementController extends Controller
      */
     public function show(string $id)
     {
-        $user = $this->userService->findById($id);
+        $user = $this->userService->findById($id, ['roles']);
         return view('admin.users.show', compact('user'));
     }
 

@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Enums\Role;
+use App\Enums\UserType;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -41,11 +41,32 @@ class User extends Authenticatable
         'phone_verified_at' => 'datetime',
         'password' => 'hashed',
         'role' => 'string',
+        'user_type' => 'string',
         'dob' => 'date',
         'is_active' => 'boolean',
         'subscribed_to_newsletter' => 'boolean',
         'status' => 'string',
     ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            // Automatically assign a role based on user_type if not already assigned
+            if (!$user->roles()->count() && $user->user_type) {
+                $user->assignRole($user->user_type);
+            }
+        });
+
+        static::updated(function (User $user) {
+            // If user_type changed, sync the corresponding role
+            if ($user->isDirty('user_type') && $user->user_type) {
+                $user->syncRoles([$user->user_type]);
+            }
+        });
+    }
 
     public function createdEntities()
     {
@@ -54,22 +75,30 @@ class User extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return $this->role === Role::SUPER_ADMIN->value;
+        return $this->user_type === UserType::SUPER_ADMIN->value || 
+               $this->role === UserType::SUPER_ADMIN->value || 
+               $this->hasRole(UserType::SUPER_ADMIN->value);
     }
 
     public function isModerator(): bool
     {
-        return $this->role === Role::MODERATOR;
+        return $this->user_type === UserType::MODERATOR->value || 
+               $this->role === UserType::MODERATOR->value || 
+               $this->hasRole(UserType::MODERATOR->value);
     }
 
     public function isVolunteer(): bool
     {
-        return $this->role === Role::VOLUNTEER->value;
+        return $this->user_type === UserType::VOLUNTEER->value || 
+               $this->role === UserType::VOLUNTEER->value || 
+               $this->hasRole(UserType::VOLUNTEER->value);
     }
 
     public function isUser(): bool
     {
-        return $this->role === Role::USER->value;
+        return $this->user_type === UserType::USER->value || 
+               $this->role === UserType::USER->value || 
+               $this->hasRole(UserType::USER->value);
     }
 
     // Legacy method for backward compatibility

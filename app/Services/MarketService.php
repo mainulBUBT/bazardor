@@ -12,7 +12,7 @@ class MarketService
     public function __construct(private Market $market) {
     }
 
-    public function getMarkets($search = null, array $with = [])
+    public function getMarkets($with = [], $search = null)
     {
         return $this->market
         ->when(!empty($with), function ($query) use ($with) {
@@ -44,10 +44,11 @@ class MarketService
             $market->longitude = $data['longitude'] ?? null;
             $market->is_active = $data['status'] === 'active';
             $market->is_featured = $data['featured'] ?? false;
-            $market->division = $data['division'] ?? null;
+            $market->division = $data['division'] ?? null;      
             $market->district = $data['district'] ?? null;
             $market->upazila_or_thana = $data['upazila'] ?? null;
             $market->visibility = $data['visibility'] === 'public' ? 1 : 0;
+            $market->zone_id = $data['zone_id'] ?? null;
 
             $market->save();
 
@@ -127,6 +128,7 @@ class MarketService
             $market->district = $data['district'] ?? null;
             $market->upazila_or_thana = $data['upazila'] ?? null;
             $market->visibility = $data['visibility'] === 'public' ? 1 : 0;
+            $market->zone_id = $data['zone_id'] ?? $market->zone_id;
 
             $market->save();
 

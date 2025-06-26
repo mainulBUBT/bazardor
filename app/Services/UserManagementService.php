@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Enums\Role;
+use App\Enums\UserType;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role as SpatieRole;
 
@@ -20,7 +20,7 @@ class UserManagementService
      * @param array $with
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getUsers($role = Role::USER, $search = null, $with = [])
+    public function getUsers($role = UserType::USER, $search = null, $with = [])
     {
         return $this->user->where('role', $role)
             ->when($search, function ($query) use ($search) {
@@ -45,9 +45,9 @@ class UserManagementService
     public function getUserStats(): array
     {
         $roles = [
-            'user' => Role::USER,
-            'volunteer' => Role::VOLUNTEER,
-            'moderator' => Role::MODERATOR,
+            'user' => UserType::USER,
+            'volunteer' => UserType::VOLUNTEER,
+            'moderator' => UserType::MODERATOR,
         ];
 
         $statuses = [
@@ -113,6 +113,7 @@ class UserManagementService
             'email' => $data['email'],
             'password' => $data['password'],
             'role' => $data['role'],
+            'user_type' => $data['role'],
             'image_path' => $data['image_path'] ?? null,
             'phone' => $data['phone'],
             'gender' => $data['gender'] ?? null,
@@ -125,14 +126,14 @@ class UserManagementService
             'email_verified_at' => !empty($data['email_verified']) ? now() : null,
         ]);
 
-        // Assign role using Spatie
-        if (isset($data['role'])) {
-            $user->assignRole($data['role']);
-        }
+        // Assign user type role
+        $user->assignRole($data['role']);
 
-        // Assign custom role if specified
-        if (isset($data['custom_role'])) {
-            $user->assignRole($data['custom_role']);
+        // Assign additional functional roles if specified
+        if (isset($data['functional_roles']) && is_array($data['functional_roles'])) {
+            foreach ($data['functional_roles'] as $roleId) {
+                $user->assignRole($roleId);
+            }
         }
 
         $user->update([
@@ -176,6 +177,7 @@ class UserManagementService
             'last_name' => $data['last_name'] ?? null,
             'password' => $data['password'],
             'role' => $data['role'],
+            'user_type' => $data['role'],
             'image_path' => $data['image_path'] ?? $user->image_path,
             'gender' => $data['gender'] ?? null,
             'address' => $data['address'] ?? null,
@@ -187,17 +189,36 @@ class UserManagementService
             'email_verified_at' => !empty($data['email_verified']) ? now() : null,
         ]);
 
-        // Update roles
-        if (isset($data['role'])) {
-            // Remove all roles first
-            $user->syncRoles([]);
-            // Assign the main role
-            $user->assignRole($data['role']);
-        }
-
-        // Assign custom role if specified
-        if (isset($data['custom_role'])) {
-            $user->assignRole($data['custom_role']);
+        // Ensure user has the base user type role
+        $user->assignRole($data['role']);
+        
+        // Update functional roles
+        $userTypeRoles = [
+            UserType::SUPER_ADMIN->value,
+            UserType::MODERATOR->value,
+            UserType::VOLUNTEER->value,
+            UserType::USER->value
+        ];
+        
+        // Get current functional roles (excluding user type roles)
+        $currentFunctionalRoles = $user->roles->whereNotIn('name', $userTypeRoles)->pluck('id')->toArray();
+        
+        // Sync functional roles if provided
+        if (isset($data['functional_roles']) && is_array($data['functional_roles'])) {
+            // Remove old functional roles
+            foreach ($currentFunctionalRoles as $roleId) {
+                $user->removeRole($roleId);
+            }
+            
+            // Add new functional roles
+            foreach ($data['functional_roles'] as $roleId) {
+                $user->assignRole($roleId);
+            }
+        } else {
+            // If no functional roles provided, remove all existing ones
+            foreach ($currentFunctionalRoles as $roleId) {
+                $user->removeRole($roleId);
+            }
         }
 
         return $user;

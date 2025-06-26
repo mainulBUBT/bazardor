@@ -83,6 +83,20 @@
         </div>
     </li>
 
+    <!-- Nav Item - Zones -->
+    <li class="nav-item {{ request()->is('admin/zones*') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseZones" aria-expanded="{{ request()->is('admin/zones*') ? 'true' : 'false' }}" aria-controls="collapseZones">
+            <i class="fas fa-fw fa-map-marked-alt"></i>
+            <span>{{translate('messages.Zones') }}</span>
+        </a>
+        <div id="collapseZones" class="collapse{{ request()->is('admin/zones*') ? ' show' : '' }}" aria-labelledby="headingZones" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item {{ request()->is('admin/zones') && !request()->is('admin/zones/create') ? 'active' : '' }}" href="{{route('admin.zones.index')}}">{{translate('messages.All Zones') }}</a>
+                <a class="collapse-item {{ request()->is('admin/zones/create') ? 'active' : '' }}" href="{{route('admin.zones.create')}}">{{translate('messages.Add Zone') }}</a>
+            </div>
+        </div>
+    </li>
+
     <!-- Divider -->
     <hr class="sidebar-divider">
 

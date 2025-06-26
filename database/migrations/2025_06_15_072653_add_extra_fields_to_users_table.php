@@ -25,7 +25,8 @@ return new class extends Migration
             $table->string('referral_code')->nullable()->after('subscribed_to_newsletter');
             $table->string('referred_by')->nullable()->after('referral_code');
             $table->string('status')->default('pending')->after('referred_by');
-
+            $table->string('user_type')->default('user');
+            $table->foreignId('role_id')->nullable()->after('user_type');
         });
     }
 
@@ -47,6 +48,8 @@ return new class extends Migration
             $table->dropColumn('subscribed_to_newsletter');
             $table->dropColumn('referral_code');
             $table->dropColumn('referred_by');
+            $table->dropColumn('user_type');
+            $table->dropColumn('role_id');
         });
     }
 };

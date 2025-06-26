@@ -72,6 +72,28 @@ class Market extends Model
     }
 
     /**
+     * Get the opening hours associated with the market.
+     */
+    public function openingHours()
+    {
+        return $this->hasMany(MarketOperatingHour::class);
+    }
+
+
+    public function creatorRecord()
+    {
+        return $this->morphOne(\App\Models\EntityCreator::class, 'creatable');
+    }
+
+    /**
+     * Get the zone that owns the market.
+     */
+    public function zone()
+    {
+        return $this->belongsTo(Zone::class);
+    }
+
+     /**
      * Get the market's average rating.
      */
     public function getAverageRatingAttribute()
@@ -112,14 +134,6 @@ class Market extends Model
     }
 
     /**
-     * Get the opening hours associated with the market.
-     */
-    public function openingHours()
-    {
-        return $this->hasMany(MarketOperatingHour::class);
-    }
-
-    /**
      * Boot the model.
      */
     protected static function boot()
@@ -131,10 +145,5 @@ class Market extends Model
                 $market->slug = Str::slug($market, '-').Str::random(5);
             }
         });
-    }
-
-    public function creatorRecord()
-    {
-        return $this->morphOne(\App\Models\EntityCreator::class, 'creatable');
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Brian2694\Toastr\Facades\Toastr;
 use Symfony\Component\HttpFoundation\Response;
-use App\Enums\Role;
+use App\Enums\UserType;
 
 class   AdminMiddleware
 {
@@ -22,7 +22,7 @@ class   AdminMiddleware
     {
         if (Auth::check()) {
             $user = Auth::user();
-            if ($user->role === Role::SUPER_ADMIN->value || $user->role === Role::MODERATOR->value) {
+            if ($user->role === UserType::SUPER_ADMIN->value || $user->role === UserType::MODERATOR->value) {
                 return $next($request);
             }
         }

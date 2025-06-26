@@ -3,63 +3,71 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\RoleStoreUpdateRequest;
+use App\Services\RoleService;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use App\Enums\Permission as PermissionEnum;
+use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
+    public function __construct(protected RoleService $roleService)
+    {
+    }
+
     /**
-     * Display a listing of the roles.
+     * Display a listing of roles
+     * 
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
-        $roles = Role::with('permissions')->get();
+        $roles = $this->roleService->getRoles();
         return view('admin.roles.index', compact('roles'));
     }
 
     /**
-     * Show the form for creating a new role.
+     * Show form for creating a new role
+     * 
+     * @return \Illuminate\Contracts\View\View
      */
     public function create()
     {
-        $permissions = Permission::all();
-        $permissionGroups = $this->groupPermissionsByResource($permissions);
+        $permissions = $this->roleService->getAllPermissions();
+        $permissionGroups = $this->roleService->groupPermissionsByResource($permissions);
         
         return view('admin.roles.create', compact('permissionGroups'));
     }
 
     /**
-     * Store a newly created role in storage.
+     * Store a newly created role
+     * 
+     * @param RoleStoreUpdateRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(RoleStoreUpdateRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'required|array',
-            'permissions.*' => 'exists:permissions,id',
-        ]);
-
-        $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role created successfully.');
+        $this->roleService->store($request->validated());
+        Toastr::success(translate('messages.role_created_successfully'));
+        
+        return redirect()->route('admin.roles.index');
     }
 
     /**
-     * Show the form for editing the specified role.
+     * Show form for editing a role
+     * 
+     * @param Role $role
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(Role $role)
     {
         if ($role->name === 'super_admin') {
-            return redirect()->route('admin.roles.index')
-                ->with('error', 'Super Admin role cannot be edited.');
+            Toastr::error(translate('messages.super_admin_role_cannot_be_edited'));
+            return redirect()->route('admin.roles.index');
         }
 
-        $permissions = Permission::all();
-        $permissionGroups = $this->groupPermissionsByResource($permissions);
+        $permissions = $this->roleService->getAllPermissions();
+        $permissionGroups = $this->roleService->groupPermissionsByResource($permissions);
         
         $rolePermissions = $role->permissions->pluck('id')->toArray();
         
@@ -67,102 +75,31 @@ class RoleController extends Controller
     }
 
     /**
-     * Update the specified role in storage.
+     * Update a role
+     * 
+     * @param RoleStoreUpdateRequest $request
+     * @param Role $role
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Role $role)
+    public function update(RoleStoreUpdateRequest $request, Role $role)
     {
-        if ($role->name === 'super_admin') {
-            return redirect()->route('admin.roles.index')
-                ->with('error', 'Super Admin role cannot be updated.');
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'permissions' => 'required|array',
-            'permissions.*' => 'exists:permissions,id',
-        ]);
-
-        $role->update(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role updated successfully.');
+        $this->roleService->update($role->id, $request->validated());
+        Toastr::success(translate('messages.role_updated_successfully'));
+        
+        return redirect()->route('admin.roles.index');
     }
 
     /**
-     * Remove the specified role from storage.
+     * Delete a role
+     * 
+     * @param Role $role
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Role $role)
     {
-        if (in_array($role->name, ['super_admin', 'moderator', 'volunteer', 'user'])) {
-            return redirect()->route('admin.roles.index')
-                ->with('error', 'Default roles cannot be deleted.');
-        }
-
-        $role->delete();
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role deleted successfully.');
-    }
-
-    /**
-     * Group permissions by resource.
-     *
-     * @param \Illuminate\Database\Eloquent\Collection $permissions
-     * @return array
-     */
-    private function groupPermissionsByResource($permissions)
-    {
-        $groups = [];
+        $this->roleService->delete($role->id);
+        Toastr::success(translate('messages.role_deleted_successfully'));
         
-        foreach ($permissions as $permission) {
-            $parts = explode('_', $permission->name);
-            
-            // Skip if the permission name doesn't follow the expected format
-            if (count($parts) < 2) {
-                continue;
-            }
-            
-            // Extract resource and action from permission name
-            // For example: "manage_products" -> resource: "products", action: "manage"
-            // Or "view_reports" -> resource: "reports", action: "view"
-            $action = $parts[0];
-            $resource = implode('_', array_slice($parts, 1));
-            
-            // Convert to title case for display
-            $resourceTitle = ucwords(str_replace('_', ' ', $resource));
-            
-            if (!isset($groups[$resourceTitle])) {
-                $groups[$resourceTitle] = [
-                    'create' => null,
-                    'edit' => null,
-                    'view' => null,
-                    'delete' => null,
-                    'manage' => null,
-                    'approve' => null,
-                    'other' => []
-                ];
-            }
-            
-            // Map common actions
-            if ($action === 'manage') {
-                $groups[$resourceTitle]['manage'] = $permission;
-            } elseif ($action === 'create') {
-                $groups[$resourceTitle]['create'] = $permission;
-            } elseif ($action === 'edit' || $action === 'update') {
-                $groups[$resourceTitle]['edit'] = $permission;
-            } elseif ($action === 'view' || $action === 'read') {
-                $groups[$resourceTitle]['view'] = $permission;
-            } elseif ($action === 'delete') {
-                $groups[$resourceTitle]['delete'] = $permission;
-            } elseif ($action === 'approve') {
-                $groups[$resourceTitle]['approve'] = $permission;
-            } else {
-                // For other actions that don't fit the common pattern
-                $groups[$resourceTitle]['other'][] = $permission;
-            }
-        }
-        
-        return $groups;
+        return redirect()->route('admin.roles.index');
     }
 } 

@@ -37,14 +37,25 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="marketType" class="form-label">{{ translate('messages.Market Type') }} <span class="text-danger">*</span></label>
-                            <select class="form-control select2" id="marketType" name="type" required>
-                                <option value="" disabled {{ old('type') ? '' : 'selected' }}>{{ translate('messages.Select Type') }}</option>
-                                @foreach(\App\Enums\MarketType::cases() as $type)
-                                    <option value="{{ $type->value }}" {{ old('type') == $type->value ? 'selected' : '' }}>{{ $type->value }}</option>
-                                @endforeach
-                            </select>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="marketType" class="form-label">{{ translate('messages.Market Type') }} <span class="text-danger">*</span></label>
+                                <select class="form-control select2" id="marketType" name="type" required>
+                                    <option value="" disabled {{ old('type') ? '' : 'selected' }}>{{ translate('messages.Select Type') }}</option>
+                                    @foreach(\App\Enums\MarketType::cases() as $type)
+                                        <option value="{{ $type->value }}" {{ old('type') == $type->value ? 'selected' : '' }}>{{ $type->value }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="marketZone" class="form-label">{{ translate('messages.Zone') }}</label>
+                                <select class="form-control select2" id="marketZone" name="zone_id">
+                                    <option value="">{{ translate('messages.Select Zone') }}</option>
+                                    @foreach($zones as $zone)
+                                        <option value="{{ $zone->id }}" {{ old('zone_id') == $zone->id ? 'selected' : '' }}>{{ $zone->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <div class="mb-3">

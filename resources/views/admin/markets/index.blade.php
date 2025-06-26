@@ -101,6 +101,7 @@
                             <th>{{ translate('messages.Image') }}</th>
                             <th>{{ translate('messages.Market Name') }}</th>
                             <th>{{ translate('messages.Location') }}</th>
+                            <th>{{ translate('messages.Zone') }}</th>
                             <th>{{ translate('messages.Type') }}</th>
                             <th>{{ translate('messages.Rating') }}</th>
                             <th>{{ translate('messages.Status') }}</th>
@@ -123,11 +124,12 @@
                         </td>
                         <td>{{ $market->name }}</td>
                         <td>{{ Str::limit($market->address, 20) }}</td>
+                        <td>{{ $market->zone ? $market->zone->name : translate('messages.No Zone') }}</td>
                         <td>{{ $market->type }}</td>
-                                                    <td>
-                                {{ $market->rating }} <br>
-                                <span class="text-muted">({{ $market->rating_count ?? 0 }} {{ Str::plural('review', $market->rating_count ?? 0) }})</span>
-                            </td>
+                        <td>
+                            {{ $market->rating }} <br>
+                            <span class="text-muted">({{ $market->rating_count ?? 0 }} {{ Str::plural('review', $market->rating_count ?? 0) }})</span>
+                        </td>
                         <td>
                             @if($market->is_active == '1')
                                 <span class="badge badge-success">{{ translate('messages.Active') }}</span>

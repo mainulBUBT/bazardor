@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('entity_creators', function (Blueprint $table) {
             $table->id();
             // User who created the entity
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable();
 
             // Polymorphic relation fields: creatable_type & creatable_id
             $table->morphs('creatable');

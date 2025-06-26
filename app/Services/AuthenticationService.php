@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Enums\Role;
+use App\Enums\UserType;
 
 class AuthenticationService
 {
@@ -20,7 +20,7 @@ class AuthenticationService
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
             
-            if ($user->role === Role::SUPER_ADMIN->value || $user->role === Role::MODERATOR->value) {
+            if ($user->role === UserType::SUPER_ADMIN->value || $user->role === UserType::MODERATOR->value) {
                 return [
                     'success' => true,
                     'user' => $user,
@@ -93,6 +93,6 @@ class AuthenticationService
             return false;
         }
         
-        return $user->role === Role::SUPER_ADMIN->value || $user->role === Role::MODERATOR->value;
+        return $user->role === UserType::SUPER_ADMIN->value || $user->role === UserType::MODERATOR->value;
     }
 } 

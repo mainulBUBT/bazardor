@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Role;
 use App\Enums\Location;
+use App\Enums\UserType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -67,7 +67,7 @@ class UserStoreUpdateRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
             'phone' => ['required', 'string', 'max:20', Rule::unique('users')->ignore($userId)],
-            'role' => ['required', new Enum(Role::class)],
+            'role' => ['required', new Enum(UserType::class)],
             'password' => $passwordRules,
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($userId)],

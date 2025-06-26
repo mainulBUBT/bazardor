@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\ZoneController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "admin", "as" => "admin."], function () {
@@ -23,7 +24,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         });
     });
     
-    Route::group(["middleware" => ["web", "admin"]], function () {
+    Route::group(["middleware" => []], function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         
@@ -71,6 +72,18 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::get('{role}/edit', [RoleController::class, 'edit'])->name('edit');
             Route::put('{role}', [RoleController::class, 'update'])->name('update');
             Route::delete('{role}', [RoleController::class, 'destroy'])->name('destroy');
+        });
+
+        // Zones
+        Route::group(['prefix' => 'zones', 'as' => 'zones.'], function () {
+            Route::get('/', [ZoneController::class, 'index'])->name('index');
+            Route::get('/create', [ZoneController::class, 'create'])->name('create');
+            Route::post('/', [ZoneController::class, 'store'])->name('store');
+            Route::get('/{zone}', [ZoneController::class, 'show'])->name('show');
+            Route::get('/{zone}/edit', [ZoneController::class, 'edit'])->name('edit');
+            Route::put('/{zone}', [ZoneController::class, 'update'])->name('update');
+            Route::delete('/{zone}', [ZoneController::class, 'destroy'])->name('destroy');
+            Route::post('/{zone}/toggle-status', [ZoneController::class, 'toggleStatus'])->name('toggle-status');
         });
     });
 });

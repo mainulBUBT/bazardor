@@ -7,7 +7,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use App\Enums\Permission as PermissionEnum;
-use App\Enums\Role as RoleEnum;
+use App\Enums\UserType;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -26,10 +26,10 @@ class RolePermissionSeeder extends Seeder
 
         // Create roles and assign permissions
         $roles = [
-            RoleEnum::SUPER_ADMIN->value => config('roles')[RoleEnum::SUPER_ADMIN->value] ?? [],
-            RoleEnum::MODERATOR->value => config('roles')[RoleEnum::MODERATOR->value] ?? [],
-            RoleEnum::VOLUNTEER->value => config('roles')[RoleEnum::VOLUNTEER->value] ?? [],
-            RoleEnum::USER->value => config('roles')[RoleEnum::USER->value] ?? [],
+            UserType::SUPER_ADMIN->value => config('roles')[UserType::SUPER_ADMIN->value] ?? [],
+            UserType::MODERATOR->value => config('roles')[UserType::MODERATOR->value] ?? [],
+            UserType::VOLUNTEER->value => config('roles')[UserType::VOLUNTEER->value] ?? [],
+            UserType::USER->value => config('roles')[UserType::USER->value] ?? [],
         ];
 
         foreach ($roles as $roleName => $permissions) {

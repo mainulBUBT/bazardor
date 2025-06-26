@@ -54,13 +54,15 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group required">
-                                        <label for="role">{{ translate('messages.user_role') }}</label>
-                                        <select class="form-control select2" id="role" name="role" required>
-                                            <option value="">{{ translate('messages.select_role') }}</option>
-                                            <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>{{ translate('messages.user') }}</option>
-                                            <option value="volunteer" {{ old('role') == 'volunteer' ? 'selected' : '' }}>{{ translate('messages.volunteer') }}</option>
-                                            <option value="moderator" {{ old('role') == 'moderator' ? 'selected' : '' }}>{{ translate('messages.moderator') }}</option>
+                                    <div class="form-group">
+                                        <label for="role">{{ translate('messages.role') }}</label>
+                                        <select class="form-control" name="role" id="role">
+                                            <option value="{{ \App\Enums\UserType::USER->value }}" {{ old('role') == \App\Enums\UserType::USER->value ? 'selected' : '' }}>{{ translate('messages.user') }}</option>
+                                            <option value="{{ \App\Enums\UserType::VOLUNTEER->value }}" {{ old('role') == \App\Enums\UserType::VOLUNTEER->value ? 'selected' : '' }}>{{ translate('messages.volunteer') }}</option>
+                                            <option value="{{ \App\Enums\UserType::MODERATOR->value }}" {{ old('role') == \App\Enums\UserType::MODERATOR->value ? 'selected' : '' }}>{{ translate('messages.moderator') }}</option>
+                                            @if(auth()->user()->isSuperAdmin())
+                                                <option value="{{ \App\Enums\UserType::SUPER_ADMIN->value }}" {{ old('role') == \App\Enums\UserType::SUPER_ADMIN->value ? 'selected' : '' }}>{{ translate('messages.super_admin') }}</option>
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
@@ -68,14 +70,13 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="custom_role">{{ translate('messages.custom_role') }}</label>
-                                        <select class="form-control select2" id="custom_role" name="custom_role">
-                                            <option value="">{{ translate('messages.select_custom_role') }}</option>
-                                            @foreach(\Spatie\Permission\Models\Role::whereNotIn('name', ['super_admin', 'moderator', 'volunteer', 'user'])->get() as $customRole)
-                                                <option value="{{ $customRole->name }}" {{ old('custom_role') == $customRole->name ? 'selected' : '' }}>{{ ucfirst($customRole->name) }}</option>
+                                        <label for="functional_roles">{{ translate('messages.functional_roles') }}</label>
+                                        <select class="form-control select2" name="functional_roles[]" id="functional_roles" multiple>
+                                            @foreach($functionalRoles as $functionalRole)
+                                                <option value="{{ $functionalRole->id }}" {{ in_array($functionalRole->id, old('functional_roles', [])) ? 'selected' : '' }}>{{ $functionalRole->name }}</option>
                                             @endforeach
                                         </select>
-                                        <small class="form-text text-muted">{{ translate('messages.optional_custom_role_with_specific_permissions') }}</small>
+                                        <small class="form-text text-muted">{{ translate('messages.functional_roles_help') }}</small>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
