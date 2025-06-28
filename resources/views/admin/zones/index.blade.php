@@ -7,91 +7,131 @@
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-2">
         <h1 class="h3 mb-0 text-gray-800">{{translate('messages.zones')}}</h1>
-        <a href="{{route('admin.zones.create')}}" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm text-white-50"></i> {{translate('messages.add_zone')}}
-        </a>
     </div>
 
-    <!-- Content Row -->
-    <div class="card">
+    <!-- Zone Form Card -->
+    <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{{translate('messages.zone_list')}}</h6>
-            <form action="{{route('admin.zones.index')}}" method="GET" class="mt-3">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="{{translate('messages.search_by_name')}}" value="{{ request('search') }}">
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-search"></i>
-                        </button>
+            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.add_zone') }}</h6>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.zones.store') }}" class="row" method="POST">
+                @csrf
+                <div class="col-md-6 mb-3">
+                    <label for="zoneName">{{ translate('messages.name') }}</label>
+                    <input type="text" class="form-control" name="name" id="zoneName" placeholder="{{ translate('messages.enter_zone_name') }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <div class="custom-control custom-switch" style="padding-top: 35px;">
+                            <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" checked>
+                            <label class="custom-control-label" for="is_active">{{translate('messages.active')}}</label>
+                        </div>
                     </div>
+                </div>
+                <div class="col-12 text-right">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus-circle mr-1"></i>{{ translate('messages.add_zone') }}
+                    </button>
                 </div>
             </form>
         </div>
+    </div>
+
+    <!-- Zones DataTable -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Zones') }}</h6>
+            <div class="d-flex">
+                <a href="#" class="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#importUnitModal">
+                    <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
+                </a>
+                <div class="dropdown mr-2">
+                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.Export') }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                        <a class="dropdown-item" href="#" id="exportCSV">
+                            <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
+                        </a>
+                        <a class="dropdown-item" href="#" id="exportPDF">
+                            <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="filterDropdown">
+                        <div class="dropdown-header">{{ translate('messages.Filter By:') }}</div>
+                        <a class="dropdown-item" href="#" data-filter="type">
+                            <i class="fas fa-tags fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Type') }}
+                        </a>
+                        <a class="dropdown-item" href="#" data-filter="status">
+                            <i class="fas fa-toggle-on fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Status') }}
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" id="resetFilters">
+                            <i class="fas fa-undo fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Reset Filters') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>{{translate('messages.id')}}</th>
-                            <th>{{translate('messages.name')}}</th>
-                            <th>{{translate('messages.markets')}}</th>
-                            <th>{{translate('messages.status')}}</th>
-                            <th>{{translate('messages.actions')}}</th>
+                            <th>{{ translate('messages.ID') }}</th>
+                            <th>{{ translate('messages.Zone Name') }}</th>
+                            <th>{{ translate('messages.Markets') }}</th>
+                            <th>{{ translate('messages.Status') }}</th>
+                            <th>{{ translate('messages.Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($zones as $key=>$zone)
+                        @forelse($zones as $zone)
                             <tr>
-                                <td>{{$zone->id}}</td>
-                                <td>{{$zone->name}}</td>
+                                <td>{{ $zone->id }}</td>
+                                <td>{{ $zone->name }}</td>
+                                <td>{{ $zone->markets->pluck('name')->implode(', ') }}</td>
                                 <td>
-                                    <span class="badge badge-soft-info">
-                                        {{$zone->markets->count()}} {{translate('messages.markets')}}
-                                    </span>
+                                    @if($zone->is_active == 1)
+                                        <span class="badge badge-success">{{ translate('messages.Active') }}</span>
+                                    @else
+                                        <span class="badge badge-danger">{{ translate('messages.Inactive') }}</span>
+                                    @endif
                                 </td>
                                 <td>
-                                    <label class="toggle-switch toggle-switch-sm">
-                                        <input type="checkbox" class="toggle-switch-input" 
-                                            onclick="location.href='{{route('admin.zones.toggle-status', $zone->id)}}'" 
-                                            {{$zone->is_active ? 'checked' : ''}}>
-                                            
-                                        <span class="toggle-switch-label">
-                                            <span class="toggle-switch-indicator"></span>
-                                        </span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="{{route('admin.zones.edit', $zone->id)}}" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{route('admin.zones.destroy', $zone->id)}}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" 
-                                                onclick="return confirm('{{translate('messages.are_you_sure_to_delete_this_zone')}}')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <a href="{{ route('admin.zones.edit', $zone->id) }}" class="btn btn-primary btn-circle btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form id="delete-zone-{{ $zone->id }}" action="" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="formAlert('delete-zone-{{ $zone->id }}', '{{ translate('messages.Want to delete this zone?') }}')" class="btn btn-danger btn-circle btn-sm delete-zone">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center">{{ translate('messages.No data found') }}</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-            
-            <div class="d-flex justify-content-center">
-                {{ $zones->links() }}
-            </div>
-            
-            @if(count($zones) === 0)
-            <div class="empty--data">
-                <img src="{{asset('assets/admin/img/empty.png')}}" alt="{{translate('messages.no_data_found')}}">
-                <h5>{{translate('messages.no_zones_found')}}</h5>
-            </div>
-            @endif
         </div>
     </div>
+
+    @if(method_exists($zones, 'links'))
+        <div class="d-flex justify-content-end">
+            {{ $zones->links() }}
+        </div>
+    @endif
 </div>
-@endsection 
+@endsection

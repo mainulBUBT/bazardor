@@ -633,4 +633,5 @@
   'save' => 'Save',
   'Zone' => 'Zone',
   'Select Zone' => 'Select Zone',
+  'Zone Name' => 'Zone Name',
 );

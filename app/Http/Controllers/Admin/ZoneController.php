@@ -27,16 +27,6 @@ class ZoneController extends Controller
     }
 
     /**
-     * Show the form for creating a new zone.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function create()
-    {
-        return view('admin.zones.create');
-    }
-
-    /**
      * Store a newly created zone in storage.
      *
      * @param  \App\Http\Requests\ZoneStoreUpdateRequest  $request
@@ -92,7 +82,7 @@ class ZoneController extends Controller
     public function update(ZoneStoreUpdateRequest $request, $id)
     {
         $this->zoneService->update($id, $request->validated());
-        Toastr::success(translate('messages.zone_updated_successfully'));
+        Toastr::success();
         return redirect()->route('admin.zones.index');
     }
 
@@ -105,7 +95,7 @@ class ZoneController extends Controller
     public function destroy($id)
     {
         $this->zoneService->delete($id);
-        Toastr::success(translate('messages.zone_deleted_successfully'));
+        Toastr::success();
         return redirect()->route('admin.zones.index');
     }
 
@@ -117,12 +107,8 @@ class ZoneController extends Controller
      */
     public function toggleStatus($id)
     {
-        $zone = $this->zoneService->toggleStatus($id);
-        $message = $zone->is_active 
-            ? translate('messages.zone_activated_successfully')
-            : translate('messages.zone_deactivated_successfully');
-            
-        Toastr::success($message);
-        return redirect()->route('admin.zones.index');
+        $message = $this->zoneService->toggleStatus($id);
+        Toastr::success();
+        return redirect()->back();
     }
-} 
+}
