@@ -634,4 +634,5 @@
   'Zone' => 'Zone',
   'Select Zone' => 'Select Zone',
   'Zone Name' => 'Zone Name',
+  'Save Settings' => 'Save Settings',
 );
