@@ -65,7 +65,7 @@
                                     <div class="mt-2">
                                         <img src="{{ asset('storage/app/public/company/' . $favicon) }}" alt="Favicon" class="img-thumbnail" style="max-height: 32px">
                                     </div>
-                                @endif
+                                @endif  
                             </div>
                         </div>
 

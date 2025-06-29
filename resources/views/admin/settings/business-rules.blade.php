@@ -5,6 +5,8 @@
     <h1 class="h3 mb-2 text-gray-800">{{ translate('messages.Business Rules') }}</h1>
     <p class="mb-4">{{ translate('messages.Configure business rules and policies for your marketplace') }}</p>
 
+    @include('admin.settings._partials.tabs')
+
     <!-- Market Settings Card -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -169,95 +171,58 @@
     <!-- Business Rules Toggle Settings -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Business Rules Options') }}</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Business Rules Options</h6>
         </div>
         <div class="card-body">
             <div class="toggle-item">
                 <label class="toggle-label">
-                    <i class="fas fa-money-bill-wave"></i> {{ translate('messages.Show price comparison between markets') }}
+                    <i class="fas fa-money-bill-wave"></i> Show price comparison between markets
                 </label>
-                <label class="toggle-switch toggle-switch-sm">
-                    <input type="checkbox" class="toggle-switch-input" id="enablePriceComparison" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => 'business_rules']) }}" name="enable_price_comparison">
-                    <span class="toggle-switch-label">
-                        <span class="toggle-switch-indicator"></span>
-                    </span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enablePriceComparison" checked>
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-label">
-                    <i class="fas fa-clock"></i> {{ translate('messages.Enable price history tracking') }}
+                    <i class="fas fa-clock"></i> Enable price history tracking
                 </label>
-                <label class="toggle-switch toggle-switch-sm">
-                    <input type="checkbox" class="toggle-switch-input" id="enablePriceHistory" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => 'business_rules']) }}" name="enable_price_history">
-                    <span class="toggle-switch-label">
-                        <span class="toggle-switch-indicator"></span>
-                    </span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enablePriceHistory" checked>
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-label">
-                    <i class="fas fa-chart-line"></i> {{ translate('messages.Enable price trend indicators') }}
+                    <i class="fas fa-chart-line"></i> Enable price trend indicators
                 </label>
-                <label class="toggle-switch toggle-switch-sm">
-                    <input type="checkbox" class="toggle-switch-input" id="enablePriceTrends" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => 'business_rules']) }}" name="enable_price_trends">
-                    <span class="toggle-switch-label">
-                        <span class="toggle-switch-indicator"></span>
-                    </span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enablePriceTrends" checked>
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-label">
-                    <i class="fas fa-star"></i> {{ translate('messages.Enable market ratings') }}
+                    <i class="fas fa-star"></i> Enable market ratings
                 </label>
-                <label class="toggle-switch toggle-switch-sm">
-                    <input type="checkbox" class="toggle-switch-input" id="enableMarketRatings" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => 'business_rules']) }}" name="enable_market_ratings">
-                    <span class="toggle-switch-label">
-                        <span class="toggle-switch-indicator"></span>
-                    </span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enableMarketRatings" checked>
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-label">
-                    <i class="fas fa-award"></i> {{ translate('messages.Enable volunteer points system') }}
+                    <i class="fas fa-award"></i> Enable volunteer points system
                 </label>
-                <label class="toggle-switch toggle-switch-sm">
-                    <input type="checkbox" class="toggle-switch-input" id="enableVolunteerPoints" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => 'business_rules']) }}" name="enable_volunteer_points">
-                    <span class="toggle-switch-label">
-                        <span class="toggle-switch-indicator"></span>
-                    </span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enableVolunteerPoints" checked>
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
         </div>
     </div>
 
 @endsection
-
-@push('styles')
-<style>
-    .toggle-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 0;
-        border-bottom: 1px solid #e3e6f0;
-    }
-    
-    .toggle-item:last-child {
-        border-bottom: none;
-    }
-    
-    .toggle-label {
-        margin: 0;
-        font-weight: 500;
-        color: #5a5c69;
-    }
-    
-    .toggle-label i {
-        margin-right: 0.5rem;
-        color: #858796;
-    }
-</style>
-@endpush
 
 @push('scripts')
 <script>

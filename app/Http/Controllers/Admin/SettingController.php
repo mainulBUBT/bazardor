@@ -31,10 +31,21 @@ class SettingController extends Controller
             $settings = $settings->mapWithKeys(function ($setting) {
                 return [$setting->key_name => $setting->value];
             });
+            return view('admin.settings.general', compact('tab', 'settings'));
+        } else if ($tab === BUSINESS_RULES) {
+            $settings = $settings->keyBy('key_name')->map(function ($setting) {
+                return [
+                    'value' => $setting->value,
+                    'status' => $setting->is_active,
+                ];
+            });
+            return view('admin.settings.business-rules', compact('tab', 'settings'));
         } else {
-            $settings = $settings->keyBy('key_name');
+            $settings = $settings->mapWithKeys(function ($setting) {
+                return [$setting->key_name => $setting->value];
+            });
         }
-        return view("admin.settings.index", compact('tab', 'settings'));
+        return view('admin.settings.'.$tab, compact('tab', 'settings'));
     }
 
 
@@ -53,11 +64,11 @@ class SettingController extends Controller
         
         if ($success) {
             Toastr::success(translate('messages.Settings updated successfully!'));
-            return redirect()->route('admin.settings.index', ['tab' => $tab]);
+            return redirect()->route('admin.settings.general', ['tab' => $tab]);
         }
         
         Toastr::error(translate('messages.Failed to update settings.'));
-        return redirect()->route('admin.settings.index', ['tab' => $tab]);
+        return redirect()->route('admin.settings.general', ['tab' => $tab]);
     }
 
     /**
