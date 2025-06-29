@@ -66,10 +66,9 @@ class ZoneController extends Controller
     public function edit($id)
     {
         $zone = $this->zoneService->findById($id);
-        $markets = $this->zoneService->getAvailableMarkets();
         $zoneMarketIds = $zone->markets->pluck('id')->toArray();
         
-        return view('admin.zones.edit', compact('zone', 'markets', 'zoneMarketIds'));
+        return view('admin.zones.edit', compact('zone', 'zoneMarketIds'));
     }
 
     /**

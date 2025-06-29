@@ -19,7 +19,7 @@
                 <div class="card-header">
                     <h5 class="card-title">{{translate('messages.zone_form')}}</h5>
                 </div>
-                <div class="card-body">
+<div class="card-body">
                     <form action="{{route('admin.zones.update', $zone->id)}}" method="POST">
                         @csrf
                         @method('PUT')
@@ -30,7 +30,7 @@
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="description">{{translate('messages.description')}}</label>
                             <textarea name="description" class="form-control" id="description" rows="3" placeholder="{{translate('messages.enter_zone_description')}}">{{ old('description', $zone->description) }}</textarea>
@@ -38,7 +38,7 @@
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="markets">{{translate('messages.markets')}}</label>
                             <select name="markets[]" id="markets" class="form-control select2" multiple>
@@ -53,7 +53,7 @@
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" {{ old('is_active', $zone->is_active) ? 'checked' : '' }}>
@@ -63,7 +63,7 @@
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">{{translate('messages.update')}}</button>
                         </div>
