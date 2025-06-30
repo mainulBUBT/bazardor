@@ -57,6 +57,7 @@ class SettingController extends Controller
      */
     public function updateSettings(UpdateSettingsRequest $updateSettingsRequest): RedirectResponse
     {
+        dd($updateSettingsRequest->validated());
         $tab = $updateSettingsRequest->query('tab', GENERAL_SETTINGS);
         $validated = $updateSettingsRequest->validated();
         
