@@ -23,9 +23,8 @@ class UpdateSettingsRequest extends FormRequest
     public function rules(): array
     {
         $tab = $this->query('tab', 'general');
-        
         $rules = [
-            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail'])],
+            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'integrations', 'security', 'backup'])],
         ];
         
         $rules = array_merge($rules, match($tab) {

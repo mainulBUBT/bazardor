@@ -57,19 +57,18 @@ class SettingController extends Controller
      */
     public function updateSettings(UpdateSettingsRequest $updateSettingsRequest): RedirectResponse
     {
-        dd($updateSettingsRequest->validated());
         $tab = $updateSettingsRequest->query('tab', GENERAL_SETTINGS);
         $validated = $updateSettingsRequest->validated();
-        
+        unset($validated['tab']); // Remove tab from validated data 
         $success = $this->settingService->updateSettings($validated, $tab);
         
         if ($success) {
             Toastr::success(translate('messages.Settings updated successfully!'));
-            return redirect()->route('admin.settings.general', ['tab' => $tab]);
+            return redirect()->back()->withInput(['tab' => $tab]);
         }
         
         Toastr::error(translate('messages.Failed to update settings.'));
-        return redirect()->route('admin.settings.general', ['tab' => $tab]);
+        return redirect()->back()->withInput(['tab' => $tab]);
     }
 
     /**

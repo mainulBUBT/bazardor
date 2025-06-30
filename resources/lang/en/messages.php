@@ -698,4 +698,5 @@
   'Enable social sharing' => 'Enable social sharing',
   'Enable support ticket system' => 'Enable support ticket system',
   'Enable analytics and tracking' => 'Enable analytics and tracking',
+  'Settings updated successfully!' => 'Settings updated successfully!',
 );
