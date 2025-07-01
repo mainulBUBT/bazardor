@@ -12,7 +12,11 @@ class SettingService
 
     }
 
-
+    /**
+     * Initialize default settings if they do not exist
+     *
+     * @return void
+     */
     public function getSettings(?string $group = null)
     {   
         $settings = $this->setting->where('settings_type', $group)->get();
