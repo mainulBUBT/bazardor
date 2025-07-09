@@ -112,10 +112,11 @@ class UserManagementService
             'username' => $data['username'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'role' => $data['role'],
-            'user_type' => $data['role'],
+            'role' => $data['role'] ?? null,
+            'role_id' => $data['role_id'] ?? null,
+            'user_type' => $data['role'] ?? 'user',
             'image_path' => $data['image_path'] ?? null,
-            'phone' => $data['phone'],
+            'phone' => $data['phone'] ?? null,
             'gender' => $data['gender'] ?? null,
             'address' => $data['address'] ?? null,
             'city' => $data['city'] ?? null,
@@ -124,6 +125,8 @@ class UserManagementService
             'is_active' => !empty($data['is_active']),
             'subscribed_to_newsletter' => !empty($data['subscribed_to_newsletter']),
             'email_verified_at' => !empty($data['email_verified']) ? now() : null,
+            'status' => $data['status'] ?? 'pending',
+            'remember_token' => $data['remember_token'] ?? null,
         ]);
 
         // Assign user type role
@@ -154,7 +157,7 @@ class UserManagementService
     {
         $user = $this->findById($id);
         $oldImagePath = $user->image_path;
-       
+
         if (!is_null($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         } else {
@@ -175,23 +178,28 @@ class UserManagementService
         $user->update([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'] ?? null,
+            'username' => $data['username'] ?? $user->username,
             'password' => $data['password'],
-            'role' => $data['role'],
-            'user_type' => $data['role'],
+            'role' => $data['role'] ?? $user->role,
+            'role_id' => $data['role_id'] ?? $user->role_id,
+            'user_type' => $data['role'] ?? $user->user_type,
             'image_path' => $data['image_path'] ?? $user->image_path,
-            'gender' => $data['gender'] ?? null,
-            'address' => $data['address'] ?? null,
-            'city' => $data['city'] ?? null,
-            'division' => $data['division'] ?? null,
-            'dob' => $data['dob'] ?? null,
+            'phone' => $data['phone'] ?? $user->phone,
+            'gender' => $data['gender'] ?? $user->gender,
+            'address' => $data['address'] ?? $user->address,
+            'city' => $data['city'] ?? $user->city,
+            'division' => $data['division'] ?? $user->division,
+            'dob' => $data['dob'] ?? $user->dob,
             'is_active' => !empty($data['is_active']),
             'subscribed_to_newsletter' => !empty($data['subscribed_to_newsletter']),
             'email_verified_at' => !empty($data['email_verified']) ? now() : null,
+            'status' => $data['status'] ?? $user->status,
+            'remember_token' => $data['remember_token'] ?? $user->remember_token,
         ]);
 
         // Ensure user has the base user type role
         $user->assignRole($data['role']);
-        
+
         // Update functional roles
         $userTypeRoles = [
             UserType::SUPER_ADMIN->value,
@@ -199,17 +207,17 @@ class UserManagementService
             UserType::VOLUNTEER->value,
             UserType::USER->value
         ];
-        
+
         // Get current functional roles (excluding user type roles)
         $currentFunctionalRoles = $user->roles->whereNotIn('name', $userTypeRoles)->pluck('id')->toArray();
-        
+
         // Sync functional roles if provided
         if (isset($data['functional_roles']) && is_array($data['functional_roles'])) {
             // Remove old functional roles
             foreach ($currentFunctionalRoles as $roleId) {
                 $user->removeRole($roleId);
             }
-            
+
             // Add new functional roles
             foreach ($data['functional_roles'] as $roleId) {
                 $user->assignRole($roleId);
@@ -247,7 +255,7 @@ class UserManagementService
             $query->with($with);
         })->findOrFail($id);
 
-        return $query; 
+        return $query;
     }
 
     /**
@@ -263,7 +271,7 @@ class UserManagementService
             return $this->generateReferralCode();
         }
         return $referral_code;
-    }   
+    }
 
     /**
      * Get paginated list of pending users.
@@ -308,7 +316,7 @@ class UserManagementService
 
     /**
      * Get all available roles for assignment
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAllRoles()
