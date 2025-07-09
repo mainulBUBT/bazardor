@@ -77,7 +77,6 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         // Zones
         Route::group(['prefix' => 'zones', 'as' => 'zones.'], function () {
             Route::get('/', [ZoneController::class, 'index'])->name('index');
-            Route::get('/create', [ZoneController::class, 'create'])->name('create');
             Route::post('/', [ZoneController::class, 'store'])->name('store');
             Route::get('/{zone}', [ZoneController::class, 'show'])->name('show');
             Route::get('/{zone}/edit', [ZoneController::class, 'edit'])->name('edit');

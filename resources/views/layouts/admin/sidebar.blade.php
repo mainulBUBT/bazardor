@@ -17,7 +17,7 @@
         {{translate('messages.Main') }}
     </div>
 
-    <!-- Nav Item - Dashboard -->
+    <!-- Dashboard -->
     <li class="nav-item {{ request()->is('admin') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/dashboard')}}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -33,7 +33,7 @@
         {{translate('messages.Catalog') }}
     </div>
 
-    <!-- Nav Item - Units -->
+    <!-- Units -->
     <li class="nav-item {{ request()->is('admin/units*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('admin.units.index') }}">
             <i class="fas fa-fw fa-ruler-combined"></i>
@@ -41,7 +41,15 @@
         </a>
     </li>
 
-    <!-- Nav Item - Categories -->
+    <!-- Zones -->
+    <li class="nav-item {{ request()->is('admin/zones*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('admin.zones.index') }}">
+            <i class="fas fa-fw fa-map-marked-alt"></i>
+            <span>{{translate('messages.Zones') }}</span>   
+        </a>
+    </li>
+
+    <!-- Categories -->
     <li class="nav-item {{ request()->is('admin/categories*') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="{{ request()->is('admin/categories*') ? 'true' : 'false' }}" aria-controls="collapseCategories">
             <i class="fas fa-fw fa-images"></i>
@@ -55,7 +63,7 @@
         </div>
     </li>
 
-    <!-- Nav Item - Products -->
+    <!-- Products -->
     <li class="nav-item {{ request()->is('admin/products*') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="{{ request()->is('admin/products*') ? 'true' : 'false' }}" aria-controls="collapseProducts">
             <i class="fas fa-fw fa-box-open"></i>
@@ -69,7 +77,7 @@
         </div>
     </li>
 
-    <!-- Nav Item - Markets -->
+    <!-- Markets -->
     <li class="nav-item {{ request()->is('admin/markets*') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMarkets" aria-expanded="{{ request()->is('admin/markets*') ? 'true' : 'false' }}" aria-controls="collapseMarkets">
             <i class="fas fa-fw fa-images"></i>
@@ -79,20 +87,6 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item {{ request()->is('admin/markets') ? 'active' : '' }}" href="{{route('admin.markets.index')}}">{{translate('messages.All Markets') }}</a>
                 <a class="collapse-item {{ request()->is('admin/markets/create') ? 'active' : '' }}" href="{{route('admin.markets.create')}}">{{translate('messages.Add Market') }}</a>
-            </div>
-        </div>
-    </li>
-
-    <!-- Nav Item - Zones -->
-    <li class="nav-item {{ request()->is('admin/zones*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseZones" aria-expanded="{{ request()->is('admin/zones*') ? 'true' : 'false' }}" aria-controls="collapseZones">
-            <i class="fas fa-fw fa-map-marked-alt"></i>
-            <span>{{translate('messages.Zones') }}</span>
-        </a>
-        <div id="collapseZones" class="collapse{{ request()->is('admin/zones*') ? ' show' : '' }}" aria-labelledby="headingZones" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item {{ request()->is('admin/zones') && !request()->is('admin/zones/create') ? 'active' : '' }}" href="{{route('admin.zones.index')}}">{{translate('messages.All Zones') }}</a>
-                <a class="collapse-item {{ request()->is('admin/zones/create') ? 'active' : '' }}" href="{{route('admin.zones.create')}}">{{translate('messages.Add Zone') }}</a>
             </div>
         </div>
     </li>
@@ -120,7 +114,7 @@
         </div>
     </li>
 
-    <!-- Nav Item - Contributions -->
+    <!-- Contributions -->
     <li class="nav-item {{ request()->is('admin/contributions*') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/contributions')}}">
             <i class="fas fa-fw fa-chart-line"></i>
@@ -128,7 +122,7 @@
         </a>
     </li>
 
-    <!-- Nav Item - Points Management -->
+    <!-- Points Management -->
     <li class="nav-item {{ request()->is('admin/points*') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePoints" aria-expanded="false" aria-controls="collapsePoints">
             <i class="fas fa-fw fa-award"></i>
@@ -150,7 +144,7 @@
         {{translate('messages.Marketing') }}
     </div>
 
-    <!-- Nav Item - Push Notifications -->
+    <!-- Push Notifications -->
     <li class="nav-item {{ request()->is('admin/notifications*') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePushNotifications" aria-expanded="false" aria-controls="collapsePushNotifications">
             <i class="fas fa-fw fa-bell"></i>
@@ -164,7 +158,7 @@
         </div>
     </li>
 
-    <!-- Nav Item - Banners -->
+    <!-- Banners -->
     <li class="nav-item {{ request()->is('admin/banners*') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBanners" aria-expanded="{{ request()->is('admin/banners*') ? 'true' : 'false' }}" aria-controls="collapseBanners">
             <i class="fas fa-fw fa-images"></i>
@@ -186,7 +180,7 @@
         {{translate('messages.Reports') }}
     </div>
 
-    <!-- Nav Item - Market Reports -->
+    <!-- Market Reports -->
     <li class="nav-item {{ request()->is('admin/reports/markets*') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/reports/markets')}}">
             <i class="fas fa-fw fa-store-alt"></i>
@@ -194,7 +188,7 @@
         </a>
     </li>
 
-    <!-- Nav Item - Product Reports -->
+    <!-- Product Reports -->
     <li class="nav-item {{ request()->is('admin/reports/products*') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/reports/products')}}">
             <i class="fas fa-fw fa-box"></i>
@@ -202,7 +196,7 @@
         </a>
     </li>
 
-    <!-- Nav Item - Price Analytics -->
+    <!-- Price Analytics -->
     <li class="nav-item {{ request()->is('admin/reports/prices*') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/reports/prices')}}">
             <i class="fas fa-fw fa-chart-line"></i>
@@ -210,7 +204,7 @@
         </a>
     </li>
 
-    <!-- Nav Item - User Analytics -->
+    <!-- User Analytics -->
     <li class="nav-item {{ request()->is('admin/reports/users*') ? 'active' : '' }}">
         <a class="nav-link" href="{{url('/admin/reports/users')}}">
             <i class="fas fa-fw fa-user-chart"></i>
@@ -226,7 +220,7 @@
         {{translate('messages.Configuration') }}
     </div>
 
-    <!-- Nav Item - Settings -->
+    <!-- Settings -->
     <li class="nav-item {{ request()->is('admin/settings*') ? 'active' : '' }}">
         <a class="nav-link" href="{{route('admin.settings.index')}}">
             <i class="fas fa-fw fa-cog"></i>

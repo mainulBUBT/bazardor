@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\DB;
 
 class ZoneService
 {
+
+    public function __construct(private Zone $zone)
+    {
+        
+    }
+
     /**
      * Get all zones with pagination
      *
@@ -19,7 +25,7 @@ class ZoneService
      */
     public function getZones(?string $search = null): LengthAwarePaginator
     {
-        return Zone::with('markets')
+        return $this->zone->with('markets')
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
             })
@@ -34,7 +40,7 @@ class ZoneService
      */
     public function getActiveZones(): Collection
     {
-        return Zone::active()->get();
+        return $this->zone->with('markets')->active()->get();
     }
 
     /**
@@ -45,7 +51,7 @@ class ZoneService
      */
     public function findById(int|string $id): Zone
     {
-        return Zone::with('markets')->findOrFail($id);
+        return $this->zone->with('markets')->findOrFail($id);
     }
 
     /**

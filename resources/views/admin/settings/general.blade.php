@@ -65,17 +65,15 @@
                                     <div class="mt-2">
                                         <img src="{{ asset('storage/app/public/company/' . $favicon) }}" alt="Favicon" class="img-thumbnail" style="max-height: 32px">
                                     </div>
-                                @endif
+                                @endif  
                             </div>
                         </div>
 
                         <!-- Save Settings Button -->
-                        <div class="row mb-4 mt-2">
-                            <div class="col-lg-12">
-                                <button type="submit" class="btn btn-success btn-lg" id="saveSettings">
-                                    <i class="fas fa-save mr-1"></i> {{ translate('messages.Save All Settings') }}
-                                </button>
-                            </div>
+                        <div class="col-12 text-right">
+                            <button type="submit" class="btn btn-primary" id="saveSettings">
+                                <i class="fas fa-save mr-1"></i>{{ translate('messages.Save Settings') }}
+                            </button>
                         </div>
                         
                     </form>
