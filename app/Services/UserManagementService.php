@@ -20,9 +20,9 @@ class UserManagementService
      * @param array $with
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getUsers($role = UserType::USER, $search = null, $with = [])
+    public function getUsers($user_type = UserType::USER->value, $search = null, $with = [])
     {
-        return $this->user->where('role', $role)
+        return $this->user->where('user_type', $user_type)
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
             })

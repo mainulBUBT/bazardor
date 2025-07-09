@@ -110,4 +110,5 @@ class ZoneController extends Controller
         Toastr::success();
         return redirect()->back();
     }
+    
 }
