@@ -112,7 +112,6 @@ class UserManagementService
             'username' => $data['username'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'role' => $data['role'],
             'user_type' => $data['role'],
             'image_path' => $data['image_path'] ?? null,
             'phone' => $data['phone'],
