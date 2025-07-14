@@ -81,14 +81,14 @@ class MarketController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified market in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param MarketStoreUpdateRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
-    {
+    public function update(MarketStoreUpdateRequest $request, $id)
+    {  
         $this->marketService->update($request->validated(), $id);
         Toastr::success(translate('messages.market_updated_successfully'));
         

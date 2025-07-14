@@ -62,6 +62,7 @@ class ProductService
                 'barcode' => $data['barcode'] ?? null,
                 'brand' => $data['brand'] ?? null,
                 'base_price' => $data['base_price'] ?? 0,
+                'country_of_origin' => $data['country_of_origin'] ?? null,
             ]);
 
             // Save tags if provided
@@ -112,7 +113,7 @@ class ProductService
             }
             unset($data['image']);
 
-            $product->fill([
+            $product->update([
                 'name' => $data['name'] ?? $product->name,
                 'category_id' => $data['category_id'] ?? $product->category_id,
                 'unit_id' => $data['unit_id'] ?? $product->unit_id,
@@ -125,6 +126,7 @@ class ProductService
                 'barcode' => $data['barcode'] ?? $product->barcode,
                 'brand' => $data['brand'] ?? $product->brand,
                 'base_price' => $data['base_price'] ?? $product->base_price,
+                'country_of_origin' => $data['country_of_origin'] ?? $product->country_of_origin,
             ]);
             $product->save();
 
@@ -187,4 +189,4 @@ class ProductService
             $query->with($with);
         })->findOrFail($id);
     }
-} 
+}

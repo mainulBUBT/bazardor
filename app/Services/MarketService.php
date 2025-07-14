@@ -43,7 +43,7 @@ class MarketService
             $market->latitude = $data['latitude'] ?? null;
             $market->longitude = $data['longitude'] ?? null;
             $market->is_active = $data['status'] === 'active';
-            $market->is_featured = $data['featured'] ?? false;
+            $market->is_featured = isset($data['featured']) ? $data['featured'] : 0;
             $market->division = $data['division'] ?? null;      
             $market->district = $data['district'] ?? null;
             $market->upazila_or_thana = $data['upazila'] ?? null;
@@ -102,14 +102,12 @@ class MarketService
     }
 
     /**
-     * Update an existing market.
-     *
-
+     * Summary of update
+     * @param array $data
      * @param string $id
-     * @return Market
-     * @throws \Exception
+     * @return Market|\Illuminate\Database\Eloquent\Collection<int, Market>
      */
-    public function update(array $data, string $id): Market
+    public function update(array $data, string $id)
     {
         DB::beginTransaction();
         try {
@@ -123,12 +121,12 @@ class MarketService
             $market->latitude = $data['latitude'] ?? null;
             $market->longitude = $data['longitude'] ?? null;
             $market->is_active = $data['status'] === 'active';
-            $market->is_featured = $data['featured'] ?? false;
+            $market->is_featured = isset($data['featured']) ? $data['featured'] : 0;
             $market->division = $data['division'] ?? null;
             $market->district = $data['district'] ?? null;
             $market->upazila_or_thana = $data['upazila'] ?? null;
             $market->visibility = $data['visibility'] === 'public' ? 1 : 0;
-            $market->zone_id = $data['zone_id'] ?? $market->zone_id;
+            $market->zone_id = $data['zone_id'] ?? null;
 
             $market->save();
 
@@ -169,6 +167,7 @@ class MarketService
             DB::commit();
             return $market;
         } catch (\Exception $e) {
+            info(['market_update_error' => $e->getMessage()]); // Log the error message for debugging
             DB::rollBack();
             throw $e;
         }

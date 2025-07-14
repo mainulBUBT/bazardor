@@ -28,11 +28,11 @@
                         <div class="row mb-3">
                             <div class="col-md-8">
                                 <label for="marketName" class="form-label">{{ translate('messages.Market Name') }} <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" id="marketName" value="{{ old('name', $market->name) }}" required>
+                                <input type="text" name="name" class="form-control" id="marketName" value="{{ $market->name }}" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="marketSlug" class="form-label">{{ translate('messages.Slug') }}</label>
-                                <input type="text" name="slug" class="form-control" id="marketSlug" value="{{ old('slug', $market->slug) }}">
+                                <input type="text" name="slug" class="form-control" id="marketSlug" value="{{ $market->slug }}">
                                 <small class="form-text text-muted">{{ translate('messages.URL-friendly identifier.') }}</small>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                                 <label for="marketType" class="form-label">{{ translate('messages.Market Type') }} <span class="text-danger">*</span></label>
                                 <select class="form-control select2" id="marketType" name="type" required>
                                     @foreach(\App\Enums\MarketType::cases() as $type)
-                                        <option value="{{ $type->value }}" {{ old('type', $market->type) == $type->value ? 'selected' : '' }}>{{ $type->value }}</option>
+                                        <option value="{{ $type->value }}" {{ $market->type == $type->value ? 'selected' : '' }}>{{ $type->value }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -51,7 +51,7 @@
                                 <select class="form-control select2" id="marketZone" name="zone_id">
                                     <option value="">{{ translate('messages.Select Zone') }}</option>
                                     @foreach($zones as $zone)
-                                        <option value="{{ $zone->id }}" {{ old('zone_id', $market->zone_id) == $zone->id ? 'selected' : '' }}>{{ $zone->name }}</option>
+                                        <option value="{{ $zone->id }}" {{ $market->zone_id == $zone->id ? 'selected' : '' }}>{{ $zone->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -59,7 +59,7 @@
 
                         <div class="mb-3">
                             <label for="marketDescription" class="form-label">{{ translate('messages.Short Description') }}</label>
-                            <textarea name="description" class="form-control" id="marketDescription" rows="3">{{ old('description', $market->description) }}</textarea>
+                            <textarea name="description" class="form-control" id="marketDescription" rows="3">{{ $market->description }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="marketAddress" class="form-label">{{ translate('messages.Full Address') }} <span class="text-danger">*</span></label>
-                            <textarea name="address" class="form-control" id="marketAddress" rows="2" required>{{ old('address', $market->address) }}</textarea>
+                            <textarea name="address" class="form-control" id="marketAddress" rows="2" required>{{ $market->address }}</textarea>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -80,7 +80,7 @@
                                 <select class="form-control select2" id="marketDivision" name="division" onchange="getDistricts(this.value)" required>
                                     <option></option>
                                     @foreach($divisions as $division)
-                                        <option value="{{ $division }}" {{ old('division', $division ?? '') == $division ? 'selected' : '' }}>{{ $division }}</option>
+                                        <option value="{{ $division }}" {{ strtoupper($market->division) == strtoupper($division) ? 'selected' : '' }}>{{ $division }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -89,7 +89,7 @@
                                 <select class="form-control select2" id="marketDistrict" name="district" onchange="getThanas(document.getElementById('marketDivision').value, this.value)" required>
                                     <option></option>
                                     @foreach($districts as $district)
-                                        <option value="{{ $district }}" {{ old('district', $district ?? '') == $district ? 'selected' : '' }}>{{ $district }}</option>
+                                        <option value="{{ $district }}" {{ strtoupper($market->district) == strtoupper($district) ? 'selected' : '' }}>{{ $district }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -98,7 +98,7 @@
                                 <select class="form-control select2" id="marketUpazila" name="upazila">
                                     <option></option>
                                     @foreach($upazilas as $upazila)
-                                        <option value="{{ $upazila }}" {{ old('upazila', $upazila ?? '') == $upazila ? 'selected' : '' }}>{{ $upazila }}</option>
+                                        <option value="{{ $upazila }}" {{ strtoupper($market->upazila_or_thana) == strtoupper($upazila) ? 'selected' : '' }}>{{ $upazila }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -107,11 +107,11 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="marketLatitude" class="form-label">{{ translate('messages.Latitude') }}</label>
-                                <input type="text" name="latitude" class="form-control" id="marketLatitude" value="{{ old('latitude', $market->latitude) }}">
+                                <input type="text" name="latitude" class="form-control" id="marketLatitude" value="{{ $market->latitude }}">
                             </div>
                             <div class="col-md-6">
                                 <label for="marketLongitude" class="form-label">{{ translate('messages.Longitude') }}</label>
-                                <input type="text" name="longitude" class="form-control" id="marketLongitude" value="{{ old('longitude', $market->longitude) }}">
+                                <input type="text" name="longitude" class="form-control" id="marketLongitude" value="{{ $market->longitude }}">
                             </div>
                         </div>
                         <div id="map" style="height: 400px; border-radius: 0.35rem;" class="mb-3"></div>
@@ -141,9 +141,9 @@
                                     @php
                                         $day_key = strtolower($day);
                                         $hours = $market->opening_hours[$day] ?? null;
-                                        $opening_time = old("opening_hours.{$day}.opening_time", $hours['opening_time'] ?? '08:00');
-                                        $closing_time = old("opening_hours.{$day}.closing_time", $hours['closing_time'] ?? '20:00');
-                                        $is_closed = old("opening_hours.{$day}.is_closed", $hours['is_closed'] ?? false);
+                                        $opening_time = $hours['opening_time'] ?? '08:00';
+                                        $closing_time = $hours['closing_time'] ?? '20:00';
+                                        $is_closed = $hours['is_closed'] ?? false;
                                     @endphp
                                     <tr data-day="{{ $day }}">
                                         <td>{{ translate('messages.' . $day) }}</td>
@@ -207,7 +207,7 @@
                             </div>
                         </div>
                         <div class="custom-file">
-                            <input type="file" name="image" class="custom-file-input" id="marketImage" accept="image/*"> <!-- Default input is now visually replaced by the label -->
+                            <input type="file" name="image" class="custom-file-input" id="marketImage" accept="image/*"> 
                             <label class="custom-file-label" for="marketImage" id="marketImageLabel" data-default-text="{{ translate('messages.Choose file...') }}">{{ translate('messages.Choose file...') }}</label>
                         </div>
                         <small class="form-text text-muted mt-2">{{ translate('messages.Recommended: 1200x800px, Max 2MB') }}</small>
@@ -228,8 +228,8 @@
 @push('scripts')
 <script id="market-edit-data" type="application/json">
     {
-        "lat": @json(old('latitude', $market->latitude ?? '23.8103')),
-        "lng": @json(old('longitude', $market->longitude ?? '90.4125')),
+        "lat": @json($market->latitude ?? '23.8103'),
+        "lng": @json($market->longitude ?? '90.4125'),
         "get_districts_url": @json(url('admin/markets/get-districts')),
         "get_thanas_url": @json(url('admin/markets/get-thanas')),
         "select_district_message": @json(translate('messages.Select District')),
@@ -237,9 +237,9 @@
         "loading_address_message": @json(translate('messages.Loading address...')),
         "address_not_found_message": @json(translate('messages.Address not found. Please enter manually.')),
         "could_not_fetch_address_message": @json(translate('messages.Could not fetch address. Please enter manually.')),
-        "division_to_load": @json(old('division', $market->division)),
-        "district_to_select": @json(old('district', $market->district)),
-        "upazila_to_select": @json(old('upazila', $market->upazila))
+        "division_to_load": @json($market->division),
+        "district_to_select": @json($market->district),
+        "upazila_to_select": @json($market->upazila_or_thana)
     }
 </script>
 <script>
@@ -452,6 +452,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Initialize dependent dropdowns ---
     if (editData.division_to_load) {
         getDistricts(editData.division_to_load, editData.district_to_select, editData.upazila_to_select);
+    }
+
+    if (editData.district_to_load) {
+        getThanas(editData.division_to_load, editData.district_to_load, editData.upazila_to_select);
     }
 });
 </script>

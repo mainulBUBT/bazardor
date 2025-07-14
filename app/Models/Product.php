@@ -31,6 +31,7 @@ class Product extends Model
         'barcode',
         'brand',
         'base_price',
+        'country_of_origin',
     ];
 
     /**

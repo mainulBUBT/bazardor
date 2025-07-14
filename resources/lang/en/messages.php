@@ -699,4 +699,13 @@
   'Enable support ticket system' => 'Enable support ticket system',
   'Enable analytics and tracking' => 'Enable analytics and tracking',
   'Settings updated successfully!' => 'Settings updated successfully!',
+  'zone_name' => 'Zone name',
+  'zone_description' => 'Zone description',
+  'market' => 'Market',
+  'zone_created_successfully' => 'Zone created successfully',
+  'Want to delete this zone?' => 'Want to delete this zone ',
+  'No Zone' => 'No Zone',
+  'No' => 'No',
+  'Want to delete this product?' => 'Want to delete this product ',
+  'market_deleted_successfully' => 'Market deleted successfully',
 );

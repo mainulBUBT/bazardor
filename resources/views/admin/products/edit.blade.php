@@ -112,6 +112,7 @@
                         </select>
                     </div>
                     <div class="custom-control custom-switch">
+                        <input type="hidden" name="is_featured" value="0">
                         <input type="checkbox" class="custom-control-input" id="featuredSwitch" name="is_featured" value="1" {{ old('is_featured', $product->is_featured) ? 'checked' : '' }}>
                         <label class="custom-control-label" for="featuredSwitch">{{ translate('messages.Featured Product') }}</label>
                     </div>
@@ -349,4 +350,4 @@ $(document).ready(function() {
     });
 });
 </script>
-@endpush 
+@endpush

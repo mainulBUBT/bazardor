@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('brand')->nullable();
             $table->decimal('base_price', 10, 2)->nullable();
             $table->integer('stock')->default(0);
+            $table->string('country_of_origin')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -36,7 +37,7 @@ return new class extends Migration
             $table->index('is_featured');
             $table->index('brand');
             $table->index('base_price');
-            
+
         });
     }
 

@@ -36,6 +36,7 @@ class Market extends Model
         'division',
         'district',
         'upazila_or_thana',
+        'zone_id',
     ];
 
     /**
@@ -49,6 +50,7 @@ class Market extends Model
         'division' => 'string',
         'district' => 'string',
         'upazila_or_thana' => 'string',
+        'zone_id' => 'integer',
         'rating' => 'float',
         'rating_count' => 'integer',
         'position' => 'integer',
