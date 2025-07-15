@@ -60,9 +60,6 @@
                                             <option value="{{ \App\Enums\UserType::USER->value }}" {{ old('role') == \App\Enums\UserType::USER->value ? 'selected' : '' }}>{{ translate('messages.user') }}</option>
                                             <option value="{{ \App\Enums\UserType::VOLUNTEER->value }}" {{ old('role') == \App\Enums\UserType::VOLUNTEER->value ? 'selected' : '' }}>{{ translate('messages.volunteer') }}</option>
                                             <option value="{{ \App\Enums\UserType::MODERATOR->value }}" {{ old('role') == \App\Enums\UserType::MODERATOR->value ? 'selected' : '' }}>{{ translate('messages.moderator') }}</option>
-                                            @if(auth()->user()->isSuperAdmin())
-                                                <option value="{{ \App\Enums\UserType::SUPER_ADMIN->value }}" {{ old('role') == \App\Enums\UserType::SUPER_ADMIN->value ? 'selected' : '' }}>{{ translate('messages.super_admin') }}</option>
-                                            @endif
                                         </select>
                                     </div>
                                 </div>

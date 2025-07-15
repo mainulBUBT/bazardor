@@ -46,26 +46,41 @@
                                 <label for="companyLogo">{{ translate('messages.Company Logo') }}</label>
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" id="companyLogo" name="company_logo" accept="image/*">
-                                    <label class="custom-file-label" for="companyLogo">{{ translate('messages.Choose file') }}</label>
+                                    <label class="custom-file-label" for="companyLogo" id="companyLogoLabel">{{ translate('messages.Choose file') }}</label>
                                 </div>
-                                @if($logo = $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'company_logo')->first()?->value)
-                                    <div class="mt-2">
-                                        <img src="{{ asset('storage/app/public/company/' . $logo) }}" alt="Company Logo" class="img-thumbnail" style="max-height: 100px">
+
+                                <div class="image-preview-container mt-3" id="logoPreviewContainer">
+                                    <div class="image-preview" id="logoPreview" style="height: 150px;">
+                                        @if($logo = $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'company_logo')->first()?->value)
+                                            <img id="logoPreviewImg" src="{{ asset('storage/app/public/company/' . $logo) }}" alt="{{ translate('messages.Company Logo') }}" style="max-height: 130px; max-width: 100%; object-fit: contain;"/>
+                                        @else
+                                            <i class="fas fa-image"></i>
+                                            <span>{{ translate('messages.Click to Upload Logo') }}</span>
+                                            <img id="logoPreviewImg" src="#" alt="{{ translate('messages.Logo Preview') }}" class="d-none" style="max-height: 130px; max-width: 100%; object-fit: contain;"/>
+                                        @endif
                                     </div>
-                                @endif
+                                </div>
+                                <small class="text-muted d-block text-center mt-2">{{ translate('messages.Recommended size') }}: 300x100px</small>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="companyFavicon">{{ translate('messages.Favicon') }}</label>
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" id="companyFavicon" name="company_favicon" accept="image/x-icon,image/png">
-                                    <label class="custom-file-label" for="companyFavicon">{{ translate('messages.Choose file') }}</label>
+                                    <label class="custom-file-label" for="companyFavicon" id="companyFaviconLabel">{{ translate('messages.Choose file') }}</label>
                                 </div>
-                                <small class="form-text text-muted">{{ translate('messages.Recommended size: 32x32 pixels, Formats: .ico, .png') }}</small>
-                                @if($favicon = $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'company_favicon')->first()?->value)
-                                    <div class="mt-2">
-                                        <img src="{{ asset('storage/app/public/company/' . $favicon) }}" alt="Favicon" class="img-thumbnail" style="max-height: 32px">
+
+                                <div class="image-preview-container mt-3" id="faviconPreviewContainer">
+                                    <div class="image-preview" id="faviconPreview" style="height: 150px;">
+                                        @if($favicon = $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'company_favicon')->first()?->value)
+                                            <img id="faviconPreviewImg" src="{{ asset('storage/app/public/company/' . $favicon) }}" alt="{{ translate('messages.Favicon') }}" style="max-height: 32px; object-fit: contain;"/>
+                                        @else
+                                            <i class="fas fa-image"></i>
+                                            <span>{{ translate('messages.Click to Upload Favicon') }}</span>
+                                            <img id="faviconPreviewImg" src="#" alt="{{ translate('messages.Favicon Preview') }}" class="d-none" style="max-height: 32px; object-fit: contain;"/>
+                                        @endif
                                     </div>
-                                @endif  
+                                </div>
+                                <small class="text-muted d-block text-center mt-2">{{ translate('messages.Recommended size') }}: 32x32px</small>
                             </div>
                         </div>
 
@@ -140,5 +155,61 @@
 @endsection
 
 @push('scripts')
-    
+
+<script>
+$(document).ready(function() {
+    // Logo upload functionality
+    $('#companyLogo').on('change', function() {
+        const file = this.files[0];
+        const reader = new FileReader();
+        const $previewElement = $('#logoPreviewImg');
+        const $previewPlaceholder = $('#logoPreview').find('i, span');
+        const $label = $('#companyLogoLabel');
+
+        if (file) {
+            reader.onload = function(e) {
+                $previewElement.attr('src', e.target.result).removeClass('d-none');
+                $previewPlaceholder.addClass('d-none');
+            }
+            reader.readAsDataURL(file);
+            $label.text(file.name);
+        } else {
+            $previewElement.attr('src', '#').addClass('d-none');
+            $previewPlaceholder.removeClass('d-none');
+            $label.text('{{ translate("messages.Choose file") }}');
+        }
+    });
+
+    // Favicon upload functionality
+    $('#companyFavicon').on('change', function() {
+        const file = this.files[0];
+        const reader = new FileReader();
+        const $previewElement = $('#faviconPreviewImg');
+        const $previewPlaceholder = $('#faviconPreview').find('i, span');
+        const $label = $('#companyFaviconLabel');
+
+        if (file) {
+            reader.onload = function(e) {
+                $previewElement.attr('src', e.target.result).removeClass('d-none');
+                $previewPlaceholder.addClass('d-none');
+            }
+            reader.readAsDataURL(file);
+            $label.text(file.name);
+        } else {
+            $previewElement.attr('src', '#').addClass('d-none');
+            $previewPlaceholder.removeClass('d-none');
+            $label.text('{{ translate("messages.Choose file") }}');
+        }
+    });
+
+    // Trigger file input when preview container is clicked
+    $('#logoPreviewContainer').on('click', function() {
+        $('#companyLogo').click();
+    });
+
+    $('#faviconPreviewContainer').on('click', function() {
+        $('#companyFavicon').click();
+    });
+});
+</script>
 @endpush

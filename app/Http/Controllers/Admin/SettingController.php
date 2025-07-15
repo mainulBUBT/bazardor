@@ -27,10 +27,9 @@ class SettingController extends Controller
     {
         $tab = $request->query('tab', GENERAL_SETTINGS);
         $settings = $this->settingService->getSettings($tab);
+        
         if ($tab === GENERAL_SETTINGS) {
-            $settings = $settings->mapWithKeys(function ($setting) {
-                return [$setting->key_name => $setting->value];
-            });
+            // Keep settings as collection for the general.blade.php template
             return view('admin.settings.general', compact('tab', 'settings'));
         } else if ($tab === BUSINESS_RULES) {
             $settings = $settings->keyBy('key_name')->map(function ($setting) {
