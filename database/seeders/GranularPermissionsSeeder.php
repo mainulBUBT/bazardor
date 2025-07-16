@@ -27,6 +27,7 @@ class GranularPermissionsSeeder extends Seeder
             'prices' => ['create', 'edit', 'view', 'delete', 'approve'],
             'reports' => ['view'],
             'price_contributions' => ['approve'],
+            'roles' => ['create', 'edit', 'view', 'delete'],
         ];
 
         // Create granular permissions
@@ -47,6 +48,7 @@ class GranularPermissionsSeeder extends Seeder
             'manage_prices' => ['create_prices', 'edit_prices', 'view_prices', 'delete_prices'],
             'view_reports' => ['view_reports'],
             'approve_price_contributions' => ['approve_price_contributions'],
+            'manage_roles' => ['create_roles', 'edit_roles', 'view_roles', 'delete_roles'],
         ];
 
         // Update existing roles with granular permissions

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\UserManagementService;
 use App\Services\RoleService;
 use Brian2694\Toastr\Facades\Toastr;
-use Spatie\Permission\Models\Role;
+
 
 class UserManagementController extends Controller
 {
@@ -46,14 +46,10 @@ class UserManagementController extends Controller
     */
     public function create(string $role)
     {
-        $functionalRoles = $this->roleService->getRoles()->whereNotIn('name', [
-            UserType::SUPER_ADMIN->value,
-            UserType::MODERATOR->value,
-            UserType::VOLUNTEER->value,
-            UserType::USER->value
-        ]);
+        $functionalRoles = $this->userService->getFunctionalRoles();
+        $userTypeOptions = $this->userService->getUserTypeOptions();
         
-        return view('admin.users.create', compact('role', 'functionalRoles'));
+        return view('admin.users.create', compact('role', 'functionalRoles', 'userTypeOptions'));
     }
 
     /**
@@ -85,14 +81,10 @@ class UserManagementController extends Controller
     public function edit(string $id)
     {
         $user = $this->userService->findById($id);
-        $functionalRoles = $this->roleService->getRoles()->whereNotIn('name', [
-            UserType::SUPER_ADMIN->value,
-            UserType::MODERATOR->value,
-            UserType::VOLUNTEER->value,
-            UserType::USER->value
-        ]);
+        $functionalRoles = $this->userService->getFunctionalRoles();
+        $userTypeOptions = $this->userService->getUserTypeOptions();
         
-        return view('admin.users.edit', compact('user', 'functionalRoles'));
+        return view('admin.users.edit', compact('user', 'functionalRoles', 'userTypeOptions'));
     }
 
     /**
@@ -112,7 +104,7 @@ class UserManagementController extends Controller
         }
         
         $this->userService->update($id, $data);
-        Toastr::success(translate('messages.user_updated_successfully'));
+        Toastr::success('User updated successfully');
 
         return redirect()->route('admin.users.index', ['role' => $request->role ?? 'user']);
     }
@@ -160,7 +152,7 @@ class UserManagementController extends Controller
     public function approve(string $id)
     {
         $this->userService->approveUser($id);
-        Toastr::success(translate('messages.user_approved_successfully'));
+        Toastr::success('User approved successfully');
         return redirect()->route('admin.users.pending');
     }
 
@@ -173,7 +165,7 @@ class UserManagementController extends Controller
     public function reject(string $id)
     {
         $this->userService->rejectUser($id);
-        Toastr::success(translate('messages.user_rejected_successfully'));
+        Toastr::success('User rejected successfully');
         return redirect()->route('admin.users.pending');
     }
 }

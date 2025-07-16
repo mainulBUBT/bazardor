@@ -54,16 +54,70 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::created(function (User $user) {
-            // Automatically assign a role based on user_type if not already assigned
-            if (!$user->roles()->count() && $user->user_type) {
-                $user->assignRole($user->user_type);
+            // Assign user_type role (basic category)
+            if (!$user->hasRole($user->user_type) && $user->user_type) {
+                try {
+                    $user->assignRole($user->user_type);
+                } catch (\Exception $e) {
+                    \Log::warning("User type role {$user->user_type} not found for user {$user->id}");
+                }
+            }
+
+            // Assign functional role if specified
+            if ($user->role_id) {
+                try {
+                    $functionalRole = \Spatie\Permission\Models\Role::find($user->role_id);
+                    if ($functionalRole) {
+                        $user->assignRole($functionalRole);
+                    }
+                } catch (\Exception $e) {
+                    \Log::warning("Functional role {$user->role_id} not found for user {$user->id}");
+                }
             }
         });
 
         static::updated(function (User $user) {
-            // If user_type changed, sync the corresponding role
+            // Handle user_type changes
             if ($user->isDirty('user_type') && $user->user_type) {
-                $user->syncRoles([$user->user_type]);
+                // Remove old user_type roles
+                $userTypeRoles = ['super_admin', 'moderator', 'volunteer', 'user'];
+                foreach ($userTypeRoles as $roleType) {
+                    if ($user->hasRole($roleType) && $roleType !== $user->user_type) {
+                        $user->removeRole($roleType);
+                    }
+                }
+                
+                // Assign new user_type role
+                try {
+                    if (!$user->hasRole($user->user_type)) {
+                        $user->assignRole($user->user_type);
+                    }
+                } catch (\Exception $e) {
+                    \Log::warning("User type role {$user->user_type} not found for user {$user->id}");
+                }
+            }
+
+            // Handle functional role changes
+            if ($user->isDirty('role_id')) {
+                // Remove old functional roles (keep user_type roles)
+                $userTypeRoles = ['super_admin', 'moderator', 'volunteer', 'user'];
+                $currentRoles = $user->roles()->whereNotIn('name', $userTypeRoles)->get();
+                
+                foreach ($currentRoles as $role) {
+                    $user->removeRole($role);
+                }
+
+                // Assign new functional role
+                if ($user->role_id) {
+                    try {
+                        $functionalRole = \Spatie\Permission\Models\Role::find($user->role_id);
+                        if ($functionalRole) {
+                            $user->assignRole($functionalRole);
+                        }
+                    } catch (\Exception $e) {
+                        \Log::warning("Functional role {$user->role_id} not found for user {$user->id}");
+                    }
+                }
             }
         });
     }
@@ -71,6 +125,45 @@ class User extends Authenticatable
     public function createdEntities()
     {
         return $this->hasMany(\App\Models\EntityCreator::class);
+    }
+
+    /**
+     * Get the functional role (role_id relationship)
+     */
+    public function functionalRole()
+    {
+        return $this->belongsTo(\Spatie\Permission\Models\Role::class, 'role_id');
+    }
+
+    /**
+     * Get all effective permissions (from both user_type and functional role)
+     */
+    public function getAllEffectivePermissions()
+    {
+        $permissions = collect();
+        
+        // Get permissions from all assigned roles
+        foreach ($this->roles as $role) {
+            $permissions = $permissions->merge($role->permissions);
+        }
+        
+        return $permissions->unique('id');
+    }
+
+    /**
+     * Check if user has a functional role assigned
+     */
+    public function hasFunctionalRole(): bool
+    {
+        return !is_null($this->role_id) && $this->functionalRole()->exists();
+    }
+
+    /**
+     * Get the display name for the user's functional role
+     */
+    public function getFunctionalRoleName(): ?string
+    {
+        return $this->functionalRole?->name;
     }
 
     public function isSuperAdmin(): bool
@@ -104,11 +197,62 @@ class User extends Authenticatable
     // Legacy method for backward compatibility
     public function hasPermission(\App\Enums\Permission $permission): bool
     {   
+        // First check using Spatie's permission system
         if ($this->hasPermissionTo($permission->value)) {
             return true;
         }
         
+        // Fallback to config-based permissions for backward compatibility
         $rolePermissions = config('roles')[$this->role] ?? [];
-        return in_array($permission->value, $rolePermissions);
+        if (in_array($permission->value, $rolePermissions)) {
+            return true;
+        }
+        
+        // Check if user has role-based permissions
+        foreach ($this->roles as $role) {
+            if ($role->hasPermissionTo($permission->value)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if user has any of the given permissions
+     */
+    public function hasAnyPermission(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if (is_string($permission)) {
+                if ($this->hasPermissionTo($permission)) {
+                    return true;
+                }
+            } elseif ($permission instanceof \App\Enums\Permission) {
+                if ($this->hasPermission($permission)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if user has all of the given permissions
+     */
+    public function hasAllPermissions(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if (is_string($permission)) {
+                if (!$this->hasPermissionTo($permission)) {
+                    return false;
+                }
+            } elseif ($permission instanceof \App\Enums\Permission) {
+                if (!$this->hasPermission($permission)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

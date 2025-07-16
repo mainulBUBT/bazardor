@@ -101,7 +101,7 @@ class UserManagementService
         $data['password'] = bcrypt($data['password']);
 
         if (isset($data['image']) && $data['image']->isValid()) {
-            $imageName = handle_file_upload('users/', $data['image']->getClientOriginalExtension(), $data['image'],  null);
+            $imageName = handle_file_upload('users/', $data['image']->getClientOriginalExtension(), $data['image'], null);
             $data['image_path'] = $imageName;
         }
         unset($data['image']);
@@ -112,8 +112,8 @@ class UserManagementService
             'username' => $data['username'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'role_id' => $data['role_id'] ?? null,
-            'user_type' => $data['role'] ?? 'user',
+            'role_id' => $data['role_id'] ?? null, // Functional role ID
+            'user_type' => $data['user_type'] ?? 'user', // Basic user category
             'image_path' => $data['image_path'] ?? null,
             'phone' => $data['phone'] ?? null,
             'gender' => $data['gender'] ?? null,
@@ -128,13 +128,24 @@ class UserManagementService
             'remember_token' => $data['remember_token'] ?? null,
         ]);
 
-        // Assign user type role
-        $user->assignRole($data['role']);
+        // Assign user type role (basic category)
+        if ($user->user_type) {
+            try {
+                $user->assignRole($user->user_type);
+            } catch (\Exception $e) {
+                \Log::warning("Could not assign user_type role {$user->user_type} to user {$user->id}");
+            }
+        }
 
-        // Assign additional functional roles if specified
-        if (isset($data['functional_roles']) && is_array($data['functional_roles'])) {
-            foreach ($data['functional_roles'] as $roleId) {
-                $user->assignRole($roleId);
+        // Assign functional role if specified
+        if ($user->role_id) {
+            try {
+                $functionalRole = SpatieRole::find($user->role_id);
+                if ($functionalRole) {
+                    $user->assignRole($functionalRole);
+                }
+            } catch (\Exception $e) {
+                \Log::warning("Could not assign functional role {$user->role_id} to user {$user->id}");
             }
         }
 
@@ -164,7 +175,7 @@ class UserManagementService
         }
 
         if (isset($data['image']) && $data['image']->isValid()) {
-            $imageName = handle_file_upload('users/', $data['image']->getClientOriginalExtension(), $data['image'],  $oldImagePath);
+            $imageName = handle_file_upload('users/', $data['image']->getClientOriginalExtension(), $data['image'], $oldImagePath);
             $data['image_path'] = $imageName;
 
             if ($oldImagePath) {
@@ -179,8 +190,8 @@ class UserManagementService
             'last_name' => $data['last_name'] ?? null,
             'username' => $data['username'] ?? $user->username,
             'password' => $data['password'],
-            'role_id' => $data['role_id'] ?? $user->role_id,
-            'user_type' => $data['role'] ?? $user->user_type,
+            'role_id' => $data['role_id'] ?? $user->role_id, // Functional role ID
+            'user_type' => $data['user_type'] ?? $user->user_type, // Basic user category
             'image_path' => $data['image_path'] ?? $user->image_path,
             'phone' => $data['phone'] ?? $user->phone,
             'gender' => $data['gender'] ?? $user->gender,
@@ -195,37 +206,8 @@ class UserManagementService
             'remember_token' => $data['remember_token'] ?? $user->remember_token,
         ]);
 
-        // Ensure user has the base user type role
-        $user->assignRole($data['role']);
-
-        // Update functional roles
-        $userTypeRoles = [
-            UserType::SUPER_ADMIN->value,
-            UserType::MODERATOR->value,
-            UserType::VOLUNTEER->value,
-            UserType::USER->value
-        ];
-
-        // Get current functional roles (excluding user type roles)
-        $currentFunctionalRoles = $user->roles->whereNotIn('name', $userTypeRoles)->pluck('id')->toArray();
-
-        // Sync functional roles if provided
-        if (isset($data['functional_roles']) && is_array($data['functional_roles'])) {
-            // Remove old functional roles
-            foreach ($currentFunctionalRoles as $roleId) {
-                $user->removeRole($roleId);
-            }
-
-            // Add new functional roles
-            foreach ($data['functional_roles'] as $roleId) {
-                $user->assignRole($roleId);
-            }
-        } else {
-            // If no functional roles provided, remove all existing ones
-            foreach ($currentFunctionalRoles as $roleId) {
-                $user->removeRole($roleId);
-            }
-        }
+        // Note: Role assignment is handled automatically by the User model's booted() method
+        // when user_type or role_id changes
 
         return $user;
     }
@@ -320,5 +302,54 @@ class UserManagementService
     public function getAllRoles()
     {
         return SpatieRole::all();
+    }
+
+    /**
+     * Get functional roles (excluding user type roles)
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getFunctionalRoles()
+    {
+        $userTypeRoles = [
+            UserType::SUPER_ADMIN->value,
+            UserType::MODERATOR->value,
+            UserType::VOLUNTEER->value,
+            UserType::USER->value
+        ];
+
+        return SpatieRole::whereNotIn('name', $userTypeRoles)->get();
+    }
+
+    /**
+     * Get user type roles only
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getUserTypeRoles()
+    {
+        $userTypeRoles = [
+            UserType::SUPER_ADMIN->value,
+            UserType::MODERATOR->value,
+            UserType::VOLUNTEER->value,
+            UserType::USER->value
+        ];
+
+        return SpatieRole::whereIn('name', $userTypeRoles)->get();
+    }
+
+    /**
+     * Get user type options for forms
+     *
+     * @return array
+     */
+    public function getUserTypeOptions(): array
+    {
+        return [
+            UserType::USER->value => 'User',
+            UserType::VOLUNTEER->value => 'Volunteer',
+            UserType::MODERATOR->value => 'Moderator',
+            UserType::SUPER_ADMIN->value => 'Super Admin',
+        ];
     }
 }

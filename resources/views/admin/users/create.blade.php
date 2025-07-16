@@ -55,25 +55,27 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="role">{{ translate('messages.role') }}</label>
-                                        <select class="form-control" name="role" id="role">
-                                            <option value="{{ \App\Enums\UserType::USER->value }}" {{ old('role') == \App\Enums\UserType::USER->value ? 'selected' : '' }}>{{ translate('messages.user') }}</option>
-                                            <option value="{{ \App\Enums\UserType::VOLUNTEER->value }}" {{ old('role') == \App\Enums\UserType::VOLUNTEER->value ? 'selected' : '' }}>{{ translate('messages.volunteer') }}</option>
-                                            <option value="{{ \App\Enums\UserType::MODERATOR->value }}" {{ old('role') == \App\Enums\UserType::MODERATOR->value ? 'selected' : '' }}>{{ translate('messages.moderator') }}</option>
+                                        <label for="user_type">{{ translate('messages.User Type') }} <span class="text-danger">*</span></label>
+                                        <select class="form-control" name="user_type" id="user_type" required>
+                                            @foreach($userTypeOptions as $value => $label)
+                                                <option value="{{ $value }}" {{ old('user_type', $role) == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                            @endforeach
                                         </select>
+                                        <small class="form-text text-muted">{{ translate('messages.Basic user category that determines access level') }}</small>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="functional_roles">{{ translate('messages.functional_roles') }}</label>
-                                        <select class="form-control select2" name="functional_roles[]" id="functional_roles" multiple>
+                                        <label for="role_id">{{ translate('messages.Functional Role') }}</label>
+                                        <select class="form-control select2" name="role_id" id="role_id">
+                                            <option value="">{{ translate('messages.Select Functional Role') }} ({{ translate('messages.Optional') }})</option>
                                             @foreach($functionalRoles as $functionalRole)
-                                                <option value="{{ $functionalRole->id }}" {{ in_array($functionalRole->id, old('functional_roles', [])) ? 'selected' : '' }}>{{ $functionalRole->name }}</option>
+                                                <option value="{{ $functionalRole->id }}" {{ old('role_id') == $functionalRole->id ? 'selected' : '' }}>{{ $functionalRole->name }}</option>
                                             @endforeach
                                         </select>
-                                        <small class="form-text text-muted">{{ translate('messages.functional_roles_help') }}</small>
+                                        <small class="form-text text-muted">{{ translate('messages.Specific job role with additional permissions (e.g., Zone Manager, Content Manager)') }}</small>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
