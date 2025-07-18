@@ -39,6 +39,9 @@ class SettingController extends Controller
                 ];
             });
             return view('admin.settings.business-rules', compact('tab', 'settings'));
+        } else if ($tab === NOTIFICATION_SETTINGS) {
+            // Keep settings as collection for the notifications.blade.php template
+            return view('admin.settings.notifications', compact('tab', 'settings'));
         } else {
             $settings = $settings->mapWithKeys(function ($setting) {
                 return [$setting->key_name => $setting->value];

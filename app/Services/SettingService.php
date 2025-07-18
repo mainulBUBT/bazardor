@@ -39,6 +39,25 @@ class SettingService
     }
     
     /**
+     * Get a single setting value by key with default fallback
+     *
+     * @param string $key The setting key
+     * @param string $group The settings group/type
+     * @return mixed The setting value or default value if not found
+     */
+    public function getSettingWithDefault(string $key, string $group)
+    {
+        $value = $this->getSetting($key, $group);
+        
+        if ($value !== null) {
+            return $value;
+        }
+        
+        $defaults = $this->getDefaultSettings();
+        return $defaults[$group][$key] ?? null;
+    }
+    
+    /**
      * Summary of updateSettings
      * @param array $data
      * @param string $group
@@ -112,7 +131,7 @@ class SettingService
      *
      * @return array
      */
-    private function getDefaultSettings(): array
+    public function getDefaultSettings(): array
     {
         return [
             'general' => [
@@ -153,6 +172,15 @@ class SettingService
                 'enable_sms_notifications' => false,
                 'notify_price_drops' => true,
                 'notify_new_markets' => true,
+                'notify_new_user_registrations' => true,
+                'notify_new_market_submissions' => true,
+                'notify_new_product_submissions' => true,
+                'notify_user_reports_flags' => true,
+                'notify_system_errors_warnings' => true,
+                'digest_frequency' => 'daily',
+                'quiet_hours_start' => '22:00',
+                'quiet_hours_end' => '07:00',
+                'digest_delivery_time' => '09:00',
             ],
             'mail' => [
                 'driver' => 'smtp',

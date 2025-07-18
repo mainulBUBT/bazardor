@@ -63,6 +63,15 @@ class UpdateSettingsRequest extends FormRequest
                 'enable_sms_notifications' => 'boolean',
                 'notify_price_drops' => 'boolean',
                 'notify_new_markets' => 'boolean',
+                'notify_new_user_registrations' => 'boolean',
+                'notify_new_market_submissions' => 'boolean',
+                'notify_new_product_submissions' => 'boolean',
+                'notify_user_reports_flags' => 'boolean',
+                'notify_system_errors_warnings' => 'boolean',
+                'digest_frequency' => ['required', 'string', Rule::in(['real-time', 'daily', 'weekly'])],
+                'quiet_hours_start' => 'required|date_format:H:i',
+                'quiet_hours_end' => 'required|date_format:H:i',
+                'digest_delivery_time' => 'required|date_format:H:i',
             ],
             'mail' => [
                 'driver' => ['required', 'string', Rule::in(['smtp', 'sendmail', 'mailgun', 'ses', 'postmark', 'log'])],
@@ -99,6 +108,11 @@ class UpdateSettingsRequest extends FormRequest
             'timezone' => 'The :attribute must be a valid timezone.',
             'image' => 'The :attribute must be an image.',
             'mimes' => 'The :attribute must be a file of type: :values.',
+            'date_format' => 'The :attribute must be a valid time in HH:MM format.',
+            'digest_frequency.in' => 'The digest frequency must be real-time, daily, or weekly.',
+            'quiet_hours_start.date_format' => 'The quiet hours start time must be in HH:MM format.',
+            'quiet_hours_end.date_format' => 'The quiet hours end time must be in HH:MM format.',
+            'digest_delivery_time.date_format' => 'The digest delivery time must be in HH:MM format.',
         ];
     }
 }
