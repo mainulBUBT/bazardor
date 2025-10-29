@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Category;
+use App\Models\ProductMarketPrice;
 
 class CategoryService
 {
@@ -121,4 +122,30 @@ class CategoryService
     {
         return $this->category->findOrFail($categoryId);
     }
+
+
+    /**
+     * Get categories with unique market counts filtered by an optional zone.
+     */
+    public function getCategoriesWithMarketCounts(?int $zoneId = null, ?int $limit = null, ?int $offset = null)
+    {
+           
+        $marketCountSubquery = ProductMarketPrice::query()
+            ->join('products', 'products.id', '=', 'product_market_prices.product_id')
+            ->join('markets', 'markets.id', '=', 'product_market_prices.market_id')
+            ->whereNull('products.deleted_at')
+            ->whereNull('markets.deleted_at')
+            ->whereColumn('products.category_id', 'categories.id')
+            ->when($zoneId, function ($query) use ($zoneId) {
+                $query->where('markets.zone_id', $zoneId);
+            })
+            ->selectRaw('COUNT(DISTINCT product_market_prices.market_id)');
+
+        return $this->category
+            ->select('categories.*')
+            ->selectSub($marketCountSubquery, 'unique_market_count')
+            ->orderBy('categories.position')
+            ->paginate($limit, ['*'], 'page', $offset);
+    }
 }
+

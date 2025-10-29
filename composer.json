@@ -9,6 +9,7 @@
         "php": "^8.2",
         "brian2694/laravel-toastr": "^5.59",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "spatie/laravel-permission": "^6.20"
     },
@@ -30,7 +31,8 @@
         },
         "files": [
             "app/CentralLogics/Helpers.php",
-            "app/CentralLogics/Constants.php"
+            "app/CentralLogics/Constants.php",
+            "app/CentralLogics/Response.php"
         ]
     },
     "autoload-dev": {

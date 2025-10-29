@@ -103,3 +103,16 @@ if (!function_exists('pagination_limit')) {
         return $limit;
     }
 }
+
+if (!function_exists('formated_response')) {
+    function formated_response($constant, $content = null, $limit =null, $offset = null ,$errors = []): array
+    {
+        $constant = (array)$constant;
+        $constant['total_size'] = isset($limit)?$content->total():null;
+        $constant['limit'] = $limit;
+        $constant['offset'] = $offset;
+        $constant['data'] = $content;
+        $constant['errors'] = $errors;
+        return $constant;
+    }
+}

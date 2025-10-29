@@ -773,4 +773,10 @@
   'An error occurred while updating the setting' => 'An error occurred while updating the setting',
   'Please enter valid time format (HH:MM)' => 'Please enter valid time format (HH:MM)',
   'Saving...' => 'Saving...',
+  'edit_zone' => 'Edit zone',
+  'User Type' => 'User Type',
+  'Basic user category that determines access level' => 'Basic user category that determines access level',
+  'Functional Role' => 'Functional Role',
+  'Select Functional Role' => 'Select Functional Role',
+  'Specific job role with additional permissions (e.g., Zone Manager, Content Manager)' => 'Specific job role with additional permissions (e.g.  Zone Manager  Content Manager)',
 );
