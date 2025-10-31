@@ -152,8 +152,8 @@
         </a>
         <div id="collapsePushNotifications" class="collapse" aria-labelledby="headingPushNotifications" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{url('/admin/notifications')}}">{{translate('messages.All Notifications') }}</a>
-                <a class="collapse-item" href="{{url('/admin/notifications/create')}}">{{translate('messages.Send Notification') }}</a>
+                <a class="collapse-item" href="{{route('admin.push-notifications.index')}}">{{translate('messages.All Notifications') }}</a>
+                <a class="collapse-item" href="{{route('admin.push-notifications.create')}}">{{translate('messages.Send Notification') }}</a>
             </div>
         </div>
     </li>

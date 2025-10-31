@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\ZoneController;
+use App\Http\Controllers\Admin\PushNotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "admin", "as" => "admin."], function () {
@@ -83,6 +84,20 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::put('/{zone}', [ZoneController::class, 'update'])->name('update');
             Route::delete('/{zone}', [ZoneController::class, 'destroy'])->name('destroy');
             Route::post('/{zone}/toggle-status', [ZoneController::class, 'toggleStatus'])->name('toggle-status');
+        });
+
+        // Push Notifications
+        Route::group(['prefix' => 'push-notifications', 'as' => 'push-notifications.'], function () {
+            Route::get('/', [PushNotificationController::class, 'index'])->name('index');
+            Route::get('create', [PushNotificationController::class, 'create'])->name('create');
+            Route::post('/', [PushNotificationController::class, 'store'])->name('store');
+            Route::get('{pushNotification}', [PushNotificationController::class, 'show'])->name('show');
+            Route::get('{pushNotification}/edit', [PushNotificationController::class, 'edit'])->name('edit');
+            Route::put('{pushNotification}', [PushNotificationController::class, 'update'])->name('update');
+            Route::delete('{pushNotification}', [PushNotificationController::class, 'destroy'])->name('destroy');
+            Route::post('{pushNotification}/send', [PushNotificationController::class, 'send'])->name('send');
+            Route::post('{pushNotification}/resend', [PushNotificationController::class, 'resend'])->name('resend');
+            Route::get('get-estimated-reach', [PushNotificationController::class, 'getEstimatedReach'])->name('get-estimated-reach');
         });
     });
 });
