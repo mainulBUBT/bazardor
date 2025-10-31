@@ -78,7 +78,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="marketDivision" class="form-label">{{ translate('messages.Division') }} <span class="text-danger">*</span></label>
-                                <select class="form-control select2" id="marketDivision" name="division" onchange="getDistricts(this.value)" required>
+                                <select class="form-control select2" id="marketDivision" name="division" required>
                                     <option></option> <!-- Placeholder for Select2 -->
                                     @foreach($divisions as $division)
                                         <option value="{{ $division }}" {{ old('division') == $division ? 'selected' : '' }}>{{ $division }}</option>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="marketDistrict" class="form-label">{{ translate('messages.District') }} <span class="text-danger">*</span></label>
-                                <select class="form-control select2" id="marketDistrict" name="district" onchange="getThanas(document.getElementById('marketDivision').value, this.value)" required disabled>
+                                <select class="form-control select2" id="marketDistrict" name="district" required disabled>
                                     <option></option> 
                                 </select>
                             </div>
@@ -112,7 +112,13 @@
                             </div>
                         </div>
                         <!-- Map Container -->
-                        <div id="map" style="height: 400px; border-radius: 0.35rem;" class="mb-3"></div>
+                        <div style="position: relative; height: 400px; border-radius: 0.35rem;" class="mb-3">
+                            <div id="map" style="height: 100%; width: 100%; border-radius: 0.35rem; position: relative;"></div>
+                            <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 460px; z-index: 999;">
+                                <input type="text" id="marketSearchBox" class="form-control" placeholder="Search location..." autocomplete="off" style="box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                                <div id="marketSearchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-top: none; max-height: 200px; overflow-y: auto; display: none; z-index: 1000; margin-top: 2px; border-radius: 0 0 4px 4px;"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -243,234 +249,216 @@
 
 @endsection
 @push('scripts')
-     <script>
+    <script>
         $(document).ready(function() {
-
-            // Image Preview & File Input Handling
+            // Image Preview
             $('#marketImage').on('change', function() {
                 const file = this.files[0];
-                const reader = new FileReader();
-                const $previewContainer = $('#imagePreview');
-                const $label = $('#marketImageLabel'); 
                 if (file) {
-                    reader.onload = function(e) {
-                        $previewContainer.html('<img src="' + e.target.result + '" alt="Market Preview">');
-                    }
+                    const reader = new FileReader();
+                    reader.onload = e => $('#imagePreview').html(`<img src="${e.target.result}" alt="Market Preview">`);
                     reader.readAsDataURL(file);
-                    $label.text(file.name); 
+                    $('#marketImageLabel').text(file.name);
                 } else {
-                    $previewContainer.html('<i class="fas fa-camera"></i><span>{{ translate('messages.Click to Upload Image') }}</span>');
-                    $label.text('{{ translate('messages.Choose file...') }}');
+                    $('#imagePreview').html('<i class="fas fa-camera"></i><span>{{ translate('messages.Click to Upload Image') }}</span>');
+                    $('#marketImageLabel').text('{{ translate('messages.Choose file...') }}');
                 }
             });
 
-             // --- Operating Hours Logic ---
-             $('#applyHoursToAll').on('click', function() {
-                const $firstRow = $('#operatingHoursTable tbody tr:first');
-                const firstOpening = $firstRow.find('.opening-time').val();
-                const firstClosing = $firstRow.find('.closing-time').val();
-                const firstIsClosed = $firstRow.find('.is-closed').prop('checked');
-
-                $('#operatingHoursTable tbody tr').each(function(index) {
-                    if(index > 0) {
-                        $(this).find('.opening-time').val(firstOpening).prop('disabled', firstIsClosed);
-                        $(this).find('.closing-time').val(firstClosing).prop('disabled', firstIsClosed);
-                        $(this).find('.is-closed').prop('checked', firstIsClosed);
-                    }
+            // Operating Hours
+            $('#applyHoursToAll').on('click', function() {
+                const $first = $('#operatingHoursTable tbody tr:first');
+                const opening = $first.find('.opening-time').val();
+                const closing = $first.find('.closing-time').val();
+                const closed = $first.find('.is-closed').prop('checked');
+                
+                $('#operatingHoursTable tbody tr').slice(1).each(function() {
+                    $(this).find('.opening-time').val(opening).prop('disabled', closed);
+                    $(this).find('.closing-time').val(closing).prop('disabled', closed);
+                    $(this).find('.is-closed').prop('checked', closed);
                 });
-             });
+            });
 
-             // Disable time inputs when 'Closed' is checked
-             $('#operatingHoursTable').on('change', '.is-closed', function() {
-                 const $row = $(this).closest('tr');
-                 const isChecked = $(this).prop('checked');
-                 $row.find('.opening-time, .closing-time').prop('disabled', isChecked);
-             });
-             // Initial check on load
-             $('#operatingHoursTable .is-closed').trigger('change');
+            $('#operatingHoursTable').on('change', '.is-closed', function() {
+                $(this).closest('tr').find('.opening-time, .closing-time').prop('disabled', this.checked);
+            }).trigger('change');
 
-            // --- Leaflet Map Logic ---
+            // Map & Search
             const latInput = document.getElementById('marketLatitude');
             const lngInput = document.getElementById('marketLongitude');
             const addressInput = document.getElementById('marketAddress');
-
-            // Initialize map centered on Dhaka, Bangladesh
+            const searchInput = document.getElementById('marketSearchBox');
+            const searchResults = document.getElementById('marketSearchResults');
+            
             const map = L.map('map').setView([23.8103, 90.4125], 12);
-
-            // Add OpenStreetMap tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
-
-            // Add a draggable marker
-            let marker = L.marker([23.8103, 90.4125], { draggable: true }).addTo(map);
-            updateLatLngInputs(marker.getLatLng());
-
-            // --- GeoSearch Control ---
-            const { GeoSearchControl, OpenStreetMapProvider } = window.GeoSearch;
-            const provider = new OpenStreetMapProvider({
-                params: {
-                    'accept-language': 'en', // for language consistency
-                    countrycodes: 'bd', // limit search to Bangladesh
-                },
-            });
-
-            const searchControl = new GeoSearchControl({
-                provider: provider,
-                style: 'bar',
-                showMarker: false,
-                showPopup: false,
-                autoClose: true,
-                retainZoomLevel: false,
-                animateZoom: true,
-                keepResult: true,
-                searchLabel: 'Search for an address...',
-            });
-            map.addControl(searchControl);
-
-            map.on('geosearch/showlocation', function(result) {
-                const latlng = { lat: result.location.y, lng: result.location.x };
-                marker.setLatLng(latlng);
-                updateLatLngInputs(latlng);
-                addressInput.value = result.location.label; // Use address from search result
-            });
-
-            // Update lat/lng on marker drag
-            marker.on('dragend', function(event) {
-                const position = marker.getLatLng();
-                updateLatLngInputs(position);
-                updateAddressInput(position);
-            });
-
-            // Update marker on map click
-            map.on('click', function(e) {
-                marker.setLatLng(e.latlng);
-                updateLatLngInputs(e.latlng);
-                updateAddressInput(e.latlng);
-            });
-
-            function updateLatLngInputs(latlng) {
-                const newLat = latlng.lat.toFixed(6);
-                const newLng = latlng.lng.toFixed(6);
-                // Only update if the value is different to prevent re-triggering 'input' event
-                if (latInput.value !== newLat) {
-                    latInput.value = newLat;
-                }
-                if (lngInput.value !== newLng) {
-                    lngInput.value = newLng;
-                }
-            }
-
-            function updateAddressInput(latlng) {
-                addressInput.value = 'Loading address...';
+            
+            const marker = L.marker([23.8103, 90.4125], { draggable: true }).addTo(map);
+            
+            const updateLatLng = latlng => {
+                const lat = latlng.lat.toFixed(6);
+                const lng = latlng.lng.toFixed(6);
+                if (latInput.value !== lat) latInput.value = lat;
+                if (lngInput.value !== lng) lngInput.value = lng;
+            };
+            
+            const updateAddress = latlng => {
+                addressInput.value = 'Loading...';
                 addressInput.classList.add('address-loading');
-
-                // Using Nominatim for reverse geocoding
-                const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`;
-                fetch(url)
-                    .then(response => response.json())
+                
+                fetch(`https://photon.komoot.io/reverse?lat=${latlng.lat}&lon=${latlng.lng}`)
+                    .then(r => r.json())
                     .then(data => {
-                        if (data && data.display_name) {
-                            addressInput.value = data.display_name;
+                        if (data?.features?.[0]) {
+                            const props = data.features[0].properties;
+                            const parts = [props.name, props.street, props.housenumber, props.postcode, props.city, props.state, props.country].filter(Boolean);
+                            addressInput.value = parts.join(', ') || 'Address not found';
                         } else {
-                            addressInput.value = 'Address not found. Please enter manually.';
+                            addressInput.value = 'Address not found';
                         }
                     })
-                    .catch(err => {
-                        console.error('Error fetching address:', err);
-                        addressInput.value = 'Could not fetch address. Please enter manually.';
+                    .catch(() => addressInput.value = 'Could not fetch address')
+                    .finally(() => addressInput.classList.remove('address-loading'));
+            };
+            
+            const updatePosition = latlng => {
+                updateLatLng(latlng);
+                updateAddress(latlng);
+            };
+            
+            marker.on('dragend', e => updatePosition(e.target.getLatLng()));
+            map.on('click', e => {
+                marker.setLatLng(e.latlng);
+                updatePosition(e.latlng);
+            });
+            
+            updateLatLng(marker.getLatLng());
+            
+            // Search functionality
+            const BD_BOUNDS = { lat: [20.34, 26.64], lng: [88.01, 92.67] };
+            let searchTimeout;
+            
+            const isBangladesh = feature => {
+                const coords = feature.geometry?.coordinates || [];
+                const [lng, lat] = coords.map(parseFloat);
+                return !isNaN(lat) && !isNaN(lng) && 
+                       lat >= BD_BOUNDS.lat[0] && lat <= BD_BOUNDS.lat[1] && 
+                       lng >= BD_BOUNDS.lng[0] && lng <= BD_BOUNDS.lng[1];
+            };
+            
+            const performSearch = () => {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const items = (data.features || [])
+                            .filter(isBangladesh)
+                            .map(feature => {
+                                const [lng, lat] = feature.geometry.coordinates;
+                                const props = feature.properties;
+                                const title = props.name || props.street || props.city || 'Unnamed';
+                                const subtitle = [props.city, props.state, props.postcode, props.country].filter(Boolean).join(', ');
+                                return `<div class="search-result-item" style="padding:10px;border-bottom:1px solid #eee;cursor:pointer" data-lat="${lat}" data-lon="${lng}">
+                                    <strong>${title}</strong>${subtitle ? `<br><small class="text-muted">${subtitle}</small>` : ''}
+                                </div>`;
+                            });
+                        
+                        if (!items.length) {
+                            searchResults.innerHTML = '<div style="padding:10px;text-align:center;color:#999">No Bangladesh results found</div>';
+                        } else {
+                            searchResults.innerHTML = items.join('');
+                            searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                                item.addEventListener('click', function() {
+                                    const lat = parseFloat(this.dataset.lat);
+                                    const lng = parseFloat(this.dataset.lon);
+                                    searchInput.value = this.querySelector('strong').textContent;
+                                    searchResults.style.display = 'none';
+                                    const newLatLng = L.latLng(lat, lng);
+                                    marker.setLatLng(newLatLng);
+                                    map.setView(newLatLng, 15);
+                                    updatePosition(newLatLng);
+                                });
+                                item.addEventListener('mouseenter', () => this.style.backgroundColor = '#f5f5f5');
+                                item.addEventListener('mouseleave', () => this.style.backgroundColor = 'white');
+                            });
+                        }
+                        searchResults.style.display = 'block';
                     })
-                    .finally(() => {
-                        addressInput.classList.remove('address-loading');
+                    .catch(() => {
+                        searchResults.innerHTML = '<div style="padding:10px;text-align:center;color:#999">Error searching</div>';
+                        searchResults.style.display = 'block';
                     });
-            }
+            };
+            
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performSearch, 300);
+            });
+            
+            document.addEventListener('click', e => {
+                if (!e.target.closest(searchInput) && !e.target.closest(searchResults)) {
+                    searchResults.style.display = 'none';
+                }
+            });
 
-            // --- Two-way binding for Lat/Lng inputs ---
-            let debounceTimeout;
-            function updateMapFromInputs() {
-                clearTimeout(debounceTimeout);
-                debounceTimeout = setTimeout(() => {
-                    const lat = parseFloat(latInput.value);
-                    const lng = parseFloat(lngInput.value);
-
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        const newLatLng = L.latLng(lat, lng);
-                        // Use a tolerance for float comparison to avoid infinite loops
-                        if (!marker.getLatLng().equals(newLatLng, 1e-6)) { 
-                             marker.setLatLng(newLatLng);
-                             map.panTo(newLatLng);
-                             updateAddressInput(newLatLng);
-                        }
-                    }
-                }, 800); // 800ms delay
-            }
-
-            latInput.addEventListener('input', updateMapFromInputs);
-            lngInput.addEventListener('input', updateMapFromInputs);
-
-            // --- Logic to handle old input for dependent dropdowns ---
-            const oldDivision = "{{ old('division') }}";
-            const oldDistrict = "{{ old('district') }}";
-            const oldUpazila = "{{ old('upazila') }}";
-
-            if (oldDivision) {
-                getDistricts(oldDivision, oldDistrict, oldUpazila);
-            }
-       });
-        
-        function getDistricts(division, selectedDistrict = null, selectedUpazila = null) {
+            // Dependent Dropdowns
+            const divisionSelect = document.getElementById('marketDivision');
             const districtSelect = document.getElementById('marketDistrict');
             const upazilaSelect = document.getElementById('marketUpazila');
-            districtSelect.innerHTML = '<option></option>';
-            districtSelect.disabled = true;
-            upazilaSelect.innerHTML = '<option></option>';
-            upazilaSelect.disabled = true;
-
-            if (!division) {
-                $(districtSelect).val('').trigger('change');
-                $(upazilaSelect).val('').trigger('change');
-                return;
-            };
-
-            let url = `{{ url('admin/markets/get-districts') }}/${division}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    districtSelect.disabled = false;
-                    data.forEach(district => {
-                        const option = new Option(district, district, false, district === selectedDistrict);
-                        districtSelect.appendChild(option);
+            
+            const getDistricts = (division, selectedDistrict = null, selectedUpazila = null) => {
+                districtSelect.innerHTML = '<option></option>';
+                districtSelect.disabled = true;
+                upazilaSelect.innerHTML = '<option></option>';
+                upazilaSelect.disabled = true;
+                
+                if (!division) return;
+                
+                fetch(`{{ url('admin/markets/get-districts') }}/${division}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        districtSelect.disabled = false;
+                        data.forEach(district => {
+                            const option = new Option(district, district, false, district === selectedDistrict);
+                            districtSelect.appendChild(option);
+                        });
+                        $(districtSelect).val(selectedDistrict).trigger('change');
+                        if (selectedDistrict) getThanas(division, selectedDistrict, selectedUpazila);
                     });
-                    $(districtSelect).val(selectedDistrict).trigger('change');
-                    if (selectedDistrict) {
-                        getThanas(division, selectedDistrict, selectedUpazila);
-                    }
-                })
-                .catch(error => console.error('Error fetching districts:', error));
-        }
-
-        function getThanas(division, district, selectedUpazila = null) {
-            const upazilaSelect = document.getElementById('marketUpazila');
-            upazilaSelect.innerHTML = '<option></option>';
-            upazilaSelect.disabled = true;
-
-            if (!district) {
-                $(upazilaSelect).val('').trigger('change');
-                return
             };
-
-            let url = `{{ url('admin/markets/get-thanas') }}/${division}/${district}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    upazilaSelect.disabled = false;
-                    data.forEach(thana => {
-                        const option = new Option(thana, thana, false, thana === selectedUpazila);
-                        upazilaSelect.appendChild(option);
+            
+            const getThanas = (division, district, selectedUpazila = null) => {
+                upazilaSelect.innerHTML = '<option></option>';
+                upazilaSelect.disabled = true;
+                
+                if (!district) return;
+                
+                fetch(`{{ url('admin/markets/get-thanas') }}/${division}/${district}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        upazilaSelect.disabled = false;
+                        data.forEach(thana => {
+                            const option = new Option(thana, thana, false, thana === selectedUpazila);
+                            upazilaSelect.appendChild(option);
+                        });
+                        $(upazilaSelect).val(selectedUpazila).trigger('change');
                     });
-                    $(upazilaSelect).val(selectedUpazila).trigger('change');
-                })
-                .catch(error => console.error('Error fetching thanas:', error));
-        }
+            };
+            
+            $('#marketDivision').on('change', function() {
+                getDistricts($(this).val());
+            });
+            
+            $('#marketDistrict').on('change', function() {
+                getThanas($('#marketDivision').val(), $(this).val());
+            });
+        });
     </script>
 @endpush

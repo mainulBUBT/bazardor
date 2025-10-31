@@ -77,7 +77,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="marketDivision" class="form-label">{{ translate('messages.Division') }} <span class="text-danger">*</span></label>
-                                <select class="form-control select2" id="marketDivision" name="division" onchange="getDistricts(this.value)" required>
+                                <select class="form-control select2" id="marketDivision" name="division" required>
                                     <option></option>
                                     @foreach($divisions as $division)
                                         <option value="{{ $division }}" {{ strtoupper($market->division) == strtoupper($division) ? 'selected' : '' }}>{{ $division }}</option>
@@ -86,7 +86,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="marketDistrict" class="form-label">{{ translate('messages.District') }} <span class="text-danger">*</span></label>
-                                <select class="form-control select2" id="marketDistrict" name="district" onchange="getThanas(document.getElementById('marketDivision').value, this.value)" required>
+                                <select class="form-control select2" id="marketDistrict" name="district" required>
                                     <option></option>
                                     @foreach($districts as $district)
                                         <option value="{{ $district }}" {{ strtoupper($market->district) == strtoupper($district) ? 'selected' : '' }}>{{ $district }}</option>
@@ -114,7 +114,13 @@
                                 <input type="text" name="longitude" class="form-control" id="marketLongitude" value="{{ $market->longitude }}">
                             </div>
                         </div>
-                        <div id="map" style="height: 400px; border-radius: 0.35rem;" class="mb-3"></div>
+                        <div style="position: relative; height: 400px; border-radius: 0.35rem;" class="mb-3">
+    <div id="map" style="height: 100%; width: 100%; border-radius: 0.35rem; position: relative;"></div>
+    <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 460px; z-index: 999;">
+        <input type="text" id="marketSearchBox" class="form-control" placeholder="Search location..." autocomplete="off" style="box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        <div id="marketSearchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-top: none; max-height: 200px; overflow-y: auto; display: none; z-index: 1000; margin-top: 2px; border-radius: 0 0 4px 4px;"></div>
+    </div>
+</div>
                     </div>
                 </div>
 
@@ -243,25 +249,23 @@
     }
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const editData = JSON.parse(document.getElementById('market-edit-data').textContent);
 
     // Slug generator
     const marketNameInput = document.getElementById('marketName');
     if (marketNameInput) {
         marketNameInput.addEventListener('keyup', function() {
-            let name = this.value;
-            let slug = name.toLowerCase()
+            const slug = this.value.toLowerCase()
                 .replace(/\s+/g, '-')
                 .replace(/[^\u0621-\u064A\u0660-\u0669\w-]+/g, '')
                 .replace(/--+/g, '-')
-                .replace(/^-+/, '')
-                .replace(/-+$/, '');
+                .replace(/^-+/, '').replace(/-+$/, '');
             document.getElementById('marketSlug').value = slug;
         });
     }
 
-    // Image Preview & File Input Handling
+    // Image Preview
     const $fileInput = $('#marketImage');
     if ($fileInput.length) {
         const $fileLabel = $('#marketImageLabel');
@@ -272,11 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    $previewContainer.html(
-                        `<img src="${e.target.result}" alt="Image Preview" class="img-fluid" style="max-height: 160px; border-radius: 8px;">`
-                    );
-                }
+                reader.onload = e => $previewContainer.html(`<img src="${e.target.result}" alt="Image Preview" class="img-fluid" style="max-height: 160px; border-radius: 8px;">`);
                 reader.readAsDataURL(file);
                 $fileLabel.text(file.name);
             } else {
@@ -292,29 +292,25 @@ document.addEventListener('DOMContentLoaded', function () {
         $operatingHoursTable.on('change', '.is-closed', function() {
             const row = $(this).closest('tr');
             row.find('.opening-time, .closing-time').prop('disabled', this.checked);
-            if(this.checked) {
-                row.find('.opening-time, .closing-time').val('');
-            }
-        });
-        $('.is-closed').trigger('change');
+            if (this.checked) row.find('.opening-time, .closing-time').val('');
+        }).trigger('change');
 
         $('#applyHoursToAll').on('click', function() {
             const firstRow = $('#operatingHoursTable tbody tr:first');
-            const openingTime = firstRow.find('.opening-time').val();
-            const closingTime = firstRow.find('.closing-time').val();
-            const isClosed = firstRow.find('.is-closed').is(':checked');
+            const opening = firstRow.find('.opening-time').val();
+            const closing = firstRow.find('.closing-time').val();
+            const closed = firstRow.find('.is-closed').is(':checked');
 
             $('#operatingHoursTable tbody tr').each(function() {
-                const row = $(this);
-                row.find('.opening-time').val(openingTime);
-                row.find('.closing-time').val(closingTime);
-                row.find('.is-closed').prop('checked', isClosed).trigger('change');
+                $(this).find('.opening-time').val(opening);
+                $(this).find('.closing-time').val(closing);
+                $(this).find('.is-closed').prop('checked', closed).trigger('change');
             });
         });
     }
 
-    // Dependent dropdowns
-    function getDistricts(division, selectedDistrict = null, selectedUpazila = null) {
+    // Dependent Dropdowns
+    const getDistricts = (division, selectedDistrict = null, selectedUpazila = null) => {
         const districtSelect = document.getElementById('marketDistrict');
         const upazilaSelect = document.getElementById('marketUpazila');
         districtSelect.innerHTML = `<option value="">${editData.select_district_message}</option>`;
@@ -325,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!division) return;
 
         fetch(`${editData.get_districts_url}/${division}`)
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 districtSelect.disabled = false;
                 data.forEach(district => {
@@ -333,14 +329,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     districtSelect.appendChild(option);
                 });
                 $(districtSelect).val(selectedDistrict).trigger('change');
-                if (selectedDistrict) {
-                    getThanas(division, selectedDistrict, selectedUpazila);
-                }
-            })
-            .catch(error => console.error('Error fetching districts:', error));
-    }
+                if (selectedDistrict) getThanas(division, selectedDistrict, selectedUpazila);
+            });
+    };
 
-    function getThanas(division, district, selectedUpazila = null) {
+    const getThanas = (division, district, selectedUpazila = null) => {
         const upazilaSelect = document.getElementById('marketUpazila');
         upazilaSelect.innerHTML = `<option value="">${editData.select_upazila_message}</option>`;
         upazilaSelect.disabled = true;
@@ -348,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!district) return;
 
         fetch(`${editData.get_thanas_url}/${division}/${district}`)
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 upazilaSelect.disabled = false;
                 data.forEach(thana => {
@@ -356,100 +349,165 @@ document.addEventListener('DOMContentLoaded', function () {
                     upazilaSelect.appendChild(option);
                 });
                 $(upazilaSelect).val(selectedUpazila).trigger('change');
-            })
-            .catch(error => console.error('Error fetching thanas:', error));
-    }
+            });
+    };
 
     $('#marketDivision').on('change', function() {
         getDistricts($(this).val());
     });
 
     $('#marketDistrict').on('change', function() {
-        const division = $('#marketDivision').val();
-        getThanas(division, $(this).val());
+        getThanas($('#marketDivision').val(), $(this).val());
     });
 
-    // --- Leaflet Map --- //
+    // Map & Search
     const latInput = document.getElementById('marketLatitude');
     const lngInput = document.getElementById('marketLongitude');
     const addressInput = document.getElementById('marketAddress');
-
+    const searchInput = document.getElementById('marketSearchBox');
+    const searchResults = document.getElementById('marketSearchResults');
+    
     const initialLat = parseFloat(editData.lat);
     const initialLng = parseFloat(editData.lng);
     const map = L.map('map').setView([initialLat, initialLng], 13);
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-
+    
     const marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
-
-    function updateLatLngInputs(latlng) {
-        const newLat = latlng.lat.toFixed(6);
-        const newLng = latlng.lng.toFixed(6);
-        if (latInput.value !== newLat) latInput.value = newLat;
-        if (lngInput.value !== newLng) lngInput.value = newLng;
-    }
-
-    function updateAddressInput(latlng) {
+    
+    const updateLatLng = latlng => {
+        const lat = latlng.lat.toFixed(6);
+        const lng = latlng.lng.toFixed(6);
+        if (latInput.value !== lat) latInput.value = lat;
+        if (lngInput.value !== lng) lngInput.value = lng;
+    };
+    
+    const updateAddress = latlng => {
         addressInput.value = editData.loading_address_message;
         addressInput.classList.add('address-loading');
-
-        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`;
-        fetch(url)
-            .then(response => response.json())
+        
+        fetch(`https://photon.komoot.io/reverse?lat=${latlng.lat}&lon=${latlng.lng}`)
+            .then(r => r.json())
             .then(data => {
-                if (data && data.display_name) {
-                    addressInput.value = data.display_name;
+                if (data?.features?.[0]) {
+                    const props = data.features[0].properties;
+                    const parts = [props.name, props.street, props.housenumber, props.postcode, props.city, props.state, props.country].filter(Boolean);
+                    addressInput.value = parts.join(', ') || editData.address_not_found_message;
                 } else {
                     addressInput.value = editData.address_not_found_message;
                 }
             })
-            .catch(err => {
-                console.error('Error fetching address:', err);
-                addressInput.value = editData.could_not_fetch_address_message;
-            })
-            .finally(() => {
-                addressInput.classList.remove('address-loading');
-            });
-    }
-
-    updateLatLngInputs(marker.getLatLng());
-    updateAddressInput(marker.getLatLng());
-
-    marker.on('dragend', function(event) {
-        const position = marker.getLatLng();
-        updateLatLngInputs(position);
-        updateAddressInput(position);
-    });
-
-    map.on('click', function(e) {
+            .catch(() => addressInput.value = editData.could_not_fetch_address_message)
+            .finally(() => addressInput.classList.remove('address-loading'));
+    };
+    
+    const updatePosition = latlng => {
+        updateLatLng(latlng);
+        updateAddress(latlng);
+    };
+    
+    marker.on('dragend', e => updatePosition(e.target.getLatLng()));
+    map.on('click', e => {
         marker.setLatLng(e.latlng);
-        updateLatLngInputs(e.latlng);
-        updateAddressInput(e.latlng);
+        updatePosition(e.latlng);
     });
-
+    
     let debounceTimeout;
-    function updateMapFromInputs() {
+    const updateMapFromInputs = () => {
         clearTimeout(debounceTimeout);
         debounceTimeout = setTimeout(() => {
             const lat = parseFloat(latInput.value);
             const lng = parseFloat(lngInput.value);
-
             if (!isNaN(lat) && !isNaN(lng)) {
                 const newLatLng = L.latLng(lat, lng);
                 if (!marker.getLatLng().equals(newLatLng, 1e-6)) {
-                     marker.setLatLng(newLatLng);
-                     map.panTo(newLatLng);
+                    marker.setLatLng(newLatLng);
+                    map.panTo(newLatLng);
                 }
             }
         }, 800);
-    }
-
+    };
+    
     latInput.addEventListener('input', updateMapFromInputs);
     lngInput.addEventListener('input', updateMapFromInputs);
+    
+    updateLatLng(marker.getLatLng());
+    updateAddress(marker.getLatLng());
+    
+    // Search functionality
+    const BD_BOUNDS = { lat: [20.34, 26.64], lng: [88.01, 92.67] };
+    let searchTimeout;
+    
+    const isBangladesh = feature => {
+        const coords = feature.geometry?.coordinates || [];
+        const [lng, lat] = coords.map(parseFloat);
+        return !isNaN(lat) && !isNaN(lng) && 
+               lat >= BD_BOUNDS.lat[0] && lat <= BD_BOUNDS.lat[1] && 
+               lng >= BD_BOUNDS.lng[0] && lng <= BD_BOUNDS.lng[1];
+    };
+    
+    const performSearch = () => {
+        const query = searchInput.value.trim();
+        if (query.length < 2) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en`)
+            .then(r => r.json())
+            .then(data => {
+                const items = (data.features || [])
+                    .filter(isBangladesh)
+                    .map(feature => {
+                        const [lng, lat] = feature.geometry.coordinates;
+                        const props = feature.properties;
+                        const title = props.name || props.street || props.city || 'Unnamed';
+                        const subtitle = [props.city, props.state, props.postcode, props.country].filter(Boolean).join(', ');
+                        return `<div class="search-result-item" style="padding:10px;border-bottom:1px solid #eee;cursor:pointer" data-lat="${lat}" data-lon="${lng}">
+                            <strong>${title}</strong>${subtitle ? `<br><small class="text-muted">${subtitle}</small>` : ''}
+                        </div>`;
+                    });
+                
+                if (!items.length) {
+                    searchResults.innerHTML = '<div style="padding:10px;text-align:center;color:#999">No Bangladesh results found</div>';
+                } else {
+                    searchResults.innerHTML = items.join('');
+                    searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const lat = parseFloat(this.dataset.lat);
+                            const lng = parseFloat(this.dataset.lon);
+                            searchInput.value = this.querySelector('strong').textContent;
+                            searchResults.style.display = 'none';
+                            const newLatLng = L.latLng(lat, lng);
+                            marker.setLatLng(newLatLng);
+                            map.setView(newLatLng, 15);
+                            updatePosition(newLatLng);
+                        });
+                        item.addEventListener('mouseenter', () => this.style.backgroundColor = '#f5f5f5');
+                        item.addEventListener('mouseleave', () => this.style.backgroundColor = 'white');
+                    });
+                }
+                searchResults.style.display = 'block';
+            })
+            .catch(() => {
+                searchResults.innerHTML = '<div style="padding:10px;text-align:center;color:#999">Error searching</div>';
+                searchResults.style.display = 'block';
+            });
+    };
+    
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(performSearch, 300);
+    });
+    
+    document.addEventListener('click', e => {
+        if (!e.target.closest(searchInput) && !e.target.closest(searchResults)) {
+            searchResults.style.display = 'none';
+        }
+    });
 
-    // --- Initialize dependent dropdowns ---
+    // Initialize dependent dropdowns
     if (editData.division_to_load) {
         getDistricts(editData.division_to_load, editData.district_to_select, editData.upazila_to_select);
     }
