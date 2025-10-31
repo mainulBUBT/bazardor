@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use MatanYadaev\EloquentSpatial\Objects\Polygon;
+use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 
 class Zone extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSpatial;
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +21,7 @@ class Zone extends Model
         'name',
         'description',
         'is_active',
+        'coordinates',
     ];
 
     /**
@@ -28,6 +31,7 @@ class Zone extends Model
      */
     protected $casts = [
         'is_active' => 'boolean',
+        'coordinates' => Polygon::class,
     ];
 
     /**

@@ -24,6 +24,7 @@ class ZoneStoreUpdateRequest extends FormRequest
         $rules = [
             'name' => 'required|string|max:255',
             'is_active' => 'sometimes|boolean',
+            'coordinates' => 'nullable|string',
         ];
 
         // For update requests, allow unique validation to ignore the current record

@@ -22,8 +22,28 @@ class ZoneController extends Controller
      */
     public function index(Request $request)
     {
-        $zones = $this->zoneService->getZones($request->search);
-        return view('admin.zones.index', compact('zones'));
+        $zones = $this->zoneService->getZones(search:$request->search, relations:['markets']);
+        
+        $otherZonesCoords = [];
+        $activeZones = $zones->where('is_active', true);
+        foreach ($activeZones as $activeZone) {
+            if (!$activeZone->coordinates) {
+                continue;
+            }
+            $raw = json_decode(json_encode($activeZone->coordinates), true);
+            $coords = data_get($raw, 'coordinates.0', []);
+            if (is_array($coords) && !empty($coords)) {
+                $otherZonesCoords[] = [
+                    'id' => $activeZone->id,
+                    'name' => $activeZone->name,
+                    'points' => array_map(function ($pair) {
+                        return ['lat' => (float) $pair[1], 'lng' => (float) $pair[0]];
+                    }, $coords),
+                ];
+            }
+        }
+
+        return view('admin.zones.index', compact('zones', 'otherZonesCoords'));
     }
 
     /**
@@ -37,12 +57,13 @@ class ZoneController extends Controller
         $data = [
             'name' => $request->name,
             'is_active' => $request->has('is_active'),
+            'coordinates' => $request->coordinates,
         ];
         
-        $zone = $this->zoneService->store($data);
+        $this->zoneService->store($data);
         
-        return redirect()->route('admin.zones.index')
-            ->with('success', translate('messages.zone_created_successfully'));
+        Toastr::success(translate('messages.zone_created_successfully'));
+        return redirect()->route('admin.zones.index');
     }
 
     /**
@@ -66,9 +87,45 @@ class ZoneController extends Controller
     public function edit($id)
     {
         $zone = $this->zoneService->findById($id);
-        $zoneMarketIds = $zone->markets->pluck('id')->toArray();
-        
-        return view('admin.zones.edit', compact('zone', 'zoneMarketIds'));
+
+
+        // Format current zone coordinates for map
+        $currentZoneCoords = [];
+        if ($zone->coordinates) {
+            $raw = json_decode(json_encode($zone->coordinates), true);
+            $coords = data_get($raw, 'coordinates.0', []);
+            if (is_array($coords)) {
+                $currentZoneCoords = array_map(function ($pair) {
+                    return ['lat' => (float) $pair[1], 'lng' => (float) $pair[0]];
+                }, $coords);
+            }
+        }
+
+        // Format other zones for map
+        $activeZones = $this->zoneService->getActiveZones()->where('id', '<>', $id);
+        $otherZonesCoords = [];
+        foreach ($activeZones as $activeZone) {
+            if (!$activeZone->coordinates) {
+                continue;
+            }
+            $raw = json_decode(json_encode($activeZone->coordinates), true);
+            $coords = data_get($raw, 'coordinates.0', []);
+            if (is_array($coords) && !empty($coords)) {
+                $otherZonesCoords[] = [
+                    'id' => $activeZone->id,
+                    'name' => $activeZone->name,
+                    'points' => array_map(function ($pair) {
+                        return ['lat' => (float) $pair[1], 'lng' => (float) $pair[0]];
+                    }, $coords),
+                ];
+            }
+        }
+
+        return view('admin.zones.edit', [
+            'zone' => $zone,
+            'currentZoneCoords' => $currentZoneCoords,
+            'otherZonesCoords' => $otherZonesCoords,
+        ]);
     }
 
     /**
@@ -80,8 +137,9 @@ class ZoneController extends Controller
      */
     public function update(ZoneStoreUpdateRequest $request, $id)
     {
+        
         $this->zoneService->update($id, $request->validated());
-        Toastr::success();
+        Toastr::success(translate('messages.zone_updated_successfully'));
         return redirect()->route('admin.zones.index');
     }
 
@@ -94,7 +152,7 @@ class ZoneController extends Controller
     public function destroy($id)
     {
         $this->zoneService->delete($id);
-        Toastr::success();
+        Toastr::success(translate('messages.zone_deleted_successfully'));
         return redirect()->route('admin.zones.index');
     }
 
@@ -106,9 +164,12 @@ class ZoneController extends Controller
      */
     public function toggleStatus($id)
     {
-        $message = $this->zoneService->toggleStatus($id);
-        Toastr::success();
+        $zone = $this->zoneService->toggleStatus($id);
+        $message = $zone->is_active
+            ? translate('messages.zone_activated_successfully')
+            : translate('messages.zone_deactivated_successfully');
+
+        Toastr::success($message);
         return redirect()->back();
     }
-    
 }

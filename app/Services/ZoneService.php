@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Models\Zone;
-use App\Models\Market;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\DB;
+use MatanYadaev\EloquentSpatial\Objects\LineString;
+use MatanYadaev\EloquentSpatial\Objects\Point;
+use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 class ZoneService
 {
@@ -23,9 +25,9 @@ class ZoneService
      * @param string|null $search
      * @return LengthAwarePaginator
      */
-    public function getZones(?string $search = null): LengthAwarePaginator
+    public function getZones(?string $search = null, array $relations = []): LengthAwarePaginator
     {
-        return $this->zone->with('markets')
+        return $this->zone->with($relations)
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
             })
@@ -38,9 +40,9 @@ class ZoneService
      *
      * @return Collection
      */
-    public function getActiveZones(): Collection
+    public function getActiveZones(array $relations = []): Collection
     {
-        return $this->zone->with('markets')->active()->get();
+        return $this->zone->active()->with($relations)->get();
     }
 
     /**
@@ -49,9 +51,9 @@ class ZoneService
      * @param int|string $id
      * @return Zone
      */
-    public function findById(int|string $id): Zone
+    public function findById(int|string $id, array $relations = []): Zone
     {
-        return $this->zone->with('markets')->findOrFail($id);
+        return $this->zone->with($relations)->findOrFail($id);
     }
 
     /**
@@ -67,6 +69,19 @@ class ZoneService
             $zone = new Zone();
             $zone->name = $data['name'];
             $zone->is_active = $data['is_active'] ?? true;
+
+            $value = $data['coordinates'];
+            foreach(explode('),(',trim($value,'()')) as $index=>$single_array){
+                if($index == 0)
+                {
+                    $lastcord = explode(',',$single_array);
+                }
+                $coords = explode(',',$single_array);
+                $polygon[] = new Point($coords[0], $coords[1]);
+            }
+
+            $polygon[] = new Point($lastcord[0], $lastcord[1]);
+            $zone->coordinates = new Polygon([new LineString($polygon)]);
             $zone->save();
             
             DB::commit();
@@ -93,23 +108,27 @@ class ZoneService
         try {
             $zone->update([
                 'name' => $data['name'],
-                'description' => $data['description'] ?? $zone->description,
                 'is_active' => isset($data['is_active']) ? (bool) $data['is_active'] : $zone->is_active,
             ]);
 
-            // Update markets if provided
-            if (isset($data['markets'])) {
-                // First, remove this zone from all markets
-                Market::where('zone_id', $zone->id)->update(['zone_id' => null]);
-                
-                // Then assign the zone to the selected markets
-                if (is_array($data['markets']) && count($data['markets'])) {
-                    Market::whereIn('id', $data['markets'])->update(['zone_id' => $zone->id]);
+            if (! empty($data['coordinates'])) {
+                $value = $data['coordinates'];
+                foreach(explode('),(',trim($value,'()')) as $index=>$single_array){
+                    if($index == 0)
+                    {
+                        $lastcord = explode(',',$single_array);
+                    }
+                    $coords = explode(',',$single_array);
+                    $polygon[] = new Point($coords[0], $coords[1]);
                 }
+
+                $polygon[] = new Point($lastcord[0], $lastcord[1]);
+
+                $zone->coordinates = new Polygon([new LineString($polygon)]);
+                $zone->save();
             }
             
             DB::commit();
-            return $zone->fresh(['markets']);
         } catch (\Exception $e) {
             DB::rollBack();
             Toastr::error($e->getMessage() ?: translate('messages.failed_to_update_zone'));
@@ -130,10 +149,6 @@ class ZoneService
         DB::beginTransaction();
         
         try {
-            // Remove zone reference from markets
-            Market::where('zone_id', $zone->id)->update(['zone_id' => null]);
-            
-            // Delete the zone
             $result = $zone->delete();
             
             DB::commit();
@@ -160,13 +175,5 @@ class ZoneService
         return $zone;
     }
 
-    /**
-     * Get all markets that can be assigned to zones
-     *
-     * @return Collection
-     */
-    public function getAvailableMarkets(): Collection
-    {
-        return Market::where('is_active', true)->get();
-    }
+
 } 

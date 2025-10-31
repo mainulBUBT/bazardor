@@ -116,3 +116,14 @@ if (!function_exists('formated_response')) {
         return $constant;
     }
 }
+
+if (!function_exists('format_coordiantes')) {
+    function format_coordiantes($coordinates)
+    {
+        $data = [];
+        foreach ($coordinates as $index => $coord) {
+            $data[$index] = (object)['lat' => $coord[0], 'lng' => $coord[1]];
+        }
+        return $data;
+    }
+}
