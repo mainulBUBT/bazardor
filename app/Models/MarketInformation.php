@@ -3,21 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\HasUuid;
 
 class MarketInformation extends Model
 {
+    use HasUuid;
+
     protected $guarded = [];
+
     protected $casts = [
-        'is_non_veg' => 'integer',
-        'is_halal' => 'integer',
-        'is_parking' => 'integer',
-        'is_restroom' => 'integer',
-        'is_home_delivery' => 'integer',
+        'market_id' => 'string',
+        'is_non_veg' => 'boolean',
+        'is_halal' => 'boolean',
+        'is_parking' => 'boolean',
+        'is_restroom' => 'boolean',
+        'is_home_delivery' => 'boolean',
     ];
 
-    public function market()
+    /**
+     * Get the market that owns the information.
+     */
+    public function market(): BelongsTo
     {
         return $this->belongsTo(Market::class);
     }
-
 }

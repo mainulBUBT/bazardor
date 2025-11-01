@@ -9,11 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('price_thresholds', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('product_id');
             $table->decimal('min_price', 10, 2);
             $table->decimal('max_price', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
             $table->index('product_id');
         });
     }

@@ -9,11 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('price_contribution_votes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('price_contribution_id');
-            $table->foreignId('user_id');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('price_contribution_id');
+            $table->foreignUuid('user_id');
             $table->boolean('is_upvote');
             $table->timestamps();
+            $table->softDeletes();
             $table->unique(['price_contribution_id', 'user_id']);
         });
     }

@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('market_information', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('market_id');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('market_id');
             $table->boolean('is_non_veg')->default(true);
             $table->boolean('is_halal')->default(false);
             $table->boolean('is_parking')->default(false);
             $table->boolean('is_restroom')->default(false);
             $table->boolean('is_home_delivery')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

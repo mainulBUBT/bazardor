@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuid;
 
 class PriceContribution extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $fillable = [
         'product_id',
@@ -22,6 +23,9 @@ class PriceContribution extends Model
     ];
 
     protected $casts = [
+        'product_id' => 'string',
+        'market_id' => 'string',
+        'user_id' => 'string',
         'verified_at' => 'datetime',
         'submitted_price' => 'decimal:2',
     ];

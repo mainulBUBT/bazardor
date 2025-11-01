@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Traits\HasUuid;
 
 class Market extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasUuid;
 
     /**
      * The attributes that are mass assignable.
@@ -45,12 +46,12 @@ class Market extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_active' => 'integer',
-        'is_featured' => 'integer',
+        'is_active' => 'boolean',
+        'is_featured' => 'boolean',
         'division' => 'string',
         'district' => 'string',
         'upazila_or_thana' => 'string',
-        'zone_id' => 'integer',
+        'zone_id' => 'string',
         'rating' => 'float',
         'rating_count' => 'integer',
         'position' => 'integer',

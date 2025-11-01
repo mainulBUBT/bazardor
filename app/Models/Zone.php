@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
+use App\Traits\HasUuid;
 
 class Zone extends Model
 {
-    use HasFactory, HasSpatial;
+    use HasFactory, HasSpatial, HasUuid;
 
     /**
      * The attributes that are mass assignable.

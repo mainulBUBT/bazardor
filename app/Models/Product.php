@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use App\Traits\HasUuid;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasUuid;
 
     /**
      * The attributes that are mass assignable.
@@ -40,6 +41,8 @@ class Product extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'category_id' => 'string',
+        'unit_id' => 'string',
         'is_visible' => 'boolean',
         'is_featured' => 'boolean',
         'base_price' => 'decimal:2',

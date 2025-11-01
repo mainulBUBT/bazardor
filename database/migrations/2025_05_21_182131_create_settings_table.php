@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('key_name', 191);
             $table->json('value')->nullable();
             $table->string('settings_type', 191)->nullable();

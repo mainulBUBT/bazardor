@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\HasUuid;
 
 class ProductMarketPrice extends Model
 {
+    use HasUuid;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -26,6 +29,8 @@ class ProductMarketPrice extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'product_id' => 'string',
+        'market_id' => 'string',
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
         'price_date' => 'datetime',

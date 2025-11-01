@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasUuid;
 
 class Unit extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasUuid;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +25,7 @@ class Unit extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_active' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     /**

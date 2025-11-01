@@ -11,22 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->string('image_path')->nullable();
+            $table->string('email')->unique();
+            $table->string('password');
             $table->boolean('is_active')->default(true);
-            $table->foreignId('parent_id')->nullable();
-            $table->integer('position')->default(0);
+            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
-
-            // Indexes
-            $table->index('name');
-            $table->index('is_active');
-            $table->index('position');
         });
     }
 
@@ -35,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('admins');
     }
 };

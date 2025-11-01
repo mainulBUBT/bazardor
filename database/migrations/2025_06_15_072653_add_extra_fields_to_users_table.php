@@ -26,7 +26,8 @@ return new class extends Migration
             $table->string('referred_by')->nullable()->after('referral_code');
             $table->string('status')->default('pending')->after('referred_by');
             $table->string('user_type')->default('user');
-            $table->foreignId('role_id')->nullable()->after('user_type');
+            $table->foreignId('zone_id')->nullable();
+            $table->timestamp('last_login_at')->nullable();
         });
     }
 
@@ -49,7 +50,8 @@ return new class extends Migration
             $table->dropColumn('referral_code');
             $table->dropColumn('referred_by');
             $table->dropColumn('user_type');
-            $table->dropColumn('role_id');
+            $table->dropColumn('zone_id');
+            $table->dropColumn('last_login_at');
         });
     }
 };

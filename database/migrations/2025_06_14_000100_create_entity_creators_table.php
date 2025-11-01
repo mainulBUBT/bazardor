@@ -9,13 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('entity_creators', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             // User who created the entity
-            $table->foreignId('user_id')->nullable();
+            $table->foreignUuid('user_id')->nullable();
 
             // Polymorphic relation fields: creatable_type & creatable_id
             $table->morphs('creatable');
-
+            $table->softDeletes();
             $table->timestamps();
 
             // Indexes for quick lookup

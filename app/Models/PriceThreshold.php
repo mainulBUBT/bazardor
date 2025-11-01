@@ -2,30 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasUuid;
 
-class ProductTag extends Model
+class PriceThreshold extends Model
 {
-    use HasUuid;
+    use HasFactory, HasUuid;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'product_id',
-        'tag',
+        'min_price',
+        'max_price',
     ];
 
     protected $casts = [
         'product_id' => 'string',
+        'min_price' => 'decimal:2',
+        'max_price' => 'decimal:2',
     ];
 
     /**
-     * Get the product that owns the tag.
+     * Get the product that owns the threshold.
      */
     public function product(): BelongsTo
     {
