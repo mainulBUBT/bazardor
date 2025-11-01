@@ -14,7 +14,7 @@ class CategoryService
     /**
      * Summary of getCategories
      * @param string|null $search
-     * @param int|null $parentId
+     * @param string|null $parentId
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function getCategories($search = null, $parentId = null)
@@ -53,11 +53,11 @@ class CategoryService
 
     /**
      * Summary of update
-     * @param int $categoryId
+     * @param string $categoryId
      * @param array $data
      * @return \App\Models\Category
      */
-    public function update(int $categoryId, array $data): Category
+    public function update(string $categoryId, array $data): Category
     {
         $category = $this->findById($categoryId);
         $oldImagePath = $category->image_path;
@@ -86,10 +86,10 @@ class CategoryService
 
     /**
      * Summary of delete
-     * @param int $categoryId
+     * @param string $categoryId
      * @return void
      */
-    public function delete(int $categoryId): void
+    public function delete(string $categoryId): void
     {
         $category = $this->findById($categoryId);
         if ($category->image_path) {
@@ -102,11 +102,11 @@ class CategoryService
 
     /**
      * Summary of status
-     * @param int $categoryId
+     * @param string $categoryId
      * @param mixed $status
      * @return void
      */
-    public function status(int $categoryId, $status): void
+    public function status(string $categoryId, $status): void
     {
         $category = $this->findById($categoryId);
         $category->is_active = $status;
@@ -115,10 +115,10 @@ class CategoryService
 
     /**
      * Summary of findById
-     * @param int $categoryId
+     * @param string $categoryId
      * @return Category
      */
-    public function findById(int $categoryId): Category
+    public function findById(string $categoryId): Category
     {
         return $this->category->findOrFail($categoryId);
     }
@@ -127,7 +127,7 @@ class CategoryService
     /**
      * Get categories with unique market counts filtered by an optional zone.
      */
-    public function getCategoriesWithMarketCounts(?int $zoneId = null, ?int $limit = null, ?int $offset = null)
+    public function getCategoriesWithMarketCounts(?string $zoneId = null, ?int $limit = null, ?int $offset = null)
     {
            
         $marketCountSubquery = ProductMarketPrice::query()

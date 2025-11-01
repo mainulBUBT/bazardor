@@ -57,40 +57,12 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="role">{{ translate('messages.role') }}</label>
-                                    <select class="form-control" name="role" id="role">
-                                        <option value="{{ \App\Enums\UserType::USER->value }}" {{ $user->user_type == \App\Enums\UserType::USER->value ? 'selected' : '' }}>{{ translate('messages.user') }}</option>
-                                        <option value="{{ \App\Enums\UserType::VOLUNTEER->value }}" {{ $user->user_type == \App\Enums\UserType::VOLUNTEER->value ? 'selected' : '' }}>{{ translate('messages.volunteer') }}</option>
-                                        <option value="{{ \App\Enums\UserType::MODERATOR->value }}" {{ $user->user_type == \App\Enums\UserType::MODERATOR->value ? 'selected' : '' }}>{{ translate('messages.moderator') }}</option>
-                                        @if(auth()->user()->isSuperAdmin())
-                                            <option value="{{ \App\Enums\UserType::SUPER_ADMIN->value }}" {{ $user->user_type == \App\Enums\UserType::SUPER_ADMIN->value ? 'selected' : '' }}>{{ translate('messages.super_admin') }}</option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="functional_roles">{{ translate('messages.functional_roles') }}</label>
-                                    <select class="form-control select2" name="functional_roles[]" id="functional_roles" multiple>
-                                        @foreach($functionalRoles as $functionalRole)
-                                            <option value="{{ $functionalRole->id }}" {{ $user->roles->contains('id', $functionalRole->id) ? 'selected' : '' }}>{{ $functionalRole->name }}</option>
+                                    <label for="user_type">{{ translate('messages.User Type') }}</label>
+                                    <select class="form-control" name="user_type" id="user_type">
+                                        @foreach($userTypeOptions as $value => $label)
+                                            <option value="{{ $value }}" {{ $user->user_type == $value ? 'selected' : '' }}>{{ $label }}</option>
                                         @endforeach
                                     </select>
-                                    <small class="form-text text-muted">{{ translate('messages.functional_roles_help') }}</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="custom_role">{{ translate('messages.custom_role') }}</label>
-                                    <select class="form-control select2" id="custom_role" name="custom_role">
-                                        <option value="">{{ translate('messages.select_custom_role') }}</option>
-                                        @foreach(\Spatie\Permission\Models\Role::whereNotIn('name', ['super_admin', 'moderator', 'volunteer', 'user'])->get() as $customRole)
-                                            <option value="{{ $customRole->name }}" {{ $user->hasRole($customRole->name) ? 'selected' : '' }}>{{ ucfirst($customRole->name) }}</option>
-                                        @endforeach
-                                    </select>
-                                    <small class="form-text text-muted">{{ translate('messages.optional_custom_role_with_specific_permissions') }}</small>
                                 </div>
                             </div>
                         </div>
@@ -219,7 +191,7 @@
                 <!-- Action Buttons -->
                 <div class="row mb-4">
                     <div class="col d-flex justify-content-end">
-                        <a href="{{ route('admin.users.index', ['role' => 'user']) }}" class="btn btn-secondary mr-2">
+                        <a href="{{ route('admin.users.index', ['user_type' => 'user']) }}" class="btn btn-secondary mr-2">
                             <i class="fas fa-times"></i> {{ translate('messages.cancel') }}
                         </a>
                         <button type="submit" class="btn btn-primary">

@@ -84,7 +84,7 @@
                                 {{ $category->parent ? $category->parent->name : translate('messages.None') }}
                             </td>
                             <td>
-                                @if($category->is_active === 'active')
+                                @if($category->is_active === true)
                                     <span class="badge badge-success">{{ translate('messages.Active') }}</span>
                                 @else
                                     <span class="badge badge-danger">{{ translate('messages.Inactive') }}</span>

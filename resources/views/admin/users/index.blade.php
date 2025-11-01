@@ -12,17 +12,14 @@
     <!-- Tabs (as links) -->
     <ul class="nav nav-tabs mb-3" id="userTabs" role="tablist">
         <li class="nav-item">
-            <a class="nav-link {{ $role === App\Enums\UserType::USER->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['role' => App\Enums\UserType::USER->value]) }}">Users</a>
+            <a class="nav-link {{ $userType === App\Enums\UserType::USER->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['user_type' => App\Enums\UserType::USER->value]) }}">Users</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $role === App\Enums\UserType::VOLUNTEER->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['role' => App\Enums\UserType::VOLUNTEER->value]) }}">Volunteers</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ $role === App\Enums\UserType::MODERATOR->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['role' => App\Enums\UserType::MODERATOR->value]) }}">Moderators</a>
+            <a class="nav-link {{ $userType === App\Enums\UserType::VOLUNTEER->value ? 'active' : '' }}" href="{{ route('admin.users.index', ['user_type' => App\Enums\UserType::VOLUNTEER->value]) }}">Volunteers</a>
         </li>
     </ul>
 
     
-    @include('admin.users.partials.table', ['users' => $users, 'type' => $role])
+    @include('admin.users.partials.table', ['users' => $users, 'type' => $userType])
 </div>
 @endsection

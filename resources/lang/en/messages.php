@@ -887,4 +887,7 @@
   'notification_resent_successfully' => 'Notification resent successfully',
   'notification_deleted_successfully' => 'Notification deleted successfully',
   'something_went_wrong_please_try_again' => 'Something went wrong please try again',
+  'API Users' => 'API Users',
+  'No roles found' => 'No roles found',
+  'Admins' => 'Admins',
 );

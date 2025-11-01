@@ -61,9 +61,9 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      */
     public function update(CategoryStoreUpdateRequest $request, string $id)
-    {
+    {   
         $data = $request->validated();
-        $this->categoryService->update((int)$id, $data);
+        $this->categoryService->update($id, $data);
 
         Toastr::success(translate("messages.category_updated_successfully"));
         return redirect()->route('admin.categories.index');
@@ -73,7 +73,7 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->categoryService->delete((int)$id);
+        $this->categoryService->delete($id);
 
         Toastr::success(translate("messages.category_deleted_successfully"));
         return redirect()->route('admin.categories.index');

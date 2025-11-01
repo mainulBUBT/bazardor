@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\User;
 use App\Enums\UserType;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role as SpatieRole;
 
 class UserManagementService
 {
@@ -38,18 +37,12 @@ class UserManagementService
      * @return array
      */
     /**
-     * Get user statistics grouped by role and status.
+     * Get user statistics grouped by user_type and status.
      *
      * @return array
      */
     public function getUserStats(): array
     {
-        $roles = [
-            'user' => UserType::USER,
-            'volunteer' => UserType::VOLUNTEER,
-            'moderator' => UserType::MODERATOR,
-        ];
-
         $statuses = [
             'active' => 1,
             'pending' => 0,
@@ -70,22 +63,18 @@ class UserManagementService
                 'active_volunteers' => 0,
                 'new_volunteers_monthly' => 0,
                 'pending_volunteers' => 0,
-                'total_moderators' => 0,
-                'active_moderators' => 0,
-                'new_moderators_monthly' => 0,
-                'pending_moderators' => 0,
             ];
         }
 
         $result = [];
 
-        foreach ($roles as $label => $role) {
-            $roleUsers = $users->where('role', $role);
+        foreach (['user', 'volunteer'] as $type) {
+            $typeUsers = $users->where('user_type', $type);
 
-            $result["total_{$label}s"] = $roleUsers->count();
-            $result["active_{$label}s"] = $roleUsers->where('status', $statuses['active'])->count();
-            $result["new_{$label}s_monthly"] = $roleUsers->where('created_at', '>=', $lastMonth)->count();
-            $result["pending_{$label}s"] = $roleUsers->where('status', $statuses['pending'])->count();
+            $result["total_{$type}s"] = $typeUsers->count();
+            $result["active_{$type}s"] = $typeUsers->where('is_active', $statuses['active'])->count();
+            $result["new_{$type}s_monthly"] = $typeUsers->where('created_at', '>=', $lastMonth)->count();
+            $result["pending_{$type}s"] = $typeUsers->where('is_active', $statuses['pending'])->count();
         }
 
         return $result;
@@ -112,8 +101,7 @@ class UserManagementService
             'username' => $data['username'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'role_id' => $data['role_id'] ?? null, // Functional role ID
-            'user_type' => $data['user_type'] ?? 'user', // Basic user category
+            'user_type' => $data['user_type'] ?? 'user',
             'image_path' => $data['image_path'] ?? null,
             'phone' => $data['phone'] ?? null,
             'gender' => $data['gender'] ?? null,
@@ -126,32 +114,8 @@ class UserManagementService
             'email_verified_at' => !empty($data['email_verified']) ? now() : null,
             'status' => $data['status'] ?? 'pending',
             'remember_token' => $data['remember_token'] ?? null,
-        ]);
-
-        // Assign user type role (basic category)
-        if ($user->user_type) {
-            try {
-                $user->assignRole($user->user_type);
-            } catch (\Exception $e) {
-                \Log::warning("Could not assign user_type role {$user->user_type} to user {$user->id}");
-            }
-        }
-
-        // Assign functional role if specified
-        if ($user->role_id) {
-            try {
-                $functionalRole = SpatieRole::find($user->role_id);
-                if ($functionalRole) {
-                    $user->assignRole($functionalRole);
-                }
-            } catch (\Exception $e) {
-                \Log::warning("Could not assign functional role {$user->role_id} to user {$user->id}");
-            }
-        }
-
-        $user->update([
             'referral_code' => $this->generateReferralCode(),
-            'referred_by' => $data['referred_by'],
+            'referred_by' => $data['referred_by'] ?? null,
         ]);
 
         return $user;
@@ -190,8 +154,7 @@ class UserManagementService
             'last_name' => $data['last_name'] ?? null,
             'username' => $data['username'] ?? $user->username,
             'password' => $data['password'],
-            'role_id' => $data['role_id'] ?? $user->role_id, // Functional role ID
-            'user_type' => $data['user_type'] ?? $user->user_type, // Basic user category
+            'user_type' => $data['user_type'] ?? $user->user_type,
             'image_path' => $data['image_path'] ?? $user->image_path,
             'phone' => $data['phone'] ?? $user->phone,
             'gender' => $data['gender'] ?? $user->gender,
@@ -205,9 +168,6 @@ class UserManagementService
             'status' => $data['status'] ?? $user->status,
             'remember_token' => $data['remember_token'] ?? $user->remember_token,
         ]);
-
-        // Note: Role assignment is handled automatically by the User model's booted() method
-        // when user_type or role_id changes
 
         return $user;
     }
@@ -295,51 +255,7 @@ class UserManagementService
     }
 
     /**
-     * Get all available roles for assignment
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getAllRoles()
-    {
-        return SpatieRole::all();
-    }
-
-    /**
-     * Get functional roles (excluding user type roles)
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getFunctionalRoles()
-    {
-        $userTypeRoles = [
-            UserType::SUPER_ADMIN->value,
-            UserType::MODERATOR->value,
-            UserType::VOLUNTEER->value,
-            UserType::USER->value
-        ];
-
-        return SpatieRole::whereNotIn('name', $userTypeRoles)->get();
-    }
-
-    /**
-     * Get user type roles only
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getUserTypeRoles()
-    {
-        $userTypeRoles = [
-            UserType::SUPER_ADMIN->value,
-            UserType::MODERATOR->value,
-            UserType::VOLUNTEER->value,
-            UserType::USER->value
-        ];
-
-        return SpatieRole::whereIn('name', $userTypeRoles)->get();
-    }
-
-    /**
-     * Get user type options for forms
+     * Get user type options for forms (API users only)
      *
      * @return array
      */
@@ -348,8 +264,6 @@ class UserManagementService
         return [
             UserType::USER->value => 'User',
             UserType::VOLUNTEER->value => 'Volunteer',
-            UserType::MODERATOR->value => 'Moderator',
-            UserType::SUPER_ADMIN->value => 'Super Admin',
         ];
     }
 }

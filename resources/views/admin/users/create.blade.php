@@ -58,7 +58,7 @@
                                         <label for="user_type">{{ translate('messages.User Type') }} <span class="text-danger">*</span></label>
                                         <select class="form-control" name="user_type" id="user_type" required>
                                             @foreach($userTypeOptions as $value => $label)
-                                                <option value="{{ $value }}" {{ old('user_type', $role) == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                                <option value="{{ $value }}" {{ old('user_type', $userType) == $value ? 'selected' : '' }}>{{ $label }}</option>
                                             @endforeach
                                         </select>
                                         <small class="form-text text-muted">{{ translate('messages.Basic user category that determines access level') }}</small>
@@ -66,18 +66,6 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="role_id">{{ translate('messages.Functional Role') }}</label>
-                                        <select class="form-control select2" name="role_id" id="role_id">
-                                            <option value="">{{ translate('messages.Select Functional Role') }} ({{ translate('messages.Optional') }})</option>
-                                            @foreach($functionalRoles as $functionalRole)
-                                                <option value="{{ $functionalRole->id }}" {{ old('role_id') == $functionalRole->id ? 'selected' : '' }}>{{ $functionalRole->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <small class="form-text text-muted">{{ translate('messages.Specific job role with additional permissions (e.g., Zone Manager, Content Manager)') }}</small>
-                                    </div>
-                                </div>
                                 <div class="col-md-6">
                                     <div class="form-group required">
                                         <label for="password">{{ translate('messages.password') }}</label>
@@ -90,8 +78,6 @@
                                         <small class="form-text text-muted">{{ translate('messages.minimum_8_characters') }}</small>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group required">
                                         <label for="confirmPassword">{{ translate('messages.confirm_password') }}</label>
@@ -104,7 +90,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                    </div>
                 </div>
 
                 <!-- Additional Information Card -->
@@ -211,7 +197,7 @@
                 <!-- Action Buttons -->
                 <div class="row mb-4">
                     <div class="col d-flex justify-content-end">
-                        <a href="{{ route('admin.users.index', ['role' => 'user']) }}" class="btn btn-secondary mr-2">
+                        <a href="{{ route('admin.users.index', ['user_type' => 'user']) }}" class="btn btn-secondary mr-2">
                             <i class="fas fa-times"></i> {{ translate('messages.cancel') }}
                         </a>
                         <button type="submit" class="btn btn-primary">

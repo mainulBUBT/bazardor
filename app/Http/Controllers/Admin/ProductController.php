@@ -53,13 +53,13 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index');
     }
 
-    public function show(int $id)
+    public function show(string $id)
     {
         $product = $this->productService->findById($id, ['category', 'unit', 'tags']);
         return view('admin.products.show', compact('product'));
     }
 
-    public function edit(int $id)
+    public function edit(string $id)
     {
         $product = $this->productService->findById($id, ['tags']);
         $categories = $this->categoryService->getCategories(null, null)->getCollection();
@@ -67,7 +67,7 @@ class ProductController extends Controller
         return view('admin.products.edit', compact('product', 'categories', 'units'));
     }
 
-    public function update(ProductStoreUpdateRequest $request, int $id)
+    public function update(ProductStoreUpdateRequest $request, string $id)
     {
         $data = $request->validated();
         if ($request->has('tags')) {
@@ -82,7 +82,7 @@ class ProductController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(int $id)
+    public function destroy(string $id)
     {
         $this->productService->delete($id);
         Toastr::success(translate('messages.product_deleted_successfully'));

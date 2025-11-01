@@ -2,22 +2,12 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">
-            {{ $role == 'user' ? translate('messages.users_list') : ($role == 'volunteer' ? translate('messages.volunteers_list') : translate('messages.moderators_list')) }}
+            {{ translate('messages.users_list') }}
         </h6>
         <div class="d-flex">
-            @if($role == 'user')
-                <a href="{{ route('admin.users.create', ['role' => 'user']) }}" class="btn btn-sm btn-primary mr-2">
-                    <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_user') }}
-                </a>
-            @elseif($role == 'volunteer')
-                <a href="{{ route('admin.users.create', ['role' => 'volunteer']) }}" class="btn btn-sm btn-primary mr-2">
-                    <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_volunteer') }}
-                </a>
-            @elseif($role == 'moderator')
-                <a href="{{ route('admin.users.create', ['role' => 'moderator']) }}" class="btn btn-sm btn-primary mr-2">
-                    <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_moderator') }}
-                </a>
-            @endif
+            <a href="{{ route('admin.users.create', ['userType' => 'user']) }}" class="btn btn-sm btn-primary mr-2">
+                <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_user') }}
+            </a>
             <a href="#" class="btn btn-sm btn-success mr-2">
                 <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.import') }}
             </a>
@@ -89,7 +79,6 @@
                         <th>{{ translate('messages.id') }}</th>
                         <th>{{ translate('messages.image') }}</th>
                         <th>{{ translate('messages.user') }}</th>
-                        <th>{{ translate('messages.role') }}</th>
                         <th>{{ translate('messages.email') }}</th>
                         <th>{{ translate('messages.phone') }}</th>
                         <th>{{ translate('messages.status') }}</th>
@@ -113,22 +102,6 @@
                             <td>
                                 <div class="font-weight-bold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                 <div class="small text-muted">{{'@'.$user->username ?? translate('messages.not_created') }}</div>
-                            </td>
-                            <td>
-                                @if($user->role === 'volunteer')
-                                    <span class="badge badge-volunteer">{{ translate('messages.volunteer') }}</span>
-                                    <div class="small mt-1">
-                                        <span class="points-badge">
-                                            <i class="fas fa-star fa-sm"></i> {{ $user->points ?? 0 }} {{ translate('messages.pts') }}
-                                        </span>
-                                    </div>
-                                @elseif($user->role === 'admin')
-                                    <span class="badge badge-admin">{{ translate('messages.admin') }}</span>
-                                @elseif($user->role === 'moderator')
-                                    <span class="badge badge-moderator">{{ translate('messages.moderator') }}</span>
-                                @else
-                                    <span class="badge badge-user">{{ translate('messages.user') }}</span>
-                                @endif
                             </td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->phone }}</td>
@@ -160,7 +133,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center py-4">{{ translate('messages.no_users_found') }}</td>
+                            <td colspan="8" class="text-center py-4">{{ translate('messages.no_users_found') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

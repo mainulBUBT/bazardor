@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MarketController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\ZoneController;
@@ -51,10 +52,10 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::post('/update-status', [SettingController::class,'updateStatus'])->name('update-status');
         });
 
-        // Users Management Routes
+        // API Users Management Routes
         Route::group(["prefix" => "users", "as" => "users."], function () {
             Route::get('/', [UserManagementController::class, 'index'])->name('index');
-            Route::get('create/{role}', [UserManagementController::class, 'create'])->name('create');
+            Route::get('create/{userType}', [UserManagementController::class, 'create'])->name('create');
             Route::post('/', [UserManagementController::class, 'store'])->name('store');
             Route::get('{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
             Route::put('{user}', [UserManagementController::class, 'update'])->name('update');
@@ -64,6 +65,17 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::get('pending', [UserManagementController::class, 'pending'])->name('pending');
             Route::get('{user}/approve', [UserManagementController::class, 'approve'])->name('approve');
             Route::get('{user}/reject', [UserManagementController::class, 'reject'])->name('reject');
+        });
+
+        // Admin Management Routes (Spatie role-based)
+        Route::group(["prefix" => "admins", "as" => "admins.", "middleware" => ["permission:manage admins"]], function () {
+            Route::get('/', [AdminManagementController::class, 'index'])->name('index');
+            Route::get('create', [AdminManagementController::class, 'create'])->name('create');
+            Route::post('/', [AdminManagementController::class, 'store'])->name('store');
+            Route::get('{admin}/edit', [AdminManagementController::class, 'edit'])->name('edit');
+            Route::put('{admin}', [AdminManagementController::class, 'update'])->name('update');
+            Route::delete('{admin}', [AdminManagementController::class, 'destroy'])->name('destroy');
+            Route::get('{admin}', [AdminManagementController::class, 'show'])->name('show');
         });
 
         Route::group(["prefix" => "roles", "as" => "roles."], function () {
