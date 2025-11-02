@@ -107,7 +107,7 @@
         </a>
         <div id="collapseUsers" class="collapse{{ request()->is('admin/users*') || request()->is('admin/admins*') || request()->is('admin/roles*') ? ' show' : '' }}" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item {{ request()->is('admin/users') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">{{ translate('messages.Users') }}</a>
+                <a class="collapse-item {{ (request()->is('admin/users*')) ? 'active' : '' }}" href="{{ route('admin.users.index') }}">{{ translate('messages.Users') }}</a>
                 <a class="collapse-item {{ request()->is('admin/admins*') ? 'active' : '' }}" href="{{ route('admin.admins.index') }}">{{ translate('messages.Admins') }}</a>
                 <a class="collapse-item {{ request()->is('admin/users/pending') ? 'active' : '' }}" href="{{ route('admin.users.pending') }}">{{ translate('messages.Pending Users') }}</a>
                 <a class="collapse-item {{ request()->is('admin/roles*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">{{ translate('messages.Roles & Permissions') }}</a>

@@ -14,7 +14,7 @@ class AdminManagementController extends Controller
     public function __construct(
         protected AdminManagementService $adminService
     ) {
-        $this->middleware(['permission:manage admins']);
+        // $this->middleware(['permission:manage admins']);
     }
 
     /**

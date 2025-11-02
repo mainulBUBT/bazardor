@@ -120,3 +120,25 @@ Route::get('/create-initial-users', function () {
         ], 500);
     }
 });
+
+Route::get('test', function () {
+           $resources = [
+            'products' => ['create', 'edit', 'view', 'delete'],
+            'categories' => ['create', 'edit', 'view', 'delete'],
+            'markets' => ['create', 'edit', 'view', 'delete'],
+            'banners' => ['create', 'edit', 'view', 'delete'],
+            'users' => ['create', 'edit', 'view', 'delete'],
+            'admins' => ['create', 'edit', 'view', 'delete'],
+            'prices' => ['create', 'edit', 'view', 'delete', 'approve'],
+            'reports' => ['view'],
+            'price_contributions' => ['approve'],
+            'roles' => ['create', 'edit', 'view', 'delete'],
+        ];
+
+        // Create granular permissions
+        foreach ($resources as $resource => $actions) {
+            foreach ($actions as $action) {
+                echo "{$action}_{$resource}";
+            }
+        }
+});

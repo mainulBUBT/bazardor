@@ -45,7 +45,10 @@ class RoleService
         DB::beginTransaction();
         
         try {
-            $role = Role::create(['name' => $data['name']]);
+            $role = Role::create([
+                'name' => $data['name'],
+                'guard_name' => 'admin'
+            ]);
             $role->syncPermissions($data['permissions']);
             
             DB::commit();
@@ -120,7 +123,7 @@ class RoleService
      */
     public function getAllPermissions(): Collection
     {
-        return Permission::all();
+        return Permission::where('guard_name', 'admin')->get();
     }
 
     /**

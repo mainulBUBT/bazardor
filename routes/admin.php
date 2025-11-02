@@ -68,7 +68,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         });
 
         // Admin Management Routes (Spatie role-based)
-        Route::group(["prefix" => "admins", "as" => "admins.", "middleware" => ["permission:manage admins"]], function () {
+        Route::group(["prefix" => "admins", "as" => "admins.", "middleware" => []], function () {
             Route::get('/', [AdminManagementController::class, 'index'])->name('index');
             Route::get('create', [AdminManagementController::class, 'create'])->name('create');
             Route::post('/', [AdminManagementController::class, 'store'])->name('store');

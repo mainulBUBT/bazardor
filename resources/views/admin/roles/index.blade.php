@@ -50,14 +50,14 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     @if(!in_array($role->name, ['super_admin', 'moderator', 'volunteer', 'user']))
-                                        <form action="{{ route('admin.roles.destroy', $role) }}" 
+                                        <form id="delete-role-{{ $role->id }}" action="{{ route('admin.roles.destroy', $role) }}" 
                                               method="POST" 
-                                              class="d-inline"
-                                              onsubmit="return confirm('{{ translate('messages.Are you sure you want to delete this role?') }}')">
+                                              class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" 
+                                            <button type="button" 
                                                     class="btn btn-sm btn-outline-danger"
+                                                    onclick="formAlert('delete-role-{{ $role->id }}', '{{ translate('messages.Are you sure you want to delete this role?') }}')"
                                                     title="{{ translate('messages.Delete') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
