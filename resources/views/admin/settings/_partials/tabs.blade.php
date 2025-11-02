@@ -12,8 +12,8 @@
     <a href="{{ route('admin.settings.index', ['tab' => 'mail']) }}" class="settings-nav-item {{ request()->query('tab') == 'mail' ? 'active' : '' }}" data-target="mail">
         <i class="fas fa-envelope mr-1"></i> {{ translate('messages.Mail') }}
     </a>
-    <a href="{{ route('admin.settings.index', ['tab' => 'integrations']) }}" class="settings-nav-item {{ request()->query('tab') == 'integrations' ? 'active' : '' }}" data-target="integrations">
-        <i class="fas fa-plug mr-1"></i> {{ translate('messages.Integrations') }}
+    <a href="{{ route('admin.settings.index', ['tab' => SOCIAL_SETTINGS]) }}" class="settings-nav-item {{ request()->query('tab') == SOCIAL_SETTINGS ? 'active' : '' }}" data-target="{{ SOCIAL_SETTINGS }}">
+        <i class="fas fa-user-friends mr-1"></i> {{ translate('messages.Social Connect') }}
     </a>
     <a href="{{ route('admin.settings.index', ['tab' => 'backup']) }}" class="settings-nav-item {{ request()->query('tab') == 'backup' ? 'active' : '' }}" data-target="backup">
         <i class="fas fa-database mr-1"></i> {{ translate('messages.Backup & Maintenance') }}

@@ -24,7 +24,7 @@ class UpdateSettingsRequest extends FormRequest
     {
         $tab = $this->query('tab', 'general');
         $rules = [
-            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'integrations', 'security', 'backup'])],
+            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'social', 'security', 'backup'])],
         ];
         
         $rules = array_merge($rules, match($tab) {
@@ -82,6 +82,14 @@ class UpdateSettingsRequest extends FormRequest
                 'password' => 'nullable|string|max:255',
                 'from_address' => 'required|email|max:255',
                 'from_name' => 'required|string|max:255',
+            ],
+            'social' => [
+                'google_client_id' => 'nullable|string|max:255',
+                'google_client_secret' => 'nullable|string|max:255',
+                'facebook_client_id' => 'nullable|string|max:255',
+                'facebook_client_secret' => 'nullable|string|max:255',
+                'enable_google_login' => 'boolean',
+                'enable_facebook_login' => 'boolean',
             ],
             default => [],
         });

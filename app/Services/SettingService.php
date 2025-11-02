@@ -192,12 +192,13 @@ class SettingService
                 'from_address' => 'no-reply@bazar-dor.com',
                 'from_name' => 'Bazar-dor',
             ],
-            'integrations' => [
-                'google_maps_api_key' => '',
+            SOCIAL_SETTINGS => [
                 'google_client_id' => '',
                 'google_client_secret' => '',
+                'facebook_client_id' => '',
+                'facebook_client_secret' => '',
                 'enable_google_login' => true,
-                'enable_google_maps' => true,
+                'enable_facebook_login' => true,
             ],
             'security' => [
                 'enable_two_factor_auth' => true,
