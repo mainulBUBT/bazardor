@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion d-flex flex-column" id="accordionSidebar" style="min-height: 100vh;">
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion d-flex flex-column" id="accordionSidebar" style="min-height: 100vh; overflow-y: auto; overflow-x: hidden;">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{url('/admin')}}">
@@ -167,35 +167,35 @@
         {{translate('messages.Reports') }}
     </div>
 
-    <!-- Market Reports -->
-    <li class="nav-item {{ request()->is('admin/reports/markets*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{url('/admin/reports/markets')}}">
-            <i class="fas fa-fw fa-store-alt"></i>
-            <span>{{translate('messages.Market Reports') }}</span>
+    <!-- Contribution Analytics -->
+    <li class="nav-item {{ request()->is('admin/reports/contributions*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('admin.reports.contributions') }}">
+            <i class="fas fa-fw fa-chart-bar"></i>
+            <span>{{translate('messages.Contribution Analytics') }}</span>
         </a>
     </li>
 
-    <!-- Product Reports -->
-    <li class="nav-item {{ request()->is('admin/reports/products*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{url('/admin/reports/products')}}">
-            <i class="fas fa-fw fa-box"></i>
-            <span>{{translate('messages.Product Reports') }}</span>
+    <!-- Data Quality Report -->
+    <li class="nav-item {{ request()->is('admin/reports/data-quality*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('admin.reports.data-quality') }}">
+            <i class="fas fa-fw fa-clipboard-check"></i>
+            <span>{{translate('messages.Data Quality') }}</span>
+        </a>
+    </li>
+
+    <!-- Market Analytics -->
+    <li class="nav-item {{ request()->is('admin/reports/markets*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('admin.reports.markets') }}">
+            <i class="fas fa-fw fa-store-alt"></i>
+            <span>{{translate('messages.Market Analytics') }}</span>
         </a>
     </li>
 
     <!-- Price Analytics -->
     <li class="nav-item {{ request()->is('admin/reports/prices*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{url('/admin/reports/prices')}}">
+        <a class="nav-link" href="{{ route('admin.reports.prices') }}">
             <i class="fas fa-fw fa-chart-line"></i>
             <span>{{translate('messages.Price Analytics') }}</span>
-        </a>
-    </li>
-
-    <!-- User Analytics -->
-    <li class="nav-item {{ request()->is('admin/reports/users*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{url('/admin/reports/users')}}">
-            <i class="fas fa-fw fa-user-chart"></i>
-            <span>{{translate('messages.User Analytics') }}</span>
         </a>
     </li>
 

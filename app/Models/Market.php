@@ -82,6 +82,13 @@ class Market extends Model
         return $this->hasMany(MarketOperatingHour::class);
     }
 
+    /**
+     * Get the market prices for the market.
+     */
+    public function marketPrices()
+    {
+        return $this->hasMany(ProductMarketPrice::class, 'market_id');
+    }
 
     public function creatorRecord()
     {

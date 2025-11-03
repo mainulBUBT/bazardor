@@ -101,6 +101,120 @@ class SettingController extends Controller
         return response()->json([
             'success' => false,
             'message' => translate('messages.failed_to_update_status')
-        ], 500);
+        ], 400);
+    }
+
+    /**
+     * Clear application cache
+     */
+    public function clearCache(Request $request)
+    {
+        $type = $request->input('type', 'all');
+        
+        try {
+            switch ($type) {
+                case 'view':
+                    \Artisan::call('view:clear');
+                    $message = translate('messages.View cache cleared successfully');
+                    break;
+                case 'all':
+                default:
+                    \Artisan::call('cache:clear');
+                    \Artisan::call('config:clear');
+                    \Artisan::call('route:clear');
+                    \Artisan::call('view:clear');
+                    $message = translate('messages.All cache cleared successfully');
+                    break;
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('messages.Failed to clear cache') . ': ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Create database backup
+     */
+    public function createBackup()
+    {
+        try {
+            $filename = 'backup-' . date('Y-m-d-His') . '.sql';
+            $backupPath = storage_path('app/backups');
+            
+            if (!file_exists($backupPath)) {
+                mkdir($backupPath, 0755, true);
+            }
+            
+            $fullPath = $backupPath . '/' . $filename;
+            
+            $dbHost = config('database.connections.mysql.host');
+            $dbName = config('database.connections.mysql.database');
+            $dbUser = config('database.connections.mysql.username');
+            $dbPass = config('database.connections.mysql.password');
+            
+            $command = sprintf(
+                'mysqldump -h %s -u %s -p%s %s > %s',
+                escapeshellarg($dbHost),
+                escapeshellarg($dbUser),
+                escapeshellarg($dbPass),
+                escapeshellarg($dbName),
+                escapeshellarg($fullPath)
+            );
+            
+            exec($command, $output, $returnVar);
+            
+            if ($returnVar === 0 && file_exists($fullPath)) {
+                return response()->json([
+                    'success' => true,
+                    'message' => translate('messages.Backup created successfully'),
+                    'filename' => $filename
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => translate('messages.Failed to create backup')
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('messages.Failed to create backup') . ': ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Toggle maintenance mode flag
+     */
+    public function toggleMaintenance(Request $request)
+    {
+        $enable = $request->input('enable', false);
+        
+        try {
+            $this->settingService->updateSettings([
+                'maintenance_mode' => $enable ? '1' : '0'
+            ], 'general');
+            
+            $message = $enable 
+                ? translate('messages.Maintenance mode enabled') 
+                : translate('messages.Maintenance mode disabled');
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => translate('messages.Failed to toggle maintenance mode') . ': ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

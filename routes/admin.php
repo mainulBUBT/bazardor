@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ContributionController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\ZoneController;
 use App\Http\Controllers\Admin\PushNotificationController;
@@ -51,6 +52,9 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::get("/", [SettingController::class, 'index'])->name('index');
             Route::post("/update", [SettingController::class, 'updateSettings'])->name('update');
             Route::post('/update-status', [SettingController::class,'updateStatus'])->name('update-status');
+            Route::post('/clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
+            Route::post('/create-backup', [SettingController::class, 'createBackup'])->name('create-backup');
+            Route::post('/toggle-maintenance', [SettingController::class, 'toggleMaintenance'])->name('toggle-maintenance');
         });
 
         // Contributions
@@ -118,6 +122,14 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::post('{pushNotification}/send', [PushNotificationController::class, 'send'])->name('send');
             Route::post('{pushNotification}/resend', [PushNotificationController::class, 'resend'])->name('resend');
             Route::get('get-estimated-reach', [PushNotificationController::class, 'getEstimatedReach'])->name('get-estimated-reach');
+        });
+
+        // Reports
+        Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+            Route::get('contributions', [ReportController::class, 'contributions'])->name('contributions');
+            Route::get('data-quality', [ReportController::class, 'dataQuality'])->name('data-quality');
+            Route::get('markets', [ReportController::class, 'markets'])->name('markets');
+            Route::get('prices', [ReportController::class, 'prices'])->name('prices');
         });
     });
 });
