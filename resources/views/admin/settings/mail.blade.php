@@ -80,32 +80,6 @@
                     </form>
                 </div>
             </div>
-
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Email Templates') }}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="list-group">
-                        <span class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ translate('messages.Welcome Email') }}
-                            <span class="badge badge-light"><i class="fas fa-edit"></i></span>
-                        </span>
-                        <span class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ translate('messages.Password Reset') }}
-                            <span class="badge badge-light"><i class="fas fa-edit"></i></span>
-                        </span>
-                        <span class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ translate('messages.Email Verification') }}
-                            <span class="badge badge-light"><i class="fas fa-edit"></i></span>
-                        </span>
-                        <span class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ translate('messages.Price Alert') }}
-                            <span class="badge badge-light"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 @endsection

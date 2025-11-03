@@ -130,19 +130,37 @@
                     </div>
                     <div class="toggle-item">
                         <label class="toggle-label">
-                            <i class="fas fa-globe"></i> {{ translate('messages.Enable multi-language support') }}
+                            <i class="fas fa-money-bill-wave"></i> {{ translate('messages.Show price comparison between markets') }}
                         </label>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="enableMultiLanguage" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="enable_multi_language" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_multi_language')->first()?->value ? 'checked' : '' }}>
+                            <input type="checkbox" id="showPriceComparison" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="show_price_comparison" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'show_price_comparison')->first()?->value ? 'checked' : '' }}>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
                     <div class="toggle-item">
                         <label class="toggle-label">
-                            <i class="fas fa-map-marked-alt"></i> {{ translate('messages.Enable geolocation services') }}
+                            <i class="fas fa-chart-line"></i> {{ translate('messages.Enable price trend indicators') }}
                         </label>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="enableGeolocation" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="enable_geolocation" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_geolocation')->first()?->value ? 'checked' : '' }}>
+                            <input type="checkbox" id="enablePriceTrends" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="enable_price_trend_indicators" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_price_trend_indicators')->first()?->value ? 'checked' : '' }}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label">
+                            <i class="fas fa-star"></i> {{ translate('messages.Enable market ratings') }}
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="enableMarketRatings" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="enable_market_ratings" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_market_ratings')->first()?->value ? 'checked' : '' }}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label">
+                            <i class="fas fa-award"></i> {{ translate('messages.Enable volunteer points system') }}
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="enableVolunteerPoints" onchange="statusAlert(this)" data-url="{{ route('admin.settings.update-status', ['tab' => GENERAL_SETTINGS]) }}" name="enable_volunteer_points_system" {{ $settings->where('settings_type', GENERAL_SETTINGS)->where('key_name', 'enable_volunteer_points_system')->first()?->value ? 'checked' : '' }}>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>

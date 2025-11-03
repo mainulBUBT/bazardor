@@ -123,20 +123,6 @@
         </a>
     </li>
 
-    <!-- Points Management -->
-    <li class="nav-item {{ request()->is('admin/points*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePoints" aria-expanded="false" aria-controls="collapsePoints">
-            <i class="fas fa-fw fa-award"></i>
-            <span>{{translate('messages.Points Management') }}</span>
-        </a>
-        <div id="collapsePoints" class="collapse" aria-labelledby="headingPoints" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{url('/admin/points/manage')}}">{{translate('messages.Manage Points') }}</a>
-                <a class="collapse-item" href="{{url('/admin/points/redemptions')}}">{{translate('messages.Redemptions') }}</a>
-            </div>
-        </div>
-    </li>
-
     <!-- Divider -->
     <hr class="sidebar-divider">
 

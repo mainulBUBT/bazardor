@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\ContributionController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\ZoneController;
 use App\Http\Controllers\Admin\PushNotificationController;
@@ -50,6 +51,13 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::get("/", [SettingController::class, 'index'])->name('index');
             Route::post("/update", [SettingController::class, 'updateSettings'])->name('update');
             Route::post('/update-status', [SettingController::class,'updateStatus'])->name('update-status');
+        });
+
+        // Contributions
+        Route::group(['prefix' => 'contributions', 'as' => 'contributions.'], function () {
+            Route::get('/', [ContributionController::class, 'index'])->name('index');
+            Route::post('{contribution}/approve', [ContributionController::class, 'approve'])->name('approve');
+            Route::post('{contribution}/reject', [ContributionController::class, 'reject'])->name('reject');
         });
 
         // API Users Management Routes
