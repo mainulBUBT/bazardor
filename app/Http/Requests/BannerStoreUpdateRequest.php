@@ -14,6 +14,15 @@ class BannerStoreUpdateRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('zone_id') && (string) $this->input('zone_id') === '0') {
+            $this->merge([
+                'zone_id' => null,
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,6 +39,7 @@ class BannerStoreUpdateRequest extends FormRequest
             'type' => 'required|in:general,featured',
             'is_active' => 'required|boolean',
             'position' => 'required|integer|min:1',
+            'zone_id' => 'nullable|uuid|exists:zones,id',
 
             // General banner fields
             'description' => 'required_if:type,general|nullable|string',

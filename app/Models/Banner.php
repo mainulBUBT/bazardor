@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasUuid;
 
 class Banner extends Model
@@ -24,7 +25,8 @@ class Banner extends Model
         'is_active',
         'position',
         'start_date',
-        'end_date'
+        'end_date',
+        'zone_id'
     ];
 
     /**
@@ -77,5 +79,13 @@ class Banner extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('position');
+    }
+
+    /**
+     * Get the zone associated with the banner.
+     */
+    public function zone(): BelongsTo
+    {
+        return $this->belongsTo(Zone::class);
     }
 }

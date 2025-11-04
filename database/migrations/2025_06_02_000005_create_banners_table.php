@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('position')->default(0);
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
+            $table->foreignUuid('zone_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -37,6 +37,6 @@ class CategoryMarketController extends Controller
         $categories = $this->categoryService->getCategoriesWithMarketCounts($zoneId, $limit, $offset);
         $resource = CategoryMarketResource::collection($categories);
 
-        return formated_response(constant: CATEGORY_MARKET_LIST_200, content: $resource, limit: $limit, offset: $offset);
-    }
+        return response()->json(formated_response(CATEGORY_MARKET_LIST_200, $resource, $limit, $offset), 200);
+   }
 }

@@ -18,9 +18,18 @@ class BannerService
      * Summary of getBanners
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getBanners()
+    public function getBanners(bool $isFeatured = false, ?int $limit = null, ?int $offset = null, $zoneId = null)
     {
-        return $this->banner->latest()->paginate(pagination_limit());
+        return $this->banner
+            ->with('zone')
+            ->latest()
+            ->when($isFeatured, function ($query) {
+                $query->featured();
+            })
+            ->when(!is_null($zoneId), function ($query) use ($zoneId) {
+                $query->where('zone_id', $zoneId);
+            })
+            ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
     }
 
     /**
@@ -43,6 +52,7 @@ class BannerService
         $this->banner->position = $data['position'];
         $this->banner->start_date = $data['start_date'] ?? null;
         $this->banner->end_date = $data['end_date'] ?? null;
+        $this->banner->zone_id = $data['zone_id'] ?? null;
         if (($data['type'] ?? 'general') === 'featured') {
             $this->banner->badge_text = $data['badge_text'] ?? null;
             $this->banner->badge_color = $data['badge_color'] ?? null;
@@ -78,6 +88,7 @@ class BannerService
         $banner->position = $data['position'];
         $banner->start_date = $data['start_date'] ?? null;
         $banner->end_date = $data['end_date'] ?? null;
+        $banner->zone_id = $data['zone_id'] ?? null;
         if (($data['type'] ?? 'general') === 'featured') {
             $banner->badge_text = $data['badge_text'] ?? null;
             $banner->badge_color = $data['badge_color'] ?? null;

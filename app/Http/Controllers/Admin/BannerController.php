@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Http\Requests\BannerStoreUpdateRequest;
 use App\Services\BannerService;
+use App\Services\ZoneService;
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
 
 class BannerController extends Controller
 {
-    public function __construct(protected BannerService $bannerService)
+    public function __construct(protected BannerService $bannerService, protected ZoneService $zoneService)
     {
 
     }
@@ -30,7 +31,8 @@ class BannerController extends Controller
      */
     public function create()
     {
-        return view('admin.banners.create');
+        $zones = $this->zoneService->getActiveZones();
+        return view('admin.banners.create', compact('zones'));
     }
 
     /**
@@ -50,7 +52,8 @@ class BannerController extends Controller
      */
     public function edit(Banner $banner)
     {
-        return view('admin.banners.edit', compact('banner'));
+        $zones = $this->zoneService->getActiveZones();
+        return view('admin.banners.edit', compact('banner', 'zones'));
     }
 
     /**

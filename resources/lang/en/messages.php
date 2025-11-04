@@ -1087,4 +1087,7 @@
   'Create Backup?' => 'Create Backup ',
   'Yes, Create it' => 'Yes  Create it',
   'Please wait' => 'Please wait',
+  'Leave blank to show in all zones' => 'Leave blank to show in all zones',
+  'Select a zone or leave as all zones' => 'Select a zone or leave as all zones',
+  'Select a zone' => 'Select a zone',
 );

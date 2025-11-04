@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Api\CategoryMarketController;
+use App\Http\Controllers\Api\BannerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'categories'], function () {
     Route::get('list', [CategoryMarketController::class, 'getCategoriesList']);
+});
+
+Route::group(['prefix' => 'banners'], function () {
+    Route::get('list', [BannerController::class, 'getBannersList']);
 });

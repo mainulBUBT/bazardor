@@ -48,6 +48,18 @@
                             </div>
                         </div>
 
+                        @php($selectedZone = (string) old('zone_id', '0'))
+                        <div class="mb-3">
+                            <label for="bannerZone" class="form-label">{{ translate('messages.Zone') }}</label>
+                            <select name="zone_id" id="bannerZone" class="form-control select2" style="width: 100%;">
+                                <option value="0" {{ $selectedZone === '0' ? 'selected' : '' }}>{{ translate('messages.All Zones') }}</option>
+                                @foreach(($zones ?? []) as $zoneItem)
+                                    <option value="{{ $zoneItem->id }}" {{ $selectedZone === (string) $zoneItem->id ? 'selected' : '' }}>{{ $zoneItem->name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">{{ translate('messages.Select a zone or leave as all zones') }}</small>
+                        </div>
+
                         <div class="mb-3">
                             <label for="bannerLink" class="form-label">{{ translate('messages.Link URL') }}</label>
                             <input type="url" name="url" class="form-control" id="bannerLink" placeholder="{{ translate('messages.https://example.com/offer (optional)') }}">
@@ -215,6 +227,12 @@
             // Trigger file input when preview container is clicked
             $('#imagePreviewContainer').on('click', function() {
                 $('#bannerImage').click();
+            });
+
+            $('#bannerZone').select2({
+                placeholder: "{{ translate('messages.Select a zone') }}",
+                allowClear: false,
+                width: 'resolve'
             });
         });
     </script>

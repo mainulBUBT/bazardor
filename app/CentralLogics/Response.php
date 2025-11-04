@@ -9,4 +9,9 @@ const CATEGORY_MARKET_LIST_200 = [
     'response_code' => 'category_market_list_200',
     'message' => 'Category list with market counts retrieved successfully'
 ];
+
+const BANNER_LIST_200 = [
+    'response_code' => 'banner_list_200',
+    'message' => 'Banner list retrieved successfully'
+];
     
