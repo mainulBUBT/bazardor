@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\Api\CategoryMarketController;
 use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,18 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
+    Route::post('otp-verification', [AuthController::class, 'verifyOtp']);
+    
+    Route::middleware('auth:api')->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+    });
+});
 
 Route::group(['prefix' => 'categories'], function () {
     Route::get('list', [CategoryMarketController::class, 'getCategoriesList']);
