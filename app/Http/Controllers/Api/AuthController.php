@@ -8,6 +8,7 @@ use App\Http\Requests\Api\RegisterRequest;
 use App\Http\Requests\Api\ForgotPasswordRequest;
 use App\Http\Requests\Api\ResetPasswordRequest;
 use App\Http\Requests\Api\OtpVerificationRequest;
+use App\Http\Requests\Api\SocialLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Services\Api\AuthService;
 use Illuminate\Http\Request;
@@ -126,5 +127,26 @@ class AuthController extends Controller
         $result = $this->authService->logout($request->user());
 
         return response()->json(formated_response(constant: $result['message'], content: $result), 200);
+    }
+
+    /**
+     * Summary of socialLogin
+     * @param \App\Http\Requests\Api\SocialLoginRequest $request
+     * @return JsonResponse
+     */
+    public function socialLogin(SocialLoginRequest $request): JsonResponse
+    {
+        $zoneId = $request->header('zoneId');
+        $result = $this->authService->socialLogin($request->validated(), $zoneId);
+
+        if (!$result['success']) {
+            return response()->json(formated_response(constant: $result['message'], content: $result), 401);
+        }
+
+        $contents = [
+            'user' => UserResource::make($result['user']),
+            'access_token' => $result['access_token'],
+        ];
+        return response()->json(formated_response(constant: $result['message'], content: $contents), 200);
     }
 }

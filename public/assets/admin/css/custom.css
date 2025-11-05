@@ -149,6 +149,41 @@
     display: block;
 }
 
+/* Social connect page styles */
+.callback-url-box {
+    background: #fff;
+    border: 1px solid #e3e6f0;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.callback-url-box code {
+    color: #5a5c69;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+.copy-btn {
+    padding: 5px 15px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.info-icon {
+    color: #4e73df;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 5px;
+}
+
+.info-icon:hover {
+    color: #2e59d9;
+}
+
 .toggle-switch {
     position: relative;
     display: inline-block;

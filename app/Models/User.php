@@ -46,6 +46,7 @@ class User extends Authenticatable
         'is_active' => 'boolean',
         'subscribed_to_newsletter' => 'boolean',
         'status' => 'string',
+        'last_login_at' => 'datetime',
     ];
 
     /**

@@ -1090,4 +1090,10 @@
   'Leave blank to show in all zones' => 'Leave blank to show in all zones',
   'Select a zone or leave as all zones' => 'Select a zone or leave as all zones',
   'Select a zone' => 'Select a zone',
+  'Callback URI' => 'Callback URI',
+  'Copy' => 'Copy',
+  'Social connect settings updated successfully' => 'Social connect settings updated successfully',
+  'Copied' => 'Copied',
+  'Callback URL copied to clipboard' => 'Callback URL copied to clipboard',
+  'Failed to copy. Please copy manually.' => 'Failed to copy. Please copy manually.',
 );

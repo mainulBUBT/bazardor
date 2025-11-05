@@ -95,4 +95,11 @@ const OTP_INVALID_403 = [
     'message' => 'Invalid OTP'
 ];
 
+const SOCIAL_LOGIN_DISABLED_403 = [
+    'response_code' => 'social_login_disabled_403',
+    'message' => 'Social login is currently disabled'
+];
+
+
+
     

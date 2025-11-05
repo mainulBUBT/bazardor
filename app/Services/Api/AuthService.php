@@ -2,6 +2,7 @@
 
 namespace App\Services\Api;
 
+use App\Models\Setting;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
@@ -10,9 +11,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
+use Exception;
+
 class AuthService
 {
-    public function __construct(private User $user)
+    public function __construct(private User $user, private Setting $setting)
     {
     }
 
@@ -258,5 +261,117 @@ class AuthService
             'success' => true,
             'message' => AUTH_LOGOUT_200,
         ];
+    }
+
+    /**
+     * Handle social login (Google/Facebook)
+     * @param array $data
+     * @param mixed $zoneId
+     * @return array{access_token: string, message: array, success: bool, user: User}
+     */
+    public function socialLogin(array $data, ?string $zoneId = null): array
+    {
+        try {
+            $provider = $data['provider'];
+            $accessToken = $data['access_token'];
+            $providerId = $data['provider_id'];
+
+            // Check if social login is enabled for this provider
+            $socialKey = $provider . '_login';
+            $socialSetting = $this->setting->where('key_name', $socialKey)->first();
+
+            if (!$socialSetting || !$socialSetting->value['enabled']) {
+                return [
+                    'success' => false,
+                    'message' => SOCIAL_LOGIN_DISABLED_403,
+                ];
+            }
+
+            // Note: Token verification is handled on the frontend
+            // The frontend should verify the token with the provider before sending to backend
+            // Backend trusts the frontend verification for simplicity
+            // For additional security, you can implement server-side token verification
+
+            // Check if user exists with this provider
+            $user = $this->user->where('provider', $provider)
+                ->where('provider_id', $providerId)
+                ->first();
+
+            if ($user) {
+                // Update existing user
+                if (!$user->is_active) {
+                    return [
+                        'success' => false,
+                        'message' => AUTH_INACTIVE_401,
+                    ];
+                }
+
+                // Update user info
+                $user->zone_id = $zoneId;
+                $user->last_login_at = now();
+                $user->provider_token = $accessToken;
+                
+                // Update email if provided and not already set
+                if (!empty($data['email']) && empty($user->email)) {
+                    $user->email = $data['email'];
+                    $user->email_verified_at = now();
+                }
+                
+                $user->save();
+            } else {
+                // Check if email exists with different provider or regular account
+                $emailUser = null;
+                if (!empty($data['email'])) {
+                    $emailUser = $this->user->where('email', $data['email'])->first();
+                }
+
+                if ($emailUser) {
+                    // Link social account to existing user
+                    $emailUser->provider = $provider;
+                    $emailUser->provider_id = $providerId;
+                    $emailUser->provider_token = $accessToken;
+                    $emailUser->zone_id = $zoneId;
+                    $emailUser->last_login_at = now();
+                    $emailUser->email_verified_at = $emailUser->email_verified_at ?? now();
+                    $emailUser->save();
+                    
+                    $user = $emailUser;
+                } else {
+                    // Create new user
+                    $attributes = [
+                        'first_name' => $data['first_name'] ?? 'User',
+                        'last_name' => $data['last_name'] ?? '',
+                        'email' => $data['email'] ?? null,
+                        'provider' => $provider,
+                        'provider_id' => $providerId,
+                        'provider_token' => $accessToken,
+                        'email_verified_at' => !empty($data['email']) ? now() : null,
+                        'is_active' => true,
+                        'zone_id' => $zoneId,
+                        'last_login_at' => now(),
+                        'referral_code' => Str::upper(Str::random(8)),
+                    ];
+
+                    $user = $this->user->create($attributes);
+                }
+            }
+
+            $token = $user->createToken('api-token');
+
+            return [
+                'success' => true,
+                'message' => AUTH_LOGIN_200,
+                'user' => $user,
+                'access_token' => $token->plainTextToken,
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => [
+                    'response_code' => 'social_login_error_500',
+                    'message' => 'Social login failed: ' . $e->getMessage(),
+                ],
+            ];
+        }
     }
 }

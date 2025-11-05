@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateSettingsRequest;
+use App\Models\Setting;
 use App\Services\SettingService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
@@ -42,7 +43,13 @@ class SettingController extends Controller
         } else if ($tab === NOTIFICATION_SETTINGS) {
             // Keep settings as collection for the notifications.blade.php template
             return view('admin.settings.notifications', compact('tab', 'settings'));
-        } else {
+        } else if ($tab === SOCIAL_SETTINGS) {
+            $settings = $settings->keyBy('key_name')->map(function ($setting) {
+                return $setting->value;
+            });
+            return view('admin.settings.social', compact('tab', 'settings'));
+        } 
+        else {
             $settings = $settings->mapWithKeys(function ($setting) {
                 return [$setting->key_name => $setting->value];
             });
@@ -216,5 +223,44 @@ class SettingController extends Controller
                 'message' => translate('messages.Failed to toggle maintenance mode') . ': ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function socialConnectUpdate(Request $request)
+    {
+
+        $validated = $request->validate([
+            'login_type' => 'required|string',
+            'enable_google_login' => 'required_if:login_type,google|boolean',
+            'google_client_id' => 'required_if:login_type,google|string',
+            'google_client_secret' => 'required_if:login_type,google|string',
+            'enable_facebook_login' => 'required_if:login_type,facebook|boolean',
+            'facebook_client_id' => 'required_if:login_type,facebook|string',
+            'facebook_client_secret' => 'required_if:login_type,facebook|string',
+        ]);
+
+        if ($request->login_type == 'google') {
+            Setting::updateOrCreate(
+                ['key_name' => 'google_login', 'settings_type' => SOCIAL_SETTINGS],
+                ['value' => [
+                    'enabled' => (bool)$validated['enable_google_login'],
+                    'client_id' => $validated['google_client_id'] ?? '',
+                    'client_secret' => $validated['google_client_secret'] ?? '',
+                ]]
+            );
+        }
+
+        if ($request->login_type == 'facebook') {
+            Setting::updateOrCreate(
+                ['key_name' => 'facebook_login', 'settings_type' => SOCIAL_SETTINGS],
+                ['value' => [
+                    'enabled' => (bool)$validated['enable_facebook_login'],
+                    'client_id' => $validated['facebook_client_id'] ?? '',
+                    'client_secret' => $validated['facebook_client_secret'] ?? '',
+                ]]
+            );
+        }
+
+        Toastr::success(translate('messages.Social connect settings updated successfully'));
+        return redirect()->back();
     }
 }

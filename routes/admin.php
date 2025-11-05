@@ -55,6 +55,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::post('/clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
             Route::post('/create-backup', [SettingController::class, 'createBackup'])->name('create-backup');
             Route::post('/toggle-maintenance', [SettingController::class, 'toggleMaintenance'])->name('toggle-maintenance');
+            Route::post('/social-connect-update', [SettingController::class, 'socialConnectUpdate'])->name('social-connect-update');
         });
 
         // Contributions
