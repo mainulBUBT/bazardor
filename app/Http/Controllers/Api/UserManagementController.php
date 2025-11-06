@@ -4,15 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UpdateProfileRequest;
+use App\Http\Requests\Api\AddFavoriteRequest;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\FavoriteResource;
 use App\Services\UserManagementService;
+use App\Services\FavoriteService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
-    public function __construct(private UserManagementService $userService)
-    {
+    public function __construct(
+        private UserManagementService $userService,
+        private FavoriteService $favoriteService
+    ) {
     }
 
     /**
@@ -46,6 +51,70 @@ class UserManagementController extends Controller
 
         $updatedUser = $this->userService->update($user->id, $payload);
 
-        return response()->json(formated_response(USER_PROFILE_UPDATED_200, UserResource::make($updatedUser)));
+        return response()->json(formated_response(USER_PROFILE_UPDATED_200, UserResource::make($updatedUser)), 200);
+    }
+
+    /**
+     * Summary of listFavorites
+     * @param \Illuminate\Http\Request $request
+     * @return JsonResponse
+     */
+    public function listFavorites(Request $request): JsonResponse
+    {
+        $userId = $request->user()->id;
+        $type = $request->type;
+        $limit = $request->limit ?? pagination_limit();
+        $offset = $request->offset ?? 1;
+
+        $favorites = $this->favoriteService->list($userId, $type, $limit, $offset);
+
+        return response()->json(formated_response(
+            FAVORITE_LIST_200,
+            FavoriteResource::collection($favorites),
+            $limit,
+            $offset
+        ), 200);
+    }
+
+    /**
+     * Summary of addFavorite
+     * @param \App\Http\Requests\Api\AddFavoriteRequest $request
+     * @return JsonResponse
+     */
+    public function addFavorite(AddFavoriteRequest $request): JsonResponse
+    {
+        $userId = $request->user()->id;
+        $validated = $request->validated();
+
+        $favorite = $this->favoriteService->add(
+            $userId,
+            $validated['type'],
+            $validated['favoritable_id']
+        );
+
+        return response()->json(
+            formated_response(FAVORITE_ADDED_200),
+            200
+        );
+    }
+
+    /**
+     * Summary of removeFavorite
+     * @param \Illuminate\Http\Request $request
+     * @return JsonResponse
+     */
+    public function removeFavorite(Request $request): JsonResponse
+    {
+        $userId = $request->user()->id;
+        $type = $request->type;
+        $favoritableId = $request->favoritable_id;
+
+        if (!$type || !$favoritableId) {
+            return response()->json(formated_response(FAVORITE_INVALID_403), 403);
+        }
+
+        $this->favoriteService->remove($userId, $type, $favoritableId);
+
+        return response()->json(formated_response(FAVORITE_REMOVED_200), 200);
     }
 }

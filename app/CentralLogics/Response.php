@@ -110,6 +110,24 @@ const USER_PROFILE_UPDATED_200 = [
     'message' => 'Profile updated successfully'
 ];
 
+const FAVORITE_ADDED_200 = [
+    'response_code' => 'favorite_added_200',
+    'message' => 'Added to favorites successfully'
+];
 
+const FAVORITE_REMOVED_200 = [
+    'response_code' => 'favorite_removed_200',
+    'message' => 'Removed from favorites successfully'
+];
+
+const FAVORITE_LIST_200 = [
+    'response_code' => 'favorite_list_200',
+    'message' => 'Favorites list retrieved successfully'
+];
+
+const FAVORITE_INVALID_403 =[
+    'response_code' => 'favorite_invalid_403',
+    'message' => 'Invalid favorite'
+];
 
     

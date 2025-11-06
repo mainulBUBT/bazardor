@@ -29,6 +29,12 @@ Route::group(['prefix' => 'auth'], function () {
             Route::get('profile', [UserManagementController::class, 'profile']);
             Route::post('update-profile', [UserManagementController::class, 'updateProfile']);
             Route::post('logout', [AuthController::class, 'logout']);
+            
+            Route::group(['prefix' => 'favorites'], function () {
+                Route::get('list', [UserManagementController::class, 'listFavorites']);
+                Route::post('add', [UserManagementController::class, 'addFavorite']);
+                Route::delete('remove', [UserManagementController::class, 'removeFavorite']);
+            });
         });
     });
 });
