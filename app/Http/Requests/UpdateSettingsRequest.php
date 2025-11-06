@@ -24,7 +24,7 @@ class UpdateSettingsRequest extends FormRequest
     {
         $tab = $this->query('tab', 'general');
         $rules = [
-            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'social', 'security', 'backup'])],
+            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'social', 'security', 'backup', 'app'])],
         ];
         
         $rules = array_merge($rules, match($tab) {
@@ -42,12 +42,22 @@ class UpdateSettingsRequest extends FormRequest
                 'enable_volunteer_points_system' => 'boolean',
                 'company_logo'=> 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'company_favicon'=> 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'facebook_url' => 'nullable|url|max:500',
+                'twitter_url' => 'nullable|url|max:500',
+                'instagram_url' => 'nullable|url|max:500',
+                'linkedin_url' => 'nullable|url|max:500',
+                'youtube_url' => 'nullable|url|max:500',
             ],
-            'business_rules' => [
+            'business' => [
                 'market_update_frequency' => ['required', 'string', Rule::in(['daily', 'weekly', 'monthly'])],
                 'market_update_cutoff_time' => ['required', 'date_format:H:i'],
                 'product_update_frequency' => ['required', 'string', Rule::in(['daily', 'weekly', 'monthly'])],
                 'product_update_cutoff_time' => ['required', 'date_format:H:i'],
+                'timezone' => 'required|string|max:50',
+                'time_format' => ['required', 'string', Rule::in(['H:i', 'h:i A'])],
+                'decimal_places' => 'required|integer|min:0|max:10',
+                'copyright_text' => 'nullable|string|max:500',
+                'cookies_text' => 'nullable|string|max:500',
             ],
             'notifications' => [
                 'enable_email_notifications' => 'boolean',
@@ -81,6 +91,12 @@ class UpdateSettingsRequest extends FormRequest
                 'enable_google_login' => 'boolean',
                 'enable_facebook_login' => 'boolean',
             ],
+            'app' => [
+                'android_min_version' => 'required|string|max:20',
+                'android_download_url' => 'required|url|max:500',
+                'ios_min_version' => 'required|string|max:20',
+                'ios_download_url' => 'required|url|max:500',
+            ],
             default => [],
         });
   
@@ -111,6 +127,12 @@ class UpdateSettingsRequest extends FormRequest
             'quiet_hours_start.date_format' => 'The quiet hours start time must be in HH:MM format.',
             'quiet_hours_end.date_format' => 'The quiet hours end time must be in HH:MM format.',
             'digest_delivery_time.date_format' => 'The digest delivery time must be in HH:MM format.',
+            'android_min_version.required' => 'The Android minimum version is required.',
+            'android_download_url.required' => 'The Android download URL is required.',
+            'android_download_url.url' => 'The Android download URL must be a valid URL.',
+            'ios_min_version.required' => 'The iOS minimum version is required.',
+            'ios_download_url.required' => 'The iOS download URL is required.',
+            'ios_download_url.url' => 'The iOS download URL must be a valid URL.',
         ];
     }
 }

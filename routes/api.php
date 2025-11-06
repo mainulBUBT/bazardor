@@ -3,6 +3,7 @@ use App\Http\Controllers\Api\CategoryMarketController;
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserManagementController;
+use App\Http\Controllers\Api\ConfigController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,4 +46,8 @@ Route::group(['prefix' => 'categories'], function () {
 
 Route::group(['prefix' => 'banners'], function () {
     Route::get('list', [BannerController::class, 'getBannersList']);
+});
+
+Route::group(['prefix' => 'config'], function () {
+    Route::get('/', [ConfigController::class, 'getConfig']);
 });

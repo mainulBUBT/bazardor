@@ -13,27 +13,34 @@ class SettingService
     }
 
     /**
-     * Initialize default settings if they do not exist
-     *
-     * @return void
+     * Summary of getSettings
+     * @param mixed $group
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Setting>
      */
-    public function getSettings(?string $group = null)
-    {   
-        $settings = $this->setting->where('settings_type', $group)->get();
-        return $settings;
-    }
-    
-    /**
-     * Get a single setting value by key
-     *
-     * @param string $key The setting key
-     * @param string $group The settings group/type
-     * @return string|null The setting value or null if not found
-     */
-    public function getSetting(string $key, string $group): ?string
+    public function getSettings(?string $group = null, array $keys = [])
     {
         return $this->setting
-            ->where('settings_type', $group)
+            ->when(!is_null($group), function ($query) use ($group) {
+                $query->where('settings_type', $group);
+            })
+            ->when(!empty($keys), function ($query) use ($keys) {
+                $query->whereIn('key_name', $keys);
+            })
+            ->get();
+    }
+
+
+    /**
+     * Summary of getSetting
+     * @param string $key
+     * @param string $group
+     */
+    public function getSetting(string $key, ?string $group = null): ?string
+    {
+        return $this->setting
+            ->when(!is_null($group), function ($query) use ($group) {
+                return $query->where('settings_type', $group);
+            })
             ->where('key_name', $key)
             ->value('value');
     }
@@ -102,7 +109,7 @@ class SettingService
             
             return true;
         } catch (\Exception $e) {
-            info(["Settings update failed: " =>  $e->getMessage()]);
+            info("Settings update failed: " . $e->getMessage());
             return false;
         }   
     }
@@ -146,6 +153,11 @@ class SettingService
                 'enable_price_trend_indicators' => true,
                 'enable_market_ratings' => true,
                 'enable_volunteer_points_system' => true,
+                'facebook_url' => 'https://facebook.com/bazardor',
+                'twitter_url' => 'https://twitter.com/bazardor',
+                'instagram_url' => 'https://instagram.com/bazardor',
+                'linkedin_url' => 'https://linkedin.com/company/bazardor',
+                'youtube_url' => 'https://youtube.com/bazardor',
             ],
             'appearance' => [
                 'primary_color' => '#4e73df',
@@ -158,6 +170,11 @@ class SettingService
                 'market_update_cutoff_time' => '17:00',
                 'product_update_frequency' => 'daily',
                 'product_update_cutoff_time' => '17:00',
+                'timezone' => 'UTC',
+                'time_format' => 'H:i',
+                'decimal_places' => 2,
+                'copyright_text' => '© 2025 Bazar-dor. All rights reserved.',
+                'cookies_text' => 'We use cookies to enhance your experience.',
             ],
             'notifications' => [
                 'enable_email_notifications' => true,
@@ -196,6 +213,12 @@ class SettingService
                 'min_password_length' => 8,
                 'password_expiration_days' => 90,
                 'session_timeout_minutes' => 30,
+            ],
+            APP_SETTINGS => [
+                'android_min_version' => '1.0.0',
+                'android_download_url' => 'https://play.google.com/store/apps/details?id=com.example.app',
+                'ios_min_version' => '1.0.0',
+                'ios_download_url' => 'https://apps.apple.com/us/app/example-app/id123456789',
             ],
             'backup' => [
                 'backup_frequency' => 'daily',

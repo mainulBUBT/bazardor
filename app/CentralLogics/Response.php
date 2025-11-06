@@ -130,4 +130,7 @@ const FAVORITE_INVALID_403 =[
     'message' => 'Invalid favorite'
 ];
 
-    
+const CONFIG_200 = [
+    'response_code' => 'config_200',
+    'message' => 'Configuration retrieved successfully'
+];

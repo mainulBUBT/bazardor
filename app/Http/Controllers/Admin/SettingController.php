@@ -48,6 +48,11 @@ class SettingController extends Controller
                 return $setting->value;
             });
             return view('admin.settings.social', compact('tab', 'settings'));
+        } else if ($tab === APP_SETTINGS) {
+            $settings = $settings->mapWithKeys(function ($setting) {
+                return [$setting->key_name => $setting->value];
+            });
+            return view('admin.settings.app', compact('tab', 'settings'));
         } 
         else {
             $settings = $settings->mapWithKeys(function ($setting) {
@@ -72,11 +77,11 @@ class SettingController extends Controller
         $success = $this->settingService->updateSettings($validated, $tab);
         
         if ($success) {
-            Toastr::success(translate('messages.Settings updated successfully!'));
+            Toastr::success(translate('messages.Settings updated successfully'));
             return redirect()->back()->withInput(['tab' => $tab]);
         }
         
-        Toastr::error(translate('messages.Failed to update settings.'));
+        Toastr::error(translate('messages.Failed to update settings'));
         return redirect()->back()->withInput(['tab' => $tab]);
     }
 

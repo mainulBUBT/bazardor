@@ -15,6 +15,9 @@
     <a href="{{ route('admin.settings.index', ['tab' => SOCIAL_SETTINGS]) }}" class="settings-nav-item {{ request()->query('tab') == SOCIAL_SETTINGS ? 'active' : '' }}" data-target="{{ SOCIAL_SETTINGS }}">
         <i class="fas fa-user-friends mr-1"></i> {{ translate('messages.Social Connect') }}
     </a>
+    <a href="{{ route('admin.settings.index', ['tab' => 'app']) }}" class="settings-nav-item {{ request()->query('tab') == 'app' ? 'active' : '' }}" data-target="app">
+        <i class="fas fa-mobile-alt mr-1"></i> {{ translate('messages.App Settings') }}
+    </a>
     <a href="{{ route('admin.settings.index', ['tab' => 'backup']) }}" class="settings-nav-item {{ request()->query('tab') == 'backup' ? 'active' : '' }}" data-target="backup">
         <i class="fas fa-database mr-1"></i> {{ translate('messages.Backup & Maintenance') }}
     </a>

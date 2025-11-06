@@ -167,7 +167,69 @@
                 </div>
             </div>
         </div>
-    
+    </div>
+
+    <!-- Social Media Links Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Social Media Links') }}</h6>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.settings.update', ['tab' => GENERAL_SETTINGS]) }}" method="POST">
+                @csrf
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="facebookUrl">{{ translate('messages.Facebook URL') }}</label>
+                        @php($facebookUrl = $settings->where('key_name', 'facebook_url')->first()?->value ?? '')
+                        <input type="url" class="form-control @error('facebook_url') is-invalid @enderror" id="facebookUrl" name="facebook_url" value="{{ $facebookUrl }}" placeholder="https://facebook.com/yourpage">
+                        @error('facebook_url')
+                            <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="twitterUrl">{{ translate('messages.Twitter URL') }}</label>
+                        @php($twitterUrl = $settings->where('key_name', 'twitter_url')->first()?->value ?? '')
+                        <input type="url" class="form-control @error('twitter_url') is-invalid @enderror" id="twitterUrl" name="twitter_url" value="{{ $twitterUrl }}" placeholder="https://twitter.com/yourhandle">
+                        @error('twitter_url')
+                            <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="instagramUrl">{{ translate('messages.Instagram URL') }}</label>
+                        @php($instagramUrl = $settings->where('key_name', 'instagram_url')->first()?->value ?? '')
+                        <input type="url" class="form-control @error('instagram_url') is-invalid @enderror" id="instagramUrl" name="instagram_url" value="{{ $instagramUrl }}" placeholder="https://instagram.com/yourprofile">
+                        @error('instagram_url')
+                            <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="linkedinUrl">{{ translate('messages.LinkedIn URL') }}</label>
+                        @php($linkedinUrl = $settings->where('key_name', 'linkedin_url')->first()?->value ?? '')
+                        <input type="url" class="form-control @error('linkedin_url') is-invalid @enderror" id="linkedinUrl" name="linkedin_url" value="{{ $linkedinUrl }}" placeholder="https://linkedin.com/company/yourcompany">
+                        @error('linkedin_url')
+                            <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="youtubeUrl">{{ translate('messages.YouTube URL') }}</label>
+                        @php($youtubeUrl = $settings->where('key_name', 'youtube_url')->first()?->value ?? '')
+                        <input type="url" class="form-control @error('youtube_url') is-invalid @enderror" id="youtubeUrl" name="youtube_url" value="{{ $youtubeUrl }}" placeholder="https://youtube.com/yourchannel">
+                        @error('youtube_url')
+                            <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-12 text-right">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-1"></i>{{ translate('messages.Save Social Media Links') }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
 @endsection
