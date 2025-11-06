@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\SettingService;
+use App\Services\ZoneService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ConfigController extends Controller
 {
     public function __construct(
-        private SettingService $settingService
+        private SettingService $settingService,
+        private ZoneService $zoneService
     ) {
     }
 
@@ -102,7 +104,33 @@ class ConfigController extends Controller
     }
 
     /**
-     * Normalize truthy values to boolean
+     * Get zone by coordinates (latitude, longitude)
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getZone(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'lat' => 'required|numeric|between:-90,90',
+            'lng' => 'required|numeric|between:-180,180',
+        ]);
+
+        $zone = $this->zoneService->getZoneByCoordinates(
+            $validated['lat'],
+            $validated['lng']
+        );
+
+        if (!$zone) {
+            return response()->json(formated_response(ZONE_SERVICE_404), 404);
+        }
+
+        return response()->json(formated_response(ZONE_200, $zone->toArray()), 200);
+    }
+
+    /**
+     * Summary of normalizeBoolean
+     * @param mixed $value
+     * @return bool
      */
     private function normalizeBoolean(mixed $value): bool
     {

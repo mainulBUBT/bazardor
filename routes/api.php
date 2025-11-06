@@ -50,4 +50,5 @@ Route::group(['prefix' => 'banners'], function () {
 
 Route::group(['prefix' => 'config'], function () {
     Route::get('/', [ConfigController::class, 'getConfig']);
+    Route::get('get-zone', [ConfigController::class, 'getZone']);
 });

@@ -175,5 +175,24 @@ class ZoneService
         return $zone;
     }
 
+    /**
+     * Get zone by coordinates (latitude, longitude)
+     * Returns the first active zone containing the given point
+     *
+     * @param float $latitude
+     * @param float $longitude
+     * @return Zone|null
+     */
+    public function getZoneByCoordinates(float $latitude, float $longitude): ?Zone
+    {
+        $point = new Point($latitude, $longitude, POINT_SRID);
+
+        return $this->zone
+            ->whereContains('coordinates', $point)
+            ->where('is_active', 1)
+            ->select('id', 'name', 'is_active', 'coordinates')
+            ->latest()
+            ->first();
+    }
 
 } 

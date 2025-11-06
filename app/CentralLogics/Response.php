@@ -134,3 +134,18 @@ const CONFIG_200 = [
     'response_code' => 'config_200',
     'message' => 'Configuration retrieved successfully'
 ];
+
+const ZONE_200 = [
+    'response_code' => 'zone_200',
+    'message' => 'Zone retrieved successfully'
+];
+
+const ZONE_NOT_FOUND_404 = [
+    'response_code' => 'zone_not_found_404',
+    'message' => 'Zone not found'
+];
+
+const ZONE_SERVICE_404 =[
+    'response_code' => 'zone_service_404',
+    'message' => 'Service not available in this area'
+]; 
