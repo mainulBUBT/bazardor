@@ -37,7 +37,7 @@ class MarketStoreUpdateRequest extends FormRequest
             'division' => 'required|string',
             'district' => 'required|string',
             'upazila' => 'nullable|string',
-            'zone_id' => 'nullable|integer|exists:zones,id',
+            'zone_id' => 'nullable|uuid|exists:zones,id',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'status' => 'required|in:active,inactive',

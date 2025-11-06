@@ -40,15 +40,21 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
+// Public API
 Route::group(['prefix' => 'categories'], function () {
-    Route::get('list', [CategoryMarketController::class, 'getCategoriesList']);
+    Route::get('list', [CategoryMarketController::class, 'getCategoriesWithMarketCountsList']);
 });
 
 Route::group(['prefix' => 'banners'], function () {
     Route::get('list', [BannerController::class, 'getBannersList']);
 });
 
+Route::group(['prefix' => 'markets'], function () {
+    Route::get('random-list', [CategoryMarketController::class, 'getRandomMarketsList']);
+});
+
 Route::group(['prefix' => 'config'], function () {
     Route::get('/', [ConfigController::class, 'getConfig']);
     Route::get('get-zone', [ConfigController::class, 'getZone']);
 });
+

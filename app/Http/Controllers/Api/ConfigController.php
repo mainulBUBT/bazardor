@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ZoneResource;
 use App\Services\SettingService;
 use App\Services\ZoneService;
 use Illuminate\Http\JsonResponse;
@@ -124,7 +125,7 @@ class ConfigController extends Controller
             return response()->json(formated_response(ZONE_SERVICE_404), 404);
         }
 
-        return response()->json(formated_response(ZONE_200, $zone->toArray()), 200);
+        return response()->json(formated_response(ZONE_200, ZoneResource::make($zone)), 200);
     }
 
     /**

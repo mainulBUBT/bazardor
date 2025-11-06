@@ -23,6 +23,7 @@ class MarketService
         })
         ->latest()->paginate(pagination_limit());
     }
+    
     /**
      * Store a new market.
      *

@@ -148,4 +148,9 @@ const ZONE_NOT_FOUND_404 = [
 const ZONE_SERVICE_404 =[
     'response_code' => 'zone_service_404',
     'message' => 'Service not available in this area'
-]; 
+];
+
+const MARKET_200 = [
+    'response_code' => 'market_200',
+    'message' => 'Market retrieved successfully'
+];
