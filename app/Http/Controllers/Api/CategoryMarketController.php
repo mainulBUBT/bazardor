@@ -81,6 +81,8 @@ class CategoryMarketController extends Controller
 
     /**
      * Get random products available in markets for a zone
+     * @param \Illuminate\Http\Request $request
+     * @return JsonResponse
      */
     public function getRandomProductList(Request $request): JsonResponse
     {
@@ -99,6 +101,47 @@ class CategoryMarketController extends Controller
         return response()->json(formated_response(
             PRODUCT_200,
             ProductResource::collection($products)
+        ), 200);
+    }
+
+    /**
+     * Get markets list with pagination, filters, distance, and operating hours
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMarketsList(Request $request): JsonResponse
+    {
+        if (!$request->hasHeader('zoneId')) {
+            return response()->json(
+                formated_response(constant: ZONE_ID_REQUIRED_403),
+                403
+            );
+        }
+
+        $zoneId = $request->header('zoneId');
+        $limit = (int) ($request->limit ?? pagination_limit());
+        $offset = (int) ($request->offset ?? 1);
+        $userLat = (float) ($request->user_lat ?? 0);
+        $userLng = (float) ($request->user_lng ?? 0);
+
+        $markets = $this->marketService->getMarketsByZoneWithFilters(
+            zoneId: $zoneId,
+            userLat: $userLat,
+            userLng: $userLng,
+            search: $request->search,
+            isOpen: $request->is_open,
+            type: $request->type,
+            information: $request->information,
+            limit: $limit,
+            offset: $offset
+        );
+
+        return response()->json(formated_response(
+            MARKET_200,
+            MarketResource::collection($markets),
+            $limit,
+            $offset
         ), 200);
     }
 }

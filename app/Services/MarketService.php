@@ -186,5 +186,87 @@ class MarketService
         })->findOrFail($id);
 
         return $query; 
-    }   
+    }
+
+    /**
+     * Get markets by zone with filters, distance calculation, and operating hours
+     *
+     * @param string $zoneId
+     * @param float $userLat
+     * @param float $userLng
+     * @param string|null $search
+     * @param bool|null $isOpen
+     * @param string|null $type
+     * @param string|null $information
+     * @param int $limit
+     * @param int $offset
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getMarketsByZoneWithFilters(
+        string $zoneId,
+        float $userLat = 0,
+        float $userLng = 0,
+        ?string $search = null,
+        ?bool $isOpen = null,
+        ?string $type = null,
+        ?string $information = null,
+        int $limit = 15,
+        int $offset = 1
+    ) {
+        $today = strtolower(now()->format('l'));
+
+        $query = $this->market
+            ->where('zone_id', $zoneId)
+            ->where('is_active', 1)
+            ->where('visibility', 1)
+            ->with([
+                'marketInformation:id,market_id,is_non_veg,is_halal,is_parking,is_restroom,is_home_delivery',
+                'openingHours' => function ($q) use ($today) {
+                    $q->where('day', ucfirst($today));
+                }
+            ])
+            ->when($search, function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->when($type, function ($q) use ($type) {
+                $q->where('type', $type);
+            })
+            ->when(!is_null($isOpen), function ($q) use ($isOpen, $today) {
+                if ($isOpen) {
+                    $q->whereHas('openingHours', function ($subQ) use ($today) {
+                        $subQ->where('day', ucfirst($today))
+                            ->where('is_closed', 0)
+                            ->whereRaw('TIME(?) BETWEEN opening AND closing', [now()->format('H:i:s')]);
+                    });
+                } else {
+                    $q->whereDoesntHave('openingHours', function ($subQ) use ($today) {
+                        $subQ->where('day', ucfirst($today))
+                            ->where('is_closed', 0)
+                            ->whereRaw('TIME(?) BETWEEN opening AND closing', [now()->format('H:i:s')]);
+                    });
+                }
+            })
+            ->when($information, function ($q) use ($information) {
+                $q->whereHas('marketInformation', function ($subQ) use ($information) {
+                    $field = 'is_' . $information;
+                    $subQ->where($field, 1);
+                });
+            });
+
+        // Add distance calculation if user coordinates provided
+        if ($userLat !== 0 && $userLng !== 0) {
+            $haversine = "(6371 * acos(cos(radians($userLat)) 
+                         * cos(radians(latitude)) 
+                         * cos(radians(longitude) - radians($userLng)) 
+                         + sin(radians($userLat)) 
+                         * sin(radians(latitude))))";
+            
+            $query->selectRaw("*, {$haversine} AS distance_km")
+                  ->orderBy('distance_km');
+        } else {
+            $query->select('*');
+        }
+
+        return $query->paginate($limit, ['*'], 'page', $offset);
+    }
 }
