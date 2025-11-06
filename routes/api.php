@@ -2,6 +2,7 @@
 use App\Http\Controllers\Api\CategoryMarketController;
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,7 +25,11 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('otp-verification', [AuthController::class, 'verifyOtp']);
     
     Route::middleware('auth:api')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
+        Route::group(['prefix' => 'users'], function () {
+            Route::get('profile', [UserManagementController::class, 'profile']);
+            Route::post('update-profile', [UserManagementController::class, 'updateProfile']);
+            Route::post('logout', [AuthController::class, 'logout']);
+        });
     });
 });
 

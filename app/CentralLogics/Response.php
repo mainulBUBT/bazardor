@@ -100,6 +100,16 @@ const SOCIAL_LOGIN_DISABLED_403 = [
     'message' => 'Social login is currently disabled'
 ];
 
+const USER_PROFILE_200 = [
+    'response_code' => 'user_profile_200',
+    'message' => 'Profile retrieved successfully'
+];
+
+const USER_PROFILE_UPDATED_200 = [
+    'response_code' => 'user_profile_updated_200',
+    'message' => 'Profile updated successfully'
+];
+
 
 
     
