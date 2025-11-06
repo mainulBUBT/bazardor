@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryMarketResource;
 use App\Http\Resources\MarketResource;
+use App\Http\Resources\ProductResource;
 use App\Services\CategoryService;
 use App\Services\MarketService;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,7 +17,8 @@ class CategoryMarketController extends Controller
 {
     public function __construct(
         private CategoryService $categoryService,
-        private MarketService $marketService
+        private MarketService $marketService,
+        private ProductService $productService
     ) {
     }
 
@@ -73,6 +76,29 @@ class CategoryMarketController extends Controller
         return response()->json(formated_response(
             MARKET_200,
             MarketResource::collection($markets)
+        ), 200);
+    }
+
+    /**
+     * Get random products available in markets for a zone
+     */
+    public function getRandomProductList(Request $request): JsonResponse
+    {
+        if (!$request->hasHeader('zoneId')) {
+            return response()->json(
+                formated_response(constant: ZONE_ID_REQUIRED_403),
+                403
+            );
+        }
+
+        $zoneId = $request->header('zoneId');
+        $limit = (int) ($request->limit ?? pagination_limit());
+
+        $products = $this->productService->getRandomProductsByZone($zoneId, $limit);
+
+        return response()->json(formated_response(
+            PRODUCT_200,
+            ProductResource::collection($products)
         ), 200);
     }
 }

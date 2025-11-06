@@ -20,7 +20,7 @@ class ProductService
      * @param array $with
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getProducts($search = null, array $with = [])
+    public function getProducts($search = null, array $with = [], $limit = null, $offset = null)
     {
         return $this->product
             ->when(!empty($with), function ($query) use ($with) {
@@ -30,7 +30,7 @@ class ProductService
                 $query->where('name', 'like', "%{$search}%");
             })
             ->latest()
-            ->paginate(pagination_limit());
+            ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
     }
 
     /**
@@ -102,7 +102,7 @@ class ProductService
     /**
      * Update an existing product.
      */
-    public function update(array $data, int $id): Product
+    public function update(array $data, string $id): Product
     {
         return DB::transaction(function () use ($data, $id) {
             $product = $this->findById($id);
@@ -169,7 +169,7 @@ class ProductService
     /**
      * Delete product and its image/tags.
      */
-    public function delete(int $id): void
+    public function delete(string $id): void
     {
         $product = $this->findById($id);
         if ($product->image_path) {
@@ -183,10 +183,61 @@ class ProductService
     /**
      * Find product by id
      */
-    public function findById(int $id, array $with = []) : Product
+    public function findById(string $id, array $with = []) : Product
     {
         return $this->product->when(!empty($with), function($query) use ($with){
             $query->with($with);
         })->findOrFail($id);
     }
+
+
+    /**
+     * Get random products with lowest price from zone markets
+     *
+     * @param string $zoneId
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getRandomProductsByZone(string $zoneId, $limit = null, $offset = null)
+    {
+        $paginator = $this->product
+            ->with([
+                'category:id,name,slug,description,image_path,is_active,position',
+                'unit:id,name,symbol,unit_type,is_active',
+                'marketPrices' => function ($query) use ($zoneId) {
+                    $query
+                        ->select('id', 'product_id', 'market_id', 'price', 'discount_price', 'price_date')
+                        ->whereHas('market', function ($marketQuery) use ($zoneId) {
+                            $marketQuery
+                                ->where('zone_id', $zoneId)
+                                ->where('is_active', 1)
+                                ->where('visibility', 1);
+                        })
+                        ->with(['market:id,name'])
+                        ->orderBy('price')
+                        ->limit(1);
+                },
+            ])
+            ->active()
+            ->visible()
+            ->inRandomOrder()
+            ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
+
+        $paginator->getCollection()->transform(function ($product) {
+            $marketPrices = $product->marketPrices
+                ->sortBy(function ($price) {
+                    return (float) $price->price;
+                })
+                ->take(1)
+                ->values();
+
+            $product->setRelation('marketPrices', $marketPrices);
+
+            return $product;
+        });
+
+        return $paginator;
+    }
 }
+

@@ -12,7 +12,7 @@ class MarketService
     public function __construct(private Market $market) {
     }
 
-    public function getMarkets($with = [], $search = null)
+    public function getMarkets($with = [], $search = null, $limit = null, $offset = null)
     {
         return $this->market
         ->when(!empty($with), function ($query) use ($with) {
@@ -21,7 +21,7 @@ class MarketService
         ->when($search, function ($query) use ($search) {
             $query->where('name', 'like', "%{$search}%");
         })
-        ->latest()->paginate(pagination_limit());
+        ->latest()->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
     }
     
     /**

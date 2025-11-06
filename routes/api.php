@@ -51,6 +51,7 @@ Route::group(['prefix' => 'banners'], function () {
 
 Route::group(['prefix' => 'markets'], function () {
     Route::get('random-list', [CategoryMarketController::class, 'getRandomMarketsList']);
+    Route::get('random-product-list', [CategoryMarketController::class, 'getRandomProductList']);
 });
 
 Route::group(['prefix' => 'config'], function () {

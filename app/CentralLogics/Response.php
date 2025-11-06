@@ -154,3 +154,8 @@ const MARKET_200 = [
     'response_code' => 'market_200',
     'message' => 'Market retrieved successfully'
 ];
+
+const PRODUCT_200 = [
+    'response_code' => 'product_200',
+    'message' => 'Product list retrieved successfully'
+];
