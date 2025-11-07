@@ -204,6 +204,7 @@ class MarketService
      */
     public function getMarketsByZoneWithFilters(
         string $zoneId,
+        ?string $categoryId = null,
         float $userLat = 0,
         float $userLng = 0,
         ?string $search = null,
@@ -213,59 +214,26 @@ class MarketService
         int $limit = 15,
         int $offset = 1
     ) {
-        $today = strtolower(now()->format('l'));
-
         $query = $this->market
             ->where('zone_id', $zoneId)
             ->where('is_active', 1)
             ->where('visibility', 1)
-            ->with([
-                'marketInformation:id,market_id,is_non_veg,is_halal,is_parking,is_restroom,is_home_delivery',
-                'openingHours' => function ($q) use ($today) {
-                    $q->where('day', ucfirst($today));
-                }
-            ])
-            ->when($search, function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+            ->with('marketInformation')
+            ->when($categoryId, function ($q) use ($categoryId) {
+                $q->whereHas('marketPrices.product', function ($subQ) use ($categoryId) {
+                    $subQ->where('category_id', $categoryId);
+                });
             })
-            ->when($type, function ($q) use ($type) {
-                $q->where('type', $type);
-            })
-            ->when(!is_null($isOpen), function ($q) use ($isOpen, $today) {
-                if ($isOpen) {
-                    $q->whereHas('openingHours', function ($subQ) use ($today) {
-                        $subQ->where('day', ucfirst($today))
-                            ->where('is_closed', 0)
-                            ->whereRaw('TIME(?) BETWEEN opening AND closing', [now()->format('H:i:s')]);
-                    });
-                } else {
-                    $q->whereDoesntHave('openingHours', function ($subQ) use ($today) {
-                        $subQ->where('day', ucfirst($today))
-                            ->where('is_closed', 0)
-                            ->whereRaw('TIME(?) BETWEEN opening AND closing', [now()->format('H:i:s')]);
-                    });
-                }
-            })
+            ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
+            ->when($type, fn($q) => $q->where('type', $type))
+            ->when($isOpen === true, fn($q) => $q->open())
+            ->when($isOpen === false, fn($q) => $q->closed())
             ->when($information, function ($q) use ($information) {
                 $q->whereHas('marketInformation', function ($subQ) use ($information) {
-                    $field = 'is_' . $information;
-                    $subQ->where($field, 1);
+                    $subQ->where($information, 1);
                 });
-            });
-
-        // Add distance calculation if user coordinates provided
-        if ($userLat !== 0 && $userLng !== 0) {
-            $haversine = "(6371 * acos(cos(radians($userLat)) 
-                         * cos(radians(latitude)) 
-                         * cos(radians(longitude) - radians($userLng)) 
-                         + sin(radians($userLat)) 
-                         * sin(radians(latitude))))";
-            
-            $query->selectRaw("*, {$haversine} AS distance_km")
-                  ->orderBy('distance_km');
-        } else {
-            $query->select('*');
-        }
+            })
+            ->withDistance($userLat, $userLng);
 
         return $query->paginate($limit, ['*'], 'page', $offset);
     }

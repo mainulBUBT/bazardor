@@ -123,6 +123,41 @@ class CategoryService
         return $this->category->findOrFail($categoryId);
     }
 
+    /**
+     * Summary of getCategoryById
+     * @param string $categoryId
+     * @param mixed $zoneId
+     */
+    public function getCategoryById(string $categoryId, ?string $zoneId = null)
+    {
+        $marketCountSubquery = ProductMarketPrice::query()
+            ->join('products', 'products.id', '=', 'product_market_prices.product_id')
+            ->join('markets', 'markets.id', '=', 'product_market_prices.market_id')
+            ->whereNull('products.deleted_at')
+            ->whereNull('markets.deleted_at')
+            ->whereColumn('products.category_id', 'categories.id')
+            ->when($zoneId, fn($query) => $query->where('markets.zone_id', $zoneId))
+            ->selectRaw('COUNT(DISTINCT product_market_prices.market_id)');
+
+        $productCountSubquery = ProductMarketPrice::query()
+            ->join('products', 'products.id', '=', 'product_market_prices.product_id')
+            ->join('markets', 'markets.id', '=', 'product_market_prices.market_id')
+            ->whereNull('products.deleted_at')
+            ->whereNull('markets.deleted_at')
+            ->whereColumn('products.category_id', 'categories.id')
+            ->when($zoneId, fn($query) => $query->where('markets.zone_id', $zoneId))
+            ->selectRaw('COUNT(DISTINCT product_market_prices.product_id)');
+
+        $category = $this->category
+            ->select('categories.*')
+            ->selectSub($marketCountSubquery, 'unique_market_count')
+            ->selectSub($productCountSubquery, 'product_count')
+            ->where('categories.id', $categoryId)
+            ->first();
+
+        return $category;
+    }
+
 
     /**
      * Get categories list with unique market and product counts, with optional filters.

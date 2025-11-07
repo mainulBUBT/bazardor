@@ -138,9 +138,98 @@ class Market extends Model
                      + sin(radians($latitude)) 
                      * sin(radians(latitude))))";
         
-        return $query->selectRaw("*, {$haversine} AS distance")
-                    ->having('distance', '<=', $radius)
-                    ->orderBy('distance');
+        return $query->selectRaw("*, {$haversine} AS distance_km")
+                    ->having('distance_km', '<=', $radius)
+                    ->orderBy('distance_km');
+    }
+
+    /**
+     * Scope to add distance calculation (without radius filter).
+     */
+    public function scopeWithDistance($query, $latitude, $longitude)
+    {
+        if ($latitude === 0 || $longitude === 0) {
+            return $query->select('*');
+        }
+
+        $haversine = "(6371 * acos(cos(radians($latitude)) 
+                     * cos(radians(latitude)) 
+                     * cos(radians(longitude) - radians($longitude)) 
+                     + sin(radians($latitude)) 
+                     * sin(radians(latitude))))";
+        
+        return $query->selectRaw("*, {$haversine} AS distance_km")
+                    ->orderBy('distance_km');
+    }
+
+    /**
+     * Scope to filter markets that are currently open.
+     */
+    public function scopeOpen($query)
+    {
+        $today = ucfirst(strtolower(now()->format('l')));
+        $currentTime = now()->format('H:i:s');
+
+        return $query->with(['openingHours' => function ($q) use ($today) {
+            $q->where('day', $today);
+        }])
+        ->whereHas('openingHours', function ($q) use ($today, $currentTime) {
+            $q->where('day', $today)
+              ->where('is_closed', 0)
+              ->whereRaw("TIME(?) BETWEEN opening AND closing", [$currentTime]);
+        });
+    }
+
+    /**
+     * Scope to filter markets that are currently closed.
+     */
+    public function scopeClosed($query)
+    {
+        $today = ucfirst(strtolower(now()->format('l')));
+        $currentTime = now()->format('H:i:s');
+
+        return $query->with(['openingHours' => function ($q) use ($today) {
+            $q->where('day', $today);
+        }])
+        ->whereDoesntHave('openingHours', function ($q) use ($today, $currentTime) {
+            $q->where('day', $today)
+              ->where('is_closed', 0)
+              ->whereRaw("TIME(?) BETWEEN opening AND closing", [$currentTime]);
+        });
+    }
+
+    /**
+     * Get today's opening hours.
+     */
+    public function getTodayOpeningHoursAttribute()
+    {
+        $today = ucfirst(strtolower(now()->format('l')));
+        $hours = $this->openingHours()->where('day', $today)->first();
+        
+        if (!$hours) {
+            return null;
+        }
+
+        $currentTime = now()->format('H:i:s');
+        $isOpen = !$hours->is_closed && $currentTime >= $hours->opening && $currentTime <= $hours->closing;
+
+        return [
+            'day' => $hours->day,
+            'opening' => $hours->opening,
+            'closing' => $hours->closing,
+            'is_closed' => (bool) $hours->is_closed,
+            'is_open' => $isOpen,
+        ];
+    }
+
+    /**
+     * Get distance in km (requires distance_km to be selected in query).
+     */
+    public function getDistanceKmAttribute()
+    {
+        return isset($this->attributes['distance_km']) 
+            ? round($this->attributes['distance_km'], 2) 
+            : null;
     }
 
     /**
