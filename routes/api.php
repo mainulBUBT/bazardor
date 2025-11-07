@@ -42,7 +42,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 // Public API
 Route::group(['prefix' => 'categories'], function () {
-    Route::get('list', [CategoryMarketController::class, 'getCategoriesWithMarketCountsList']);
+    Route::get('list', [CategoryMarketController::class, 'getCategoriesList']);
 });
 
 Route::group(['prefix' => 'banners'], function () {

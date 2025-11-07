@@ -28,7 +28,7 @@ class CategoryMarketController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return array|\Illuminate\Http\JsonResponse
      */
-    public function getCategoriesWithMarketCountsList(Request $request) : array|JsonResponse
+    public function getCategoriesList(Request $request) : array|JsonResponse
     {
         if (!$request->hasHeader('zoneId')) {
             return response()->json(
@@ -40,8 +40,18 @@ class CategoryMarketController extends Controller
         $zoneId = $request->header('zoneId');
         $limit = $request->limit ?? pagination_limit();
         $offset = $request->offset ?? 1;
+        $search = $request->search;
+        $minProducts = $request->filled('min_products') ? (int) $request->min_products : null;
+        $minMarkets = $request->filled('min_markets') ? (int) $request->min_markets : null;
 
-        $categories = $this->categoryService->getCategoriesWithMarketCounts($zoneId, $limit, $offset);
+        $categories = $this->categoryService->getCategoriesList(
+            zoneId: $zoneId,
+            limit: $limit,
+            offset: $offset,
+            search: $search,
+            minProducts: $minProducts,
+            minMarkets: $minMarkets
+        );
         $resource = CategoryMarketResource::collection($categories);
 
         return response()->json(formated_response(CATEGORY_MARKET_LIST_200, $resource, $limit, $offset), 200);

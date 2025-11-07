@@ -125,27 +125,53 @@ class CategoryService
 
 
     /**
-     * Get categories with unique market counts filtered by an optional zone.
+     * Get categories list with unique market and product counts, with optional filters.
+     * Uses database-level subqueries for optimal performance.
      */
-    public function getCategoriesWithMarketCounts(?string $zoneId = null, ?int $limit = null, ?int $offset = null)
-    {
-           
+    public function getCategoriesList(
+        ?string $zoneId = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $search = null,
+        ?int $minProducts = null,
+        ?int $minMarkets = null
+    ) {
         $marketCountSubquery = ProductMarketPrice::query()
             ->join('products', 'products.id', '=', 'product_market_prices.product_id')
             ->join('markets', 'markets.id', '=', 'product_market_prices.market_id')
             ->whereNull('products.deleted_at')
             ->whereNull('markets.deleted_at')
             ->whereColumn('products.category_id', 'categories.id')
-            ->when($zoneId, function ($query) use ($zoneId) {
-                $query->where('markets.zone_id', $zoneId);
-            })
+            ->when($zoneId, fn($query) => $query->where('markets.zone_id', $zoneId))
             ->selectRaw('COUNT(DISTINCT product_market_prices.market_id)');
 
-        return $this->category
+        $productCountSubquery = ProductMarketPrice::query()
+            ->join('products', 'products.id', '=', 'product_market_prices.product_id')
+            ->join('markets', 'markets.id', '=', 'product_market_prices.market_id')
+            ->whereNull('products.deleted_at')
+            ->whereNull('markets.deleted_at')
+            ->whereColumn('products.category_id', 'categories.id')
+            ->when($zoneId, fn($query) => $query->where('markets.zone_id', $zoneId))
+            ->selectRaw('COUNT(DISTINCT product_market_prices.product_id)');
+
+        $query = $this->category
             ->select('categories.*')
             ->selectSub($marketCountSubquery, 'unique_market_count')
+            ->selectSub($productCountSubquery, 'product_count')
+            ->when($search, fn($q) => $q->where('categories.name', 'like', "%{$search}%"));
+
+        // Apply min filters using WHERE with subqueries
+        if ($minProducts !== null) {
+            $query->whereRaw('(SELECT COUNT(DISTINCT product_market_prices.product_id) FROM product_market_prices INNER JOIN products ON products.id = product_market_prices.product_id INNER JOIN markets ON markets.id = product_market_prices.market_id WHERE products.deleted_at IS NULL AND markets.deleted_at IS NULL AND products.category_id = categories.id' . ($zoneId ? ' AND markets.zone_id = ?' : '') . ') >= ?', array_filter([$zoneId, $minProducts]));
+        }
+
+        if ($minMarkets !== null) {
+            $query->whereRaw('(SELECT COUNT(DISTINCT product_market_prices.market_id) FROM product_market_prices INNER JOIN products ON products.id = product_market_prices.product_id INNER JOIN markets ON markets.id = product_market_prices.market_id WHERE products.deleted_at IS NULL AND markets.deleted_at IS NULL AND products.category_id = categories.id' . ($zoneId ? ' AND markets.zone_id = ?' : '') . ') >= ?', array_filter([$zoneId, $minMarkets]));
+        }
+
+        return $query
             ->orderBy('categories.position')
-            ->paginate($limit, ['*'], 'page', $offset);
+            ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
     }
 }
 

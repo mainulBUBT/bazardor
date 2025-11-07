@@ -20,6 +20,7 @@ class CategoryMarketResource extends JsonResource
             'position' => $this->position,
             'is_active' => (bool) $this->is_active,
             'unique_market_count' => (int) $this->unique_market_count,
+            'product_count' => (int) $this->product_count,
         ];
     }
 }
