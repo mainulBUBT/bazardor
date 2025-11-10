@@ -93,20 +93,23 @@ class SettingService
             );
         }
 
+        if ($group == MAIL_SETTINGS) {
+            $data = $this->formatMailConfig($data);
+        }
+
         try {
             DB::transaction(function () use ($data, $group) {
-                $existing = $this->setting->where('settings_type', $group)->pluck('value', 'key_name');
-                
-                foreach ($data as $key => $value) {
-                    if (!$existing->has($key) || $existing[$key] != $value) {
-                        $this->setting->updateOrCreate(
-                            ['settings_type' => $group, 'key_name' => $key],
-                            ['value' => $value]
-                        );
+                    $existing = $this->setting->where('settings_type', $group)->pluck('value', 'key_name');
+                    foreach ($data as $key => $value) {
+                        if (!$existing->has($key) || $existing[$key] != $value) {
+                            $this->setting->updateOrCreate(
+                                ['settings_type' => $group, 'key_name' => $key],
+                                ['value' => $value]
+                            );
+                        }
                     }
-                }
             });
-            
+
             return true;
         } catch (\Exception $e) {
             info("Settings update failed: " . $e->getMessage());
@@ -114,6 +117,13 @@ class SettingService
         }   
     }
 
+    /**
+     * Summary of updateStatus
+     * @param mixed $id
+     * @param mixed $status
+     * @param mixed $group
+     * @return bool
+     */
     public function updateStatus($id, $status, $group)
     {
         $setting = $this->setting->where('settings_type', $group)
@@ -131,8 +141,25 @@ class SettingService
         }
         
         return true;
-    }   
-    
+    }
+
+    private function formatMailConfig(array $data): array
+    {
+        return [
+            'mail_config' => [
+                'status' => array_key_exists('status', $data) ? (bool)$data['status'] : true,
+                'driver' => $data['driver'] ?? 'smtp',
+                'host' => $data['host'] ?? '',
+                'port' => $data['port'] ?? '587',
+                'username' => $data['username'] ?? '',
+                'password' => $data['password'] ?? '',
+                'encryption' => $data['encryption'] ?? 'tls',
+                'from_address' => $data['from_address'] ?? ($data['email'] ?? ''),
+                'from_name' => $data['from_name'] ?? ($data['name'] ?? config('app.name')),
+            ],
+        ];
+    }
+
     /**
      * Get default settings
      *

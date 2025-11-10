@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateSettingsRequest;
 use App\Models\Setting;
 use App\Services\SettingService;
+use App\Mail\TestEmail;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class SettingController extends Controller
@@ -53,6 +56,10 @@ class SettingController extends Controller
                 return [$setting->key_name => $setting->value];
             });
             return view('admin.settings.app', compact('tab', 'settings'));
+        } else if ($tab === MAIL_SETTINGS) {
+            $mailConfig = $settings->firstWhere('key_name', 'mail_config');
+            $settings = $mailConfig ? $mailConfig->value : [];
+            return view('admin.settings.mail', compact('tab', 'settings'));
         } 
         else {
             $settings = $settings->mapWithKeys(function ($setting) {
@@ -83,6 +90,51 @@ class SettingController extends Controller
         
         Toastr::error(translate('messages.Failed to update settings'));
         return redirect()->back()->withInput(['tab' => $tab]);
+    }
+
+    public function testMail(Request $request)
+    {
+        $validated = $request->validate([
+            'test_email' => ['required', 'email'],
+        ]);
+
+        try {
+            $mailConfig = $this->settingService->getSetting('mail_config', MAIL_SETTINGS);
+
+            if (!$mailConfig) {
+                return response()->json([
+                    'success' => false,
+                    'message' => translate('messages.Mail configuration not found. Please save settings first.')
+                ], 422);
+            }
+
+            if (empty($mailConfig['status'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => translate('messages.Mail service is currently disabled. Enable it before sending a test email.')
+                ], 422);
+            }
+
+            $testEmail = $validated['test_email'];
+            $fromAddress = config('mail.from.address', 'no-reply@example.com');
+            $fromName = config('mail.from.name', config('app.name'));
+            $appName = config('app.name');
+
+            Mail::to($testEmail)
+                ->send((new TestEmail($appName))->from($fromAddress, $fromName));
+
+            return response()->json([
+                'success' => true,
+                'message' => translate('messages.Test email sent successfully to') . ' ' . $testEmail,
+            ]);
+        } catch (\Throwable $exception) {
+            Log::error('Test mail failed: ' . $exception->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => translate('messages.Failed to send test email')
+            ], 500);
+        }
     }
 
     /**
@@ -268,4 +320,5 @@ class SettingController extends Controller
         Toastr::success(translate('messages.Social connect settings updated successfully'));
         return redirect()->back();
     }
+
 }

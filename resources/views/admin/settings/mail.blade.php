@@ -70,7 +70,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
-                            <button type="button" class="btn btn-outline-secondary" id="testMailConnection" data-message="{{ translate('messages.Feature coming soon') }}">
+                            <button type="button" class="btn btn-outline-secondary" id="testMailConnection" data-toggle="modal" data-target="#testMailModal">
                                 <i class="fas fa-paper-plane mr-1"></i> {{ translate('messages.Test Mail Connection') }}
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -82,14 +82,86 @@
             </div>
         </div>
     </div>
+
+    <!-- Test Mail Modal -->
+    <div class="modal fade" id="testMailModal" tabindex="-1" role="dialog" aria-labelledby="testMailModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="testMailModalLabel">
+                        <i class="fas fa-paper-plane mr-2"></i> {{ translate('messages.Test Mail Connection') }}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="testMailForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="testEmail">{{ translate('messages.Recipient Email') }}</label>
+                            <input type="email" class="form-control" id="testEmail" name="test_email" required placeholder="{{ translate('messages.Enter email address to send test mail') }}">
+                            <small class="form-text text-muted">{{ translate('messages.A test email will be sent to this address to verify mail configuration') }}</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ translate('messages.Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary" id="sendTestMailBtn">
+                            <i class="fas fa-paper-plane mr-1"></i> {{ translate('messages.Send Test Mail') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
 <script>
     $(function () {
-        $('#testMailConnection').on('click', function () {
-            const message = $(this).data('message');
-            toastr.info(message);
+        const testMailConfig = <?php echo json_encode([
+            'sendingText' => translate('messages.Sending...'),
+            'fallbackError' => translate('messages.Failed to send test email'),
+            'route' => route('admin.settings.test-mail'),
+            'token' => csrf_token(),
+        ]); ?>;
+
+        $('#testMailForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const email = $('#testEmail').val();
+            const $submitBtn = $('#sendTestMailBtn');
+            const originalHtml = $submitBtn.html();
+
+            $submitBtn.html(`<i class="fas fa-spinner fa-spin mr-1"></i>${testMailConfig.sendingText}`).prop('disabled', true);
+
+            $.ajax({
+                url: testMailConfig.route,
+                method: 'POST',
+                data: {
+                    _token: testMailConfig.token,
+                    test_email: email
+                },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#testMailModal').modal('hide');
+                        $('#testMailForm')[0].reset();
+                    } else {
+                        toastr.error(response.message || testMailConfig.fallbackError);
+                    }
+                },
+                error: function (xhr) {
+                    const message = xhr.responseJSON?.message || testMailConfig.fallbackError;
+                    toastr.error(message);
+                },
+                complete: function () {
+                    $submitBtn.html(originalHtml).prop('disabled', false);
+                }
+            });
+        });
+
+        $('#testMailModal').on('hidden.bs.modal', function () {
+            $('#testMailForm')[0].reset();
         });
     });
 </script>

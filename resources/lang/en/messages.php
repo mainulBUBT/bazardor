@@ -1120,4 +1120,13 @@
   'Copyright Text' => 'Copyright Text',
   'Cookies Text' => 'Cookies Text',
   'Save System Settings' => 'Save System Settings',
+  'Recipient Email' => 'Recipient Email',
+  'Enter email address to send test mail' => 'Enter email address to send test mail',
+  'A test email will be sent to this address to verify mail configuration' => 'A test email will be sent to this address to verify mail configuration',
+  'Send Test Mail' => 'Send Test Mail',
+  'Sending...' => 'Sending...',
+  'Failed to send test email' => 'Failed to send test email',
+  'This is a test email to confirm your mail configuration is working correctly.' => 'This is a test email to confirm your mail configuration is working correctly.',
+  'Test Email Confirmation' => 'Test Email Confirmation',
+  'Test email sent successfully to' => 'Test email sent successfully to',
 );
