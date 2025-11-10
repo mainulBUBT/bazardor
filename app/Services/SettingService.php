@@ -35,7 +35,7 @@ class SettingService
      * @param string $key
      * @param string $group
      */
-    public function getSetting(string $key, ?string $group = null): ?string
+    public function getSetting(string $key, ?string $group = null): mixed
     {
         return $this->setting
             ->when(!is_null($group), function ($query) use ($group) {
