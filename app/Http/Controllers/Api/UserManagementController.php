@@ -159,7 +159,7 @@ class UserManagementController extends Controller
                     'status' => $contribution->status,
                 ]
             ),
-            201
+            200
         );
     }
 }

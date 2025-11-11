@@ -45,6 +45,22 @@
                         <label for="productDescription">{{ translate('messages.Description') }}</label>
                         <textarea name="description" id="productDescription" class="form-control" rows="4">{{ old('description') }}</textarea>
                     </div>
+                    <!-- PRICE THRESHOLDS -->
+                    <div class="form-group">
+                        <label>{{ translate('messages.Price Thresholds') }}</label>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="minPrice">{{ translate('messages.Minimum Price') }} ($)</label>
+                                <input type="number" name="min_price" id="minPrice" class="form-control" step="0.01" min="0" placeholder="0.00" value="{{ old('min_price') }}">
+                                <small class="form-text text-muted">{{ translate('messages.Lowest acceptable price for this product') }}</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="maxPrice">{{ translate('messages.Maximum Price') }} ($)</label>
+                                <input type="number" name="max_price" id="maxPrice" class="form-control" step="0.01" min="0" placeholder="999.99" value="{{ old('max_price') }}">
+                                <small class="form-text text-muted">{{ translate('messages.Highest acceptable price for this product') }}</small>
+                            </div>
+                        </div>
+                    </div>
                     <!-- TAGS -->
                     <div class="form-group">
                         <label>{{ translate('messages.Tags') }}</label>

@@ -1129,4 +1129,9 @@
   'This is a test email to confirm your mail configuration is working correctly.' => 'This is a test email to confirm your mail configuration is working correctly.',
   'Test Email Confirmation' => 'Test Email Confirmation',
   'Test email sent successfully to' => 'Test email sent successfully to',
+  'Price Thresholds' => 'Price Thresholds',
+  'Minimum Price' => 'Minimum Price',
+  'Lowest acceptable price for this product' => 'Lowest acceptable price for this product',
+  'Maximum Price' => 'Maximum Price',
+  'Highest acceptable price for this product' => 'Highest acceptable price for this product',
 );

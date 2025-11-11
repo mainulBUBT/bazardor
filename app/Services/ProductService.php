@@ -65,6 +65,14 @@ class ProductService
                 'country_of_origin' => $data['country_of_origin'] ?? null,
             ]);
 
+            // Create price threshold if provided
+            if (isset($data['min_price']) || isset($data['max_price'])) {
+                $product->priceThreshold()->create([
+                    'min_price' => $data['min_price'] ?? null,
+                    'max_price' => $data['max_price'] ?? null,
+                ]);
+            }
+
             // Save tags if provided
             if (!empty($data['tags']) && is_array($data['tags'])) {
                 foreach ($data['tags'] as $tagText) {
@@ -129,6 +137,14 @@ class ProductService
                 'country_of_origin' => $data['country_of_origin'] ?? $product->country_of_origin,
             ]);
             $product->save();
+
+            // Update price threshold if provided
+            if (isset($data['min_price']) || isset($data['max_price'])) {
+                $product->priceThreshold()->updateOrCreate([], [
+                    'min_price' => $data['min_price'] ?? null,
+                    'max_price' => $data['max_price'] ?? null,
+                ]);
+            }
 
             // Update tags (simple replace strategy)
             if (isset($data['tags']) && is_array($data['tags'])) {

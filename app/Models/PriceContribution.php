@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\HasUuid;
 
 class PriceContribution extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory, HasUuid, SoftDeletes;
 
     protected $fillable = [
         'product_id',
@@ -17,17 +18,14 @@ class PriceContribution extends Model
         'submitted_price',
         'proof_image',
         'status',
-        'upvotes',
-        'downvotes',
-        'verified_at'
     ];
 
     protected $casts = [
         'product_id' => 'string',
         'market_id' => 'string',
         'user_id' => 'string',
-        'verified_at' => 'datetime',
         'submitted_price' => 'decimal:2',
+        'status' => 'string',
     ];
 
     /**
@@ -54,67 +52,4 @@ class PriceContribution extends Model
         return $this->belongsTo(Market::class);
     }
 
-    /**
-     * Get the votes for this price contribution.
-     */
-    public function votes()
-    {
-        return $this->hasMany(PriceContributionVote::class);
-    }
-
-    /**
-     * Calculate confidence score based on votes
-     */
-    public function getConfidenceScoreAttribute()
-    {
-        $n = $this->upvotes + $this->downvotes;
-        if ($n === 0) return 0;
-        
-        $z = 1.96; // 95% confidence
-        $p = $this->upvotes / $n;
-        
-        // Wilson score interval
-        $left = $p + ($z * $z / (2 * $n));
-        $right = $z * sqrt(($p * (1 - $p) + ($z * $z / (4 * $n))) / $n);
-        $under = 1 + ($z * $z / $n);
-        
-        return ($left - $right) / $under;
-    }
-
-    /**
-     * Automatically approve price if it meets certain criteria
-     */
-    public function shouldAutoApprove()
-    {
-        // Get threshold for this product
-        $threshold = PriceThreshold::where('product_id', $this->product_id)->first();
-        
-        if (!$threshold) return false;
-
-        // Check if price is within threshold
-        if ($this->submitted_price < $threshold->min_price || 
-            $this->submitted_price > $threshold->max_price) {
-            return false;
-        }
-
-        // Check user reputation
-        $userReputation = $this->user->reputation_score;
-        if ($userReputation < 50) return false;
-
-        // Check recent contributions
-        $recentContributions = self::where('product_id', $this->product_id)
-            ->where('market_id', $this->market_id)
-            ->where('created_at', '>=', now()->subHours(24))
-            ->where('status', 'approved')
-            ->get();
-
-        if ($recentContributions->isEmpty()) return true;
-
-        // Calculate average of recent approved prices
-        $avgPrice = $recentContributions->avg('submitted_price');
-        $percentDiff = abs(($this->submitted_price - $avgPrice) / $avgPrice * 100);
-
-        // If within 10% of recent average, auto-approve
-        return $percentDiff <= 10;
-    }
 }

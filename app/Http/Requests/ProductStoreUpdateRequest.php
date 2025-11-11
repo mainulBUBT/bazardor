@@ -29,6 +29,8 @@ class ProductStoreUpdateRequest extends FormRequest
             'barcode' => 'nullable|string|max:100|unique:products,barcode,' . $productId,
             'brand' => 'nullable|string|max:255',
             'base_price' => 'nullable|numeric|min:0',
+            'min_price' => 'nullable|numeric|min:0',
+            'max_price' => 'nullable|numeric|min:0|gte:min_price',
             'country_of_origin' => 'nullable|string|max:100',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
