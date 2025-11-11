@@ -159,3 +159,13 @@ const PRODUCT_200 = [
     'response_code' => 'product_200',
     'message' => 'Product list retrieved successfully'
 ];
+
+const PRICE_SUBMISSION_CREATED_200 = [
+    'response_code' => 'price_submission_created_201',
+    'message' => 'Price submitted successfully'
+];
+
+const PRICE_SUBMISSION_RATE_LIMITED_429 = [
+    'response_code' => 'price_submission_rate_limited_429',
+    'message' => 'You can submit a new price for this product after 60 minutes.'
+];

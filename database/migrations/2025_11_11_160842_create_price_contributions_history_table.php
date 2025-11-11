@@ -6,25 +6,33 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('price_contributions', function (Blueprint $table) {
+        Schema::create('price_contributions_history', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('product_id');
             $table->foreignUuid('market_id');
             $table->foreignUuid('user_id');
             $table->decimal('submitted_price', 10, 2);
             $table->string('proof_image')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('status')->default('validated');
+            $table->timestamp('validated_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
-            $table->index(['product_id', 'market_id', 'status']);
-            $table->index('user_id');
-            $table->index('created_at');
+
+            $table->index(['product_id', 'market_id']);
+            $table->index(['user_id', 'validated_at']);
+            $table->index('status');
         });
     }
+
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('price_contributions');
+        Schema::dropIfExists('price_contributions_history');
     }
 };

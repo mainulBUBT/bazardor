@@ -36,6 +36,10 @@ Route::group(['prefix' => 'auth'], function () {
                 Route::post('add', [UserManagementController::class, 'addFavorite']);
                 Route::delete('remove', [UserManagementController::class, 'removeFavorite']);
             });
+
+            Route::group(['prefix' => 'products'], function () {
+                Route::post('submit-price', [UserManagementController::class, 'submitPrice']);
+            });
         });
     });
 });

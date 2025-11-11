@@ -9,6 +9,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\FavoriteResource;
 use App\Services\UserManagementService;
 use App\Services\FavoriteService;
+use App\Services\ContributionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,8 @@ class UserManagementController extends Controller
 {
     public function __construct(
         private UserManagementService $userService,
-        private FavoriteService $favoriteService
+        private FavoriteService $favoriteService,
+        private ContributionService $contributionService
     ) {
     }
 
@@ -116,5 +118,48 @@ class UserManagementController extends Controller
         $this->favoriteService->remove($userId, $type, $favoritableId);
 
         return response()->json(formated_response(FAVORITE_REMOVED_200), 200);
+    }
+
+    /**
+     * Allow an authenticated user to submit a product price contribution.
+     */
+    public function submitPrice(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'product_id' => ['required', 'uuid', 'exists:products,id'],
+            'market_id' => ['required', 'uuid', 'exists:markets,id'],
+            'submitted_price' => ['required', 'numeric', 'min:0.01'],
+            'proof_image' => ['nullable', 'image', 'max:2048'],
+        ]);
+
+        $result = $this->contributionService->submitPrice(
+            user: $request->user(),
+            data: $validated,
+            proof: $request->file('proof_image')
+        );
+
+        if ($result['rate_limited']) {
+            return response()->json(
+                formated_response(
+                    constant: PRICE_SUBMISSION_RATE_LIMITED_429,
+                    errors: ['last_submission_at' => $result['last_submission_at']]
+                ),
+                429
+            );
+        }
+
+        $contribution = $result['contribution'];
+
+        return response()->json(
+            formated_response(
+                constant: PRICE_SUBMISSION_CREATED_200,
+                content: [
+                    'id' => $contribution->id,
+                    'submitted_price' => $contribution->submitted_price,
+                    'status' => $contribution->status,
+                ]
+            ),
+            201
+        );
     }
 }
