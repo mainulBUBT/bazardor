@@ -8,7 +8,11 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use App\Services\UnitService;
 use App\Services\MarketService;
+use App\Exports\ProductsExport;
+use App\Imports\ProductsImport;
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -87,5 +91,41 @@ class ProductController extends Controller
         $this->productService->delete($id);
         Toastr::success(translate('messages.product_deleted_successfully'));
         return redirect()->route('admin.products.index');
+    }
+
+    /**
+     * Display the bulk import/export page.
+     */
+    public function bulkImport()
+    {
+        return view('admin.products.bulk-import');
+    }
+
+    /**
+     * Export products to Excel.
+     */
+    public function export()
+    {
+        return Excel::download(new ProductsExport, 'products_' . date('Y-m-d_H-i-s') . '.xlsx');
+    }
+
+    /**
+     * Import products from Excel.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240', // Max 10MB
+        ]);
+
+        try {
+            Excel::import(new ProductsImport, $request->file('file'));
+            
+            Toastr::success(translate('messages.products_imported_successfully'));
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Toastr::error(translate('messages.import_failed') . ': ' . $e->getMessage());
+            return redirect()->back();
+        }
     }
 } 

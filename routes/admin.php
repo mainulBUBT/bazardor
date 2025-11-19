@@ -46,6 +46,9 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         Route::get('markets/get-thanas/{division}/{district}', [MarketController::class, 'getThanas'])->name('markets.get-thanas');
 
         Route::resource('products', ProductController::class);
+        Route::get('products-bulk/import-export', [ProductController::class, 'bulkImport'])->name('products.bulk-import');
+        Route::post('products-bulk/import', [ProductController::class, 'import'])->name('products.import');
+        Route::get('products-bulk/export', [ProductController::class, 'export'])->name('products.export');
 
         // Settings Routes
         Route::group(["prefix" => "settings", "as" => "settings."], function () {

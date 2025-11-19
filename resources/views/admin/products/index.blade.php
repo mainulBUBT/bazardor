@@ -14,8 +14,8 @@
                 <a href="{{ route('admin.products.create') }}" class="btn btn-sm btn-primary mr-2">
                     <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add New Product') }}
                 </a>
-                <a href="#" class="btn btn-sm btn-success mr-2">
-                    <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
+                <a href="{{ route('admin.products.bulk-import') }}" class="btn btn-sm btn-success mr-2">
+                    <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import/Export') }}
                 </a>
                 <div class="dropdown mr-2">
                     <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
