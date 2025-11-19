@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Admin\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Services\AuthenticationService;
+use App\Services\RecaptchaService;
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
 
 class LoginController extends Controller
 {
     
-    public function __construct(protected AuthenticationService $authService)
-    {
+    public function __construct(
+        protected AuthenticationService $authService,
+        protected RecaptchaService $recaptchaService
+    ) {
         
     }
     
@@ -23,7 +26,10 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('admin.auth.login');
+        // Get reCAPTCHA settings from service (with caching)
+        $recaptchaSettings = $this->recaptchaService->getSettingsForView();
+        
+        return view('admin.auth.login', $recaptchaSettings);
     }
 
     /**
@@ -34,6 +40,12 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request)
     {
+        // Validate reCAPTCHA token
+        if (!$this->recaptchaService->validate($request->input('recaptcha_token'))) {
+            Toastr::error(translate('messages.reCAPTCHA verification failed. Please try again.'));
+            return redirect()->back()->withInput($request->only('email', 'remember'));
+        }
+
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
 

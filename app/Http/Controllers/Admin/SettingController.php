@@ -60,6 +60,11 @@ class SettingController extends Controller
             $mailConfig = $settings->firstWhere('key_name', 'mail_config');
             $settings = $mailConfig ? $mailConfig->value : [];
             return view('admin.settings.mail', compact('tab', 'settings'));
+        } else if ($tab === OTHER_SETTINGS) {
+            $settings = $settings->mapWithKeys(function ($setting) {
+                return [$setting->key_name => $setting->value];
+            });
+            return view('admin.settings.others', compact('tab', 'settings'));
         } 
         else {
             $settings = $settings->mapWithKeys(function ($setting) {
@@ -84,6 +89,11 @@ class SettingController extends Controller
         $success = $this->settingService->updateSettings($validated, $tab);
         
         if ($success) {
+            // Clear reCAPTCHA cache if updating other settings
+            if ($tab === OTHER_SETTINGS) {
+                app(\App\Services\RecaptchaService::class)->clearCache();
+            }
+            
             Toastr::success(translate('messages.Settings updated successfully'));
             return redirect()->back()->withInput(['tab' => $tab]);
         }

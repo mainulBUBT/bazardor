@@ -21,4 +21,7 @@
     <a href="{{ route('admin.settings.index', ['tab' => 'backup']) }}" class="settings-nav-item {{ request()->query('tab') == 'backup' ? 'active' : '' }}" data-target="backup">
         <i class="fas fa-database mr-1"></i> {{ translate('messages.Backup & Maintenance') }}
     </a>
+    <a href="{{ route('admin.settings.index', ['tab' => OTHER_SETTINGS]) }}" class="settings-nav-item {{ request()->query('tab') == OTHER_SETTINGS ? 'active' : '' }}" data-target="{{ OTHER_SETTINGS }}">
+        <i class="fas fa-sliders-h mr-1"></i> {{ translate('messages.Others') }}
+    </a>
 </div>
