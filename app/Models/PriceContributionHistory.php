@@ -30,4 +30,28 @@ class PriceContributionHistory extends Model
         'submitted_price' => 'decimal:2',
         'validated_at' => 'datetime',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function market()
+    {
+        return $this->belongsTo(Market::class);
+    }
+
+    public function scopeValidated($query)
+    {
+        return $query->where('status', 'validated');
+    }
+
+    public function scopeInvalid($query)
+    {
+        return $query->where('status', 'invalid');
+    }
 }

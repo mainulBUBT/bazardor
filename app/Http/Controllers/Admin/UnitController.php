@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UnitStoreUpdateRequest;
 use App\Services\UnitService;
 use Brian2694\Toastr\Facades\Toastr;
+use App\Exports\UnitsExport;
+use App\Imports\UnitsImport;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UnitController extends Controller
 {
@@ -36,7 +40,7 @@ class UnitController extends Controller
     {
         $this->unitService->storeUnit($unitStoreUpdateRequest->validated());
 
-        Toastr::success(translate("messages.Unit created successfully"));
+        toastr()->success(translate("messages.Unit created successfully"));
         return redirect()->route("admin.units.index");
     }
 
@@ -64,7 +68,7 @@ class UnitController extends Controller
     {
         $this->unitService->updateUnit($unitStoreUpdateRequest->validated(), $id);
 
-        Toastr::success(translate("messages.Unit updated successfully"));
+        toastr()->success(translate("messages.Unit updated successfully"));
         return redirect()->route("admin.units.index");
     }
 
@@ -75,8 +79,54 @@ class UnitController extends Controller
     {
         $this->unitService->deleteUnit($id);
 
-        Toastr::success(translate("messages.Unit deleted successfully"));
+        toastr()->success(translate("messages.Unit deleted successfully"));
         return redirect()->route("admin.units.index");
     }
     
+    /**
+     * Display the import/export page.
+     */
+    public function importExport()
+    {
+        return view('admin.units.import_export');
+    }
+
+    /**
+     * Import units from Excel/CSV.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            Excel::import(new UnitsImport, $request->file('file'));
+            toastr()->success(translate('messages.Units imported successfully'));
+            return redirect()->back();
+        } catch (\Exception $e) {
+            toastr()->error(translate('messages.Import failed') . ': ' . $e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    /**
+     * Export units.
+     */
+    public function export(Request $request)
+    {
+        $format = $request->query('format', 'xlsx');
+        $extension = 'xlsx';
+        $writerType = \Maatwebsite\Excel\Excel::XLSX;
+
+        if ($format === 'csv') {
+            $extension = 'csv';
+            $writerType = \Maatwebsite\Excel\Excel::CSV;
+        } elseif ($format === 'pdf') {
+            $extension = 'pdf';
+            $writerType = \Maatwebsite\Excel\Excel::MPDF;
+        }
+
+        return Excel::download(new UnitsExport, 'units_' . date('Y-m-d_H-i-s') . '.' . $extension, $writerType);
+    }
 }

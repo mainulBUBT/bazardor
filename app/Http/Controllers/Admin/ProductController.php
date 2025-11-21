@@ -53,7 +53,7 @@ class ProductController extends Controller
         }
 
         $this->productService->store($data);
-        Toastr::success(translate('messages.product_created_successfully'));
+        toastr()->success(translate('messages.product_created_successfully'));
         return redirect()->route('admin.products.index');
     }
 
@@ -82,14 +82,14 @@ class ProductController extends Controller
             $data['tags'] = $tags;
         }
         $this->productService->update($data, $id);
-        Toastr::success(translate('messages.product_updated_successfully'));
+        toastr()->success(translate('messages.product_updated_successfully'));
         return redirect()->back();
     }
 
     public function destroy(string $id)
     {
         $this->productService->delete($id);
-        Toastr::success(translate('messages.product_deleted_successfully'));
+        toastr()->success(translate('messages.product_deleted_successfully'));
         return redirect()->route('admin.products.index');
     }
 
@@ -104,9 +104,21 @@ class ProductController extends Controller
     /**
      * Export products to Excel.
      */
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new ProductsExport, 'products_' . date('Y-m-d_H-i-s') . '.xlsx');
+        $format = $request->query('format', 'xlsx');
+        $extension = 'xlsx';
+        $writerType = \Maatwebsite\Excel\Excel::XLSX;
+
+        if ($format === 'csv') {
+            $extension = 'csv';
+            $writerType = \Maatwebsite\Excel\Excel::CSV;
+        } elseif ($format === 'pdf') {
+            $extension = 'pdf';
+            $writerType = \Maatwebsite\Excel\Excel::MPDF;
+        }
+
+        return Excel::download(new ProductsExport, 'products_' . date('Y-m-d_H-i-s') . '.' . $extension, $writerType);
     }
 
     /**
@@ -121,10 +133,10 @@ class ProductController extends Controller
         try {
             Excel::import(new ProductsImport, $request->file('file'));
             
-            Toastr::success(translate('messages.products_imported_successfully'));
+            toastr()->success(translate('messages.products_imported_successfully'));
             return redirect()->back();
         } catch (\Exception $e) {
-            Toastr::error(translate('messages.import_failed') . ': ' . $e->getMessage());
+            toastr()->error(translate('messages.import_failed') . ': ' . $e->getMessage());
             return redirect()->back();
         }
     }

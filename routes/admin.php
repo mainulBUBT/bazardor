@@ -33,6 +33,9 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         
         // Resource Routes
+        Route::get('units/import-export', [UnitController::class, 'importExport'])->name('units.import-export');
+        Route::post('units/import', [UnitController::class, 'import'])->name('units.import');
+        Route::get('units/export', [UnitController::class, 'export'])->name('units.export');
         Route::resource('units', UnitController::class);
         Route::resource('banners', BannerController::class);
         Route::post('banners/status/{banner}', [BannerController::class, 'status'])->name('banners.status');

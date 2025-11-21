@@ -15,17 +15,20 @@
                     <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add New Product') }}
                 </a>
                 <a href="{{ route('admin.products.bulk-import') }}" class="btn btn-sm btn-success mr-2">
-                    <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import/Export') }}
+                    <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
                 </a>
                 <div class="dropdown mr-2">
                     <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.Export') }}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
-                        <a class="dropdown-item" href="#" id="exportCSV">
+                        <a class="dropdown-item" href="{{ route('admin.products.export', ['format' => 'csv']) }}">
                             <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
                         </a>
-                        <a class="dropdown-item" href="#" id="exportPDF">
+                        <a class="dropdown-item" href="{{ route('admin.products.export', ['format' => 'xlsx']) }}">
+                            <i class="fas fa-file-excel fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Excel') }}
+                        </a>
+                        <a class="dropdown-item" href="{{ route('admin.products.export', ['format' => 'pdf']) }}">
                             <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
                         </a>
                     </div>

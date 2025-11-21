@@ -47,7 +47,7 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Units') }}</h6>
             <div class="d-flex">
-                <a href="#" class="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#importUnitModal">
+                <a href="{{ route('admin.units.import-export') }}" class="btn btn-sm btn-success mr-2">
                     <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
                 </a>
                 <div class="dropdown mr-2">
@@ -55,10 +55,13 @@
                         <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.Export') }}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
-                        <a class="dropdown-item" href="#" id="exportCSV">
+                        <a class="dropdown-item" href="{{ route('admin.units.export', ['format' => 'csv']) }}">
                             <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
                         </a>
-                        <a class="dropdown-item" href="#" id="exportPDF">
+                        <a class="dropdown-item" href="{{ route('admin.units.export', ['format' => 'xlsx']) }}">
+                            <i class="fas fa-file-excel fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Excel') }}
+                        </a>
+                        <a class="dropdown-item" href="{{ route('admin.units.export', ['format' => 'pdf']) }}">
                             <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
                         </a>
                     </div>
@@ -116,10 +119,10 @@
                                     <a href="{{ route('admin.units.edit', $unit->id) }}" class="btn btn-primary btn-circle btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form id="delete-unit-{{ $unit->id }}" action="" method="POST" class="d-inline">
+                                    <form id="delete-unit-{{ $unit->id }}" action="{{ route('admin.units.destroy', $unit->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" onclick="formAlert('delete-unit-{{ $unit->id }}', '{{ translate('messages.Want to delete this unit?') }}')" class="btn btn-danger btn-circle btn-sm delete-unit">
+                                        <button type="button" class="btn btn-danger btn-circle btn-sm delete-unit" data-form-id="delete-unit-{{ $unit->id }}" data-message="{{ translate('messages.Want to delete this unit?') }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -143,6 +146,15 @@
     @endif
 
 @endsection
+
 @push('scripts')
-<!-- DataTables JS and custom scripts can be included here -->
+<script>
+    $(document).ready(function() {
+        $('.delete-unit').on('click', function() {
+            let formId = $(this).data('form-id');
+            let message = $(this).data('message');
+            formAlert(formId, message);
+        });
+    });
+</script>
 @endpush

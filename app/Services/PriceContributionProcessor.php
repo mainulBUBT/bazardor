@@ -126,7 +126,7 @@ class PriceContributionProcessor
                     'proof_image' => $contribution->proof_image,
                     'status' => $isValid ? 'validated' : 'invalid',
                     'validated_at' => $timestamp,
-                    'created_at' => $timestamp,
+                    'created_at' => $contribution->created_at,
                     'updated_at' => $timestamp,
                 ];
             }
