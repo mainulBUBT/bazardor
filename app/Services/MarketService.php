@@ -12,16 +12,37 @@ class MarketService
     public function __construct(private Market $market) {
     }
 
-    public function getMarkets($with = [], $search = null, $limit = null, $offset = null)
+    public function getMarkets($with = [], $filters = [])
     {
-        return $this->market
-        ->when(!empty($with), function ($query) use ($with) {
-            $query->with($with);
-        })
-        ->when($search, function ($query) use ($search) {
-            $query->where('name', 'like', "%{$search}%");
-        })
-        ->latest()->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
+        $query = $this->market
+            ->when(!empty($with), function ($query) use ($with) {
+                $query->with($with);
+            })
+            ->when(!empty($filters['division']), function ($query) use ($filters) {
+                $query->where('division', $filters['division']);
+            })
+            ->when(!empty($filters['type']), function ($query) use ($filters) {
+                $query->where('type', $filters['type']);
+            })
+            ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function ($query) use ($filters) {
+                $query->where('is_active', (bool) $filters['is_active']);
+            });
+        
+        // Apply sorting
+        $sort = $filters['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                $query->latest();
+                break;
+        }
+        
+        return $query->paginate(pagination_limit());
     }
     
     /**

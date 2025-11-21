@@ -23,13 +23,18 @@ class ZoneService
      * Get all zones with pagination
      *
      * @param string|null $search
+     * @param array $relations
+     * @param array $filters
      * @return LengthAwarePaginator
      */
-    public function getZones(?string $search = null, array $relations = []): LengthAwarePaginator
+    public function getZones(?string $search = null, array $relations = [], array $filters = []): LengthAwarePaginator
     {
         return $this->zone->with($relations)
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
+            })
+            ->when(isset($filters['is_active']), function ($query) use ($filters) {
+                $query->where('is_active', $filters['is_active']);
             })
             ->latest()
             ->paginate(pagination_limit());

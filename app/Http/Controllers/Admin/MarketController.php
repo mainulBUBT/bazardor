@@ -22,9 +22,16 @@ class MarketController extends Controller
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $markets = $this->marketService->getMarkets(['zone']);
+        $filters = [
+            'division' => $request->get('division'),
+            'type' => $request->get('type'),
+            'is_active' => $request->get('is_active'),
+            'sort' => $request->get('sort', 'latest'),
+        ];
+        
+        $markets = $this->marketService->getMarkets(['zone'], $filters);
         return view('admin.markets.index', compact('markets'));
     }
 

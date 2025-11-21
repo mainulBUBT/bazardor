@@ -91,18 +91,25 @@
                     <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="filterDropdown">
-                        <div class="dropdown-header">{{ translate('messages.Filter By:') }}</div>
-                        <a class="dropdown-item" href="#" data-filter="type">
-                            <i class="fas fa-tags fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Type') }}
-                        </a>
-                        <a class="dropdown-item" href="#" data-filter="status">
-                            <i class="fas fa-toggle-on fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Status') }}
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" id="resetFilters">
-                            <i class="fas fa-undo fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Reset Filters') }}
-                        </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 250px;">
+                        <form id="filterForm">
+                            <div class="mb-3">
+                                <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
+                                <select class="form-control form-control-sm" id="filterStatus" name="is_active">
+                                    <option value="">{{ translate('messages.All Status') }}</option>
+                                    <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                    <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
+                                    <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
+                                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -514,5 +521,26 @@ class ZoneMapCreate {
         this.ui.clearBtn.show();
     }
 }
+
+// Filter functionality
+$(document).ready(function() {
+    // Apply filters button
+    $('#applyFiltersBtn').on('click', function() {
+        const isActive = $('#filterStatus').val();
+        
+        const params = new URLSearchParams();
+        
+        if (isActive !== '') {
+            params.set('is_active', isActive);
+        }
+        
+        window.location.href = '?' + params.toString();
+    });
+    
+    // Reset filters button
+    $('#resetFiltersBtn').on('click', function() {
+        window.location.href = window.location.pathname;
+    });
+});
 </script>
 @endpush

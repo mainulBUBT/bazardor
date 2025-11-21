@@ -22,7 +22,16 @@ class ZoneController extends Controller
      */
     public function index(Request $request)
     {
-        $zones = $this->zoneService->getZones(search:$request->search, relations:['markets']);
+        $filters = [];
+        if ($request->has('is_active') && $request->is_active !== '') {
+            $filters['is_active'] = (bool) $request->is_active;
+        }
+        
+        $zones = $this->zoneService->getZones(
+            search: $request->search,
+            relations: ['markets'],
+            filters: $filters
+        );
         
         $otherZonesCoords = [];
         $activeZones = $zones->where('is_active', true);

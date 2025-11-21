@@ -52,7 +52,6 @@ class ContributionService
 
         $contribution->forceFill([
             'status' => 'approved',
-            'verified_at' => now(),
         ])->save();
     }
 
@@ -67,7 +66,6 @@ class ContributionService
 
         $contribution->forceFill([
             'status' => 'rejected',
-            'verified_at' => null,
         ])->save();
     }
 

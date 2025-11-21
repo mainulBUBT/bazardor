@@ -7,10 +7,38 @@
             <h1 class="h3 mb-0 text-gray-800">{{ translate('messages.Contribution Analytics') }}</h1>
             <p class="mb-0 text-muted">{{ translate('messages.Track volunteer and user submission trends') }}</p>
         </div>
-        <div class="btn-group">
-            <a href="?period=7" class="btn btn-sm btn-outline-primary {{ $period == 7 ? 'active' : '' }}">7 Days</a>
-            <a href="?period=30" class="btn btn-sm btn-outline-primary {{ $period == 30 ? 'active' : '' }}">30 Days</a>
-            <a href="?period=90" class="btn btn-sm btn-outline-primary {{ $period == 90 ? 'active' : '' }}">90 Days</a>
+        <div class="d-flex">
+            <div class="btn-group mr-2">
+                <a href="?period=7" class="btn btn-sm btn-outline-primary {{ $period == 7 ? 'active' : '' }}">7 Days</a>
+                <a href="?period=30" class="btn btn-sm btn-outline-primary {{ $period == 30 ? 'active' : '' }}">30 Days</a>
+                <a href="?period=90" class="btn btn-sm btn-outline-primary {{ $period == 90 ? 'active' : '' }}">90 Days</a>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
+                </button>
+                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 250px;">
+                    <form id="filterForm">
+                        <div class="mb-2">
+                            <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
+                            <select class="form-control form-control-sm" id="filterStatus" name="status">
+                                <option value="">{{ translate('messages.All Statuses') }}</option>
+                                <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>{{ translate('messages.Pending') }}</option>
+                                <option value="validated" {{ $status == 'validated' ? 'selected' : '' }}>{{ translate('messages.Validated') }}</option>
+                                <option value="invalid" {{ $status == 'invalid' ? 'selected' : '' }}>{{ translate('messages.Invalid') }}</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
+                                <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
+                                <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -168,3 +196,32 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Apply filters button
+        $('#applyFiltersBtn').on('click', function() {
+            const params = new URLSearchParams(window.location.search);
+            const currentPeriod = params.get('period') || '30';
+            const status = $('#filterStatus').val();
+            
+            const newParams = new URLSearchParams();
+            newParams.set('period', currentPeriod);
+            
+            if (status) {
+                newParams.set('status', status);
+            }
+            
+            window.location.href = '?' + newParams.toString();
+        });
+        
+        // Reset filters button
+        $('#resetFiltersBtn').on('click', function() {
+            const params = new URLSearchParams(window.location.search);
+            const period = params.get('period') || '30';
+            window.location.href = '?period=' + period;
+        });
+    });
+</script>
+@endpush

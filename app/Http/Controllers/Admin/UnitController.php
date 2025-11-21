@@ -19,9 +19,14 @@ class UnitController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $units = $this->unitService->getUnits();
+        $filters = [
+            'unit_type' => $request->get('unit_type'),
+            'is_active' => $request->get('is_active'),
+        ];
+        
+        $units = $this->unitService->getUnits($filters);
         return view("admin.units.index", compact('units'));
     }
 

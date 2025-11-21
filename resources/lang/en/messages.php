@@ -1255,4 +1255,9 @@
   'No market prices found.' => 'No market prices found.',
   'Never' => 'Never',
   'Not Specified' => 'Not Specified',
+  'Filters' => 'Filters',
+  'All Statuses' => 'All Statuses',
+  'Validated' => 'Validated',
+  'Invalid' => 'Invalid',
+  'All Divisions' => 'All Divisions',
 );

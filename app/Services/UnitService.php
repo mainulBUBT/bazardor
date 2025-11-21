@@ -13,9 +13,19 @@ class UnitService
      * Summary of getUnits
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getUnits()
+    public function getUnits(array $filters = [])
     {
-        return $this->unit->latest()->paginate(pagination_limit());
+        $query = Unit::query();
+        
+        if (!empty($filters['unit_type'])) {
+            $query->where('unit_type', $filters['unit_type']);
+        }
+        
+        if (isset($filters['is_active']) && $filters['is_active'] !== '') {
+            $query->where('is_active', (bool) $filters['is_active']);
+        }
+        
+        return $query->latest()->paginate(pagination_limit());
     }
 
     /**
