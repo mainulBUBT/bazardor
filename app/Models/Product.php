@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Traits\HasUuid;
 use App\Models\PriceThreshold;
 
@@ -35,6 +36,8 @@ class Product extends Model
         'brand',
         'base_price',
         'country_of_origin',
+        'added_by',
+        'added_by_id',
     ];
 
     /**
@@ -110,6 +113,31 @@ class Product extends Model
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    /**
+     * Get the creator (User or Admin) who added this product.
+     * This is a polymorphic relationship based on added_by field.
+     */
+    public function creator(): MorphTo
+    {
+        return $this->morphTo(__FUNCTION__, 'added_by', 'added_by_id');
+    }
+
+    /**
+     * Get the user who added this product (if added_by is 'user').
+     */
+    public function addedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'added_by_id')->where('added_by', 'user');
+    }
+
+    /**
+     * Get the admin who added this product (if added_by is 'admin').
+     */
+    public function addedByAdmin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'added_by_id')->where('added_by', 'admin');
     }
 
     public function creatorRecord(): MorphOne

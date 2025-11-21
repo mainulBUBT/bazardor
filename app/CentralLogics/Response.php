@@ -169,3 +169,8 @@ const PRICE_SUBMISSION_RATE_LIMITED_429 = [
     'response_code' => 'price_submission_rate_limited_429',
     'message' => 'You can submit a new price for this product after 60 minutes.'
 ];
+
+const PRODUCT_SUBMISSION_CREATED_200 = [
+    'response_code' => 'product_submission_created_200',
+    'message' => 'Product submitted successfully. It will be visible after admin approval.'
+];

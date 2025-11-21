@@ -17,18 +17,18 @@ use App\Http\Controllers\Admin\ZoneController;
 use App\Http\Controllers\Admin\PushNotificationController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(["prefix" => "admin", "as" => "admin."], function () {
-    Route::group(["prefix" => "auth", "as" => "auth."], function () {
-        Route::group(["middleware" => "guest"], function () {
+Route::prefix('admin')->as('admin.')->group(function () {
+    Route::prefix('auth')->as('auth.')->group(function () {
+        Route::middleware('guest')->group(function () {
             Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
             Route::post('login', [LoginController::class, 'login'])->name('login.submit');
         });
-        Route::group(["middleware" => ["web", "admin"]], function () {
+        Route::middleware(['web', 'admin'])->group(function () {
             Route::post('logout', [LoginController::class, 'logout'])->name('logout');
         });
     });
     
-    Route::group(["middleware" => []], function () {
+    Route::middleware([])->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         
@@ -54,9 +54,9 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         Route::get('products-bulk/export', [ProductController::class, 'export'])->name('products.export');
 
         // Settings Routes
-        Route::group(["prefix" => "settings", "as" => "settings."], function () {
-            Route::get("/", [SettingController::class, 'index'])->name('index');
-            Route::post("/update", [SettingController::class, 'updateSettings'])->name('update');
+        Route::prefix('settings')->as('settings.')->group(function () {
+            Route::get('/', [SettingController::class, 'index'])->name('index');
+            Route::post('/update', [SettingController::class, 'updateSettings'])->name('update');
             Route::post('/update-status', [SettingController::class,'updateStatus'])->name('update-status');
             Route::post('/clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
             Route::post('/create-backup', [SettingController::class, 'createBackup'])->name('create-backup');
@@ -66,14 +66,14 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         });
 
         // Contributions
-        Route::group(['prefix' => 'contributions', 'as' => 'contributions.'], function () {
+        Route::prefix('contributions')->as('contributions.')->group(function () {
             Route::get('/', [ContributionController::class, 'index'])->name('index');
             Route::post('{contribution}/approve', [ContributionController::class, 'approve'])->name('approve');
             Route::post('{contribution}/reject', [ContributionController::class, 'reject'])->name('reject');
         });
 
         // API Users Management Routes
-        Route::group(["prefix" => "users", "as" => "users."], function () {
+        Route::prefix('users')->as('users.')->group(function () {
             Route::get('/', [UserManagementController::class, 'index'])->name('index');
             Route::get('create/{userType}', [UserManagementController::class, 'create'])->name('create');
             Route::post('/', [UserManagementController::class, 'store'])->name('store');
@@ -88,7 +88,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         });
 
         // Admin Management Routes (Spatie role-based)
-        Route::group(["prefix" => "admins", "as" => "admins.", "middleware" => []], function () {
+        Route::prefix('admins')->as('admins.')->middleware([])->group(function () {
             Route::get('/', [AdminManagementController::class, 'index'])->name('index');
             Route::get('create', [AdminManagementController::class, 'create'])->name('create');
             Route::post('/', [AdminManagementController::class, 'store'])->name('store');
@@ -98,7 +98,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
             Route::get('{admin}', [AdminManagementController::class, 'show'])->name('show');
         });
 
-        Route::group(["prefix" => "roles", "as" => "roles."], function () {
+        Route::prefix('roles')->as('roles.')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('index');
             Route::get('create', [RoleController::class, 'create'])->name('create');
             Route::post('/', [RoleController::class, 'store'])->name('store');
@@ -108,7 +108,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         });
 
         // Zones
-        Route::group(['prefix' => 'zones', 'as' => 'zones.'], function () {
+        Route::prefix('zones')->as('zones.')->group(function () {
             Route::get('/', [ZoneController::class, 'index'])->name('index');
             Route::post('/', [ZoneController::class, 'store'])->name('store');
             Route::get('/{zone}', [ZoneController::class, 'show'])->name('show');
@@ -119,7 +119,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         });
 
         // Push Notifications
-        Route::group(['prefix' => 'push-notifications', 'as' => 'push-notifications.'], function () {
+        Route::prefix('push-notifications')->as('push-notifications.')->group(function () {
             Route::get('/', [PushNotificationController::class, 'index'])->name('index');
             Route::get('create', [PushNotificationController::class, 'create'])->name('create');
             Route::post('/', [PushNotificationController::class, 'store'])->name('store');
@@ -133,7 +133,7 @@ Route::group(["prefix" => "admin", "as" => "admin."], function () {
         });
 
         // Reports
-        Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+        Route::prefix('reports')->as('reports.')->group(function () {
             Route::get('contributions', [ReportController::class, 'contributions'])->name('contributions');
             Route::get('data-quality', [ReportController::class, 'dataQuality'])->name('data-quality');
             Route::get('markets', [ReportController::class, 'markets'])->name('markets');

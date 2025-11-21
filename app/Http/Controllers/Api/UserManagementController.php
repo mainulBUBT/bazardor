@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UpdateProfileRequest;
 use App\Http\Requests\Api\AddFavoriteRequest;
+use App\Http\Requests\ProductStoreUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\FavoriteResource;
+use App\Http\Resources\ProductResource;
 use App\Services\UserManagementService;
 use App\Services\FavoriteService;
 use App\Services\ContributionService;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,7 +21,8 @@ class UserManagementController extends Controller
     public function __construct(
         private UserManagementService $userService,
         private FavoriteService $favoriteService,
-        private ContributionService $contributionService
+        private ContributionService $contributionService,
+        private ProductService $productService
     ) {
     }
 
@@ -158,6 +162,38 @@ class UserManagementController extends Controller
                     'submitted_price' => $contribution->submitted_price,
                     'status' => $contribution->status,
                 ]
+            ),
+            200
+        );
+    }
+
+    /**
+     * Allow an authenticated user to create a product (pending admin approval).
+     * 
+     * @param ProductStoreUpdateRequest $request
+     * @return JsonResponse
+     */
+    public function createProduct(ProductStoreUpdateRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        
+        // Override status and visibility for user-submitted products
+        $validated['status'] = 'draft'; // Pending approval
+        $validated['is_visible'] = false; // Hidden until approved
+        $validated['is_featured'] = false;
+        $validated['added_by'] = 'user';
+        $validated['added_by_id'] = $request->user()->id;
+        
+        // Use ProductService to create the product
+        $product = $this->productService->store($validated);
+        
+        // Load relationships for resource
+        $product->load(['category', 'unit']);
+        
+        return response()->json(
+            formated_response(
+                constant: PRODUCT_SUBMISSION_CREATED_200,
+                content: ProductResource::make($product)
             ),
             200
         );
