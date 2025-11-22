@@ -245,4 +245,57 @@ class Market extends Model
             }
         });
     }
+
+    /**
+     * Calculate distance from given coordinates to this market
+     * Uses Haversine formula for accurate distance calculation
+     * 
+     * @param float $latitude User's latitude
+     * @param float $longitude User's longitude
+     * @return float|null Distance in kilometers, null if market coordinates not set
+     */
+    public function getDistanceFrom(float $latitude, float $longitude): ?float
+    {
+        if (!$this->latitude || !$this->longitude) {
+            return null;
+        }
+
+        $earthRadius = 6371; // Earth's radius in kilometers
+
+        $dLat = deg2rad($this->latitude - $latitude);
+        $dLng = deg2rad($this->longitude - $longitude);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($latitude)) * cos(deg2rad($this->latitude)) *
+            sin($dLng / 2) * sin($dLng / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return round($earthRadius * $c, 2);
+    }
+
+    /**
+     * Get count of active products in this market
+     * 
+     * @return int
+     */
+    public function getActiveProductsCount(): int
+    {
+        return $this->marketPrices()
+            ->whereHas('product', function ($query) {
+                $query->where('status', 'active')->where('is_visible', true);
+            })
+            ->distinct('product_id')
+            ->count('product_id');
+    }
+
+    /**
+     * Get count of open days for this market
+     * 
+     * @return int
+     */
+    public function getOpenDaysCount(): int
+    {
+        return $this->openingHours()->where('is_closed', false)->count();
+    }
 }

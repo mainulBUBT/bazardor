@@ -3,22 +3,28 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CompareMarketsRequest;
+use App\Http\Requests\CompareMarketProductsRequest;
 use App\Http\Resources\CategoryMarketResource;
 use App\Http\Resources\MarketResource;
+use App\Http\Resources\MarketComparisonResource;
+use App\Http\Resources\MarketsComparisonResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductComparisonResource;
 use App\Services\CategoryService;
 use App\Services\MarketService;
+use App\Services\MarketComparisonService;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
 
 class CategoryMarketController extends Controller
 {
     public function __construct(
         private CategoryService $categoryService,
         private MarketService $marketService,
-        private ProductService $productService
+        private ProductService $productService,
+        private MarketComparisonService $marketComparisonService
     ) {
     }
 
@@ -196,6 +202,58 @@ class CategoryMarketController extends Controller
         return response()->json(formated_response(
             MARKET_200,
             MarketResource::collection($markets),
+            $limit,
+            $offset
+        ), 200);
+    }
+
+    /**
+     * Compare two markets - details, features, and statistics
+     * 
+     * @param CompareMarketsRequest $request
+     * @return JsonResponse
+     */
+    public function compareMarkets(CompareMarketsRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $comparison = $this->marketComparisonService->compareMarkets(
+            marketId1: $validated['market_id_1'],
+            marketId2: $validated['market_id_2'],
+            userLat: $validated['user_lat'] ?? null,
+            userLng: $validated['user_lng'] ?? null
+        );
+
+        return response()->json(formated_response(
+            MARKET_COMPARISON_200,
+            new MarketsComparisonResource($comparison)
+        ), 200);
+    }
+
+    /**
+     * Compare products between two markets
+     * 
+     * @param CompareMarketProductsRequest $request
+     * @return JsonResponse
+     */
+    public function compareMarketProducts(CompareMarketProductsRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $limit = (int) ($validated['limit'] ?? pagination_limit());
+        $offset = (int) ($validated['offset'] ?? 1);
+
+        $comparisonProducts = $this->marketComparisonService->compareMarketProducts(
+            marketId1: $validated['market_id_1'],
+            marketId2: $validated['market_id_2'],
+            categoryId: $validated['category_id'] ?? null,
+            limit: $limit,
+            offset: $offset
+        );
+
+        return response()->json(formated_response(
+            MARKET_PRODUCTS_COMPARISON_200,
+            ProductComparisonResource::collection($comparisonProducts->items()),
             $limit,
             $offset
         ), 200);

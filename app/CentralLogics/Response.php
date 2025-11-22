@@ -174,3 +174,13 @@ const PRODUCT_SUBMISSION_CREATED_200 = [
     'response_code' => 'product_submission_created_200',
     'message' => 'Product submitted successfully. It will be visible after admin approval.'
 ];
+
+const MARKET_COMPARISON_200 = [
+    'response_code' => 'market_comparison_200',
+    'message' => 'Market comparison retrieved successfully'
+];
+
+const MARKET_PRODUCTS_COMPARISON_200 = [
+    'response_code' => 'market_products_comparison_200',
+    'message' => 'Market products comparison retrieved successfully'
+];

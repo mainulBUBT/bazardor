@@ -57,6 +57,8 @@ Route::prefix('markets')->group(function () {
     Route::get('random-list', [CategoryMarketController::class, 'getRandomMarketsList']);
     Route::get('random-product-list', [CategoryMarketController::class, 'getRandomProductList']);
     Route::get('list', [CategoryMarketController::class, 'getMarketsList']);
+    Route::get('compare', [CategoryMarketController::class, 'compareMarkets']);
+    Route::get('compare-products', [CategoryMarketController::class, 'compareMarketProducts']);
 });
 
 Route::prefix('config')->group(function () {
