@@ -15,19 +15,41 @@ class BannerService
     }
 
     /**
-     * Summary of getBanners
+     * Get paginated list of banners with optional filters.
+     * 
+     * @param bool $isFeatured
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param mixed $zoneId
+     * @param array $filters
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getBanners(bool $isFeatured = false, ?int $limit = null, ?int $offset = null, $zoneId = null)
+    public function getBanners(bool $isFeatured = false, ?int $limit = null, ?int $offset = null, $zoneId = null, array $filters = [])
     {
         return $this->banner
             ->with('zone')
-            ->latest()
             ->when($isFeatured, function ($query) {
                 $query->featured();
             })
             ->when(!is_null($zoneId), function ($query) use ($zoneId) {
                 $query->where('zone_id', $zoneId);
+            })
+            ->when(!empty($filters['type']), function ($query) use ($filters) {
+                $query->where('type', $filters['type']);
+            })
+            ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function ($query) use ($filters) {
+                $query->where('is_active', $filters['is_active']);
+            })
+            ->when(!empty($filters['sort']), function ($query) use ($filters) {
+                match ($filters['sort']) {
+                    'title_asc' => $query->orderBy('title', 'asc'),
+                    'title_desc' => $query->orderBy('title', 'desc'),
+                    'position_asc' => $query->orderBy('position', 'asc'),
+                    'position_desc' => $query->orderBy('position', 'desc'),
+                    default => $query->latest(),
+                };
+            }, function ($query) {
+                $query->latest();
             })
             ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
     }

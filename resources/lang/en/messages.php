@@ -1260,4 +1260,10 @@
   'Validated' => 'Validated',
   'Invalid' => 'Invalid',
   'All Divisions' => 'All Divisions',
+  'Price: Low to High' => 'Price: Low to High',
+  'Price: High to Low' => 'Price: High to Low',
+  'Title: A to Z' => 'Title: A to Z',
+  'Title: Z to A' => 'Title: Z to A',
+  'Position: Low to High' => 'Position: Low to High',
+  'Position: High to Low' => 'Position: High to Low',
 );

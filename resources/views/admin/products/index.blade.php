@@ -37,21 +37,47 @@
                     <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="filterDropdown">
-                        <div class="dropdown-header">{{ translate('messages.Filter By:') }}</div>
-                        <a class="dropdown-item" href="#">
-                            <i class="fas fa-tag fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Category') }}
-                        </a>
-                        <a class="dropdown-item" href="#">
-                            <i class="fas fa-dollar-sign fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Price') }}
-                        </a>
-                        <a class="dropdown-item" href="#">
-                            <i class="fas fa-warehouse fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Stock Status') }}
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">
-                            <i class="fas fa-undo fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Reset Filters') }}
-                        </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 280px;">
+                        <form id="filterForm">
+                            <div class="mb-2">
+                                <label for="filterCategory" class="form-label small">{{ translate('messages.Category') }}</label>
+                                <select class="form-control form-control-sm" id="filterCategory" name="category_id">
+                                    <option value="">{{ translate('messages.All Categories') }}</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
+                                <select class="form-control form-control-sm" id="filterStatus" name="status">
+                                    <option value="">{{ translate('messages.All Status') }}</option>
+                                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                                    <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>{{ translate('messages.Draft') }}</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="filterSort" class="form-label small">{{ translate('messages.Sort By') }}</label>
+                                <select class="form-control form-control-sm" id="filterSort" name="sort">
+                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
+                                    <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
+                                    <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
+                                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>{{ translate('messages.Price: Low to High') }}</option>
+                                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>{{ translate('messages.Price: High to Low') }}</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
+                                    <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
+                                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -113,7 +139,7 @@
                     </tbody>
                 </table>
             </div>
-            {{ $products->links() }}
+            {{ $products->appends(request()->query())->links() }}
         </div>
     </div>
 @endsection
@@ -126,6 +152,34 @@
             const formId = $(this).data('form-id');
             const message = $(this).data('message');
             formAlert(formId, message);
+        });
+
+        // Apply filters button
+        $('#applyFiltersBtn').on('click', function() {
+            const categoryId = $('#filterCategory').val();
+            const status = $('#filterStatus').val();
+            const sort = $('#filterSort').val();
+            
+            const params = new URLSearchParams();
+            
+            if (categoryId) {
+                params.set('category_id', categoryId);
+            }
+            
+            if (status) {
+                params.set('status', status);
+            }
+            
+            if (sort && sort !== 'latest') {
+                params.set('sort', sort);
+            }
+            
+            window.location.href = '?' + params.toString();
+        });
+        
+        // Reset filters button
+        $('#resetFiltersBtn').on('click', function() {
+            window.location.href = window.location.pathname;
         });
     });
 </script>

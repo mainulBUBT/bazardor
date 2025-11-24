@@ -20,10 +20,40 @@ class BannerController extends Controller
     /**
      * Display a listing of the banners.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $banners = $this->bannerService->getBanners();
+        $filters = [
+            'type' => $request->query('type'),
+            'is_active' => $request->query('is_active'),
+            'sort' => $request->query('sort', 'latest'),
+        ];
+        
+        $banners = $this->bannerService->getBanners(false, null, null, null, $filters);
         return view('admin.banners.index', compact('banners'));
+    }
+
+    /**
+     * Export banners to various formats.
+     */
+    public function export(Request $request)
+    {
+        $format = $request->query('format', 'xlsx');
+        $extension = 'xlsx';
+        $writerType = \Maatwebsite\Excel\Excel::XLSX;
+
+        if ($format === 'csv') {
+            $extension = 'csv';
+            $writerType = \Maatwebsite\Excel\Excel::CSV;
+        } elseif ($format === 'pdf') {
+            $extension = 'pdf';
+            $writerType = \Maatwebsite\Excel\Excel::MPDF;
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\BannersExport, 
+            'banners_' . date('Y-m-d_H-i-s') . '.' . $extension, 
+            $writerType
+        );
     }
 
     /**

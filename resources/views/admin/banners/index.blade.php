@@ -15,19 +15,63 @@
                 <a href="{{ route('admin.banners.create') }}" class="btn btn-sm btn-primary mr-2">
                     <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add New Banner') }}
                 </a>
-                <a href="#" class="btn btn-sm btn-success mr-2" id="exportBannersBtn">
-                    <i class="fas fa-download fa-sm"></i> {{ translate('messages.Export') }}
-                </a>
-                <div class="dropdown">
+                <div class="dropdown mr-2">
+                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.Export') }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                        <a class="dropdown-item" href="{{ route('admin.banners.export', ['format' => 'csv']) }}">
+                            <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
+                        </a>
+                        <a class="dropdown-item" href="{{ route('admin.banners.export', ['format' => 'xlsx']) }}">
+                            <i class="fas fa-file-excel fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Excel') }}
+                        </a>
+                        <a class="dropdown-item" href="{{ route('admin.banners.export', ['format' => 'pdf']) }}">
+                            <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="dropdown mr-2">
                     <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="filterDropdown">
-                        <a class="dropdown-item" href="#" data-filter="status" data-value="active">{{ translate('messages.By Status: Active') }}</a>
-                        <a class="dropdown-item" href="#" data-filter="status" data-value="inactive">{{ translate('messages.By Status: Inactive') }}</a>
-                        <a class="dropdown-item" href="#" data-filter="status" data-value="scheduled">{{ translate('messages.By Status: Scheduled') }}</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" data-filter="clear">{{ translate('messages.Clear Filters') }}</a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 280px;">
+                        <form id="filterForm">
+                            <div class="mb-2">
+                                <label for="filterType" class="form-label small">{{ translate('messages.Type') }}</label>
+                                <select class="form-control form-control-sm" id="filterType" name="type">
+                                    <option value="">{{ translate('messages.All Types') }}</option>
+                                    <option value="featured" {{ request('type') === 'featured' ? 'selected' : '' }}>{{ translate('messages.Featured') }}</option>
+                                    <option value="general" {{ request('type') === 'general' ? 'selected' : '' }}>{{ translate('messages.General') }}</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
+                                <select class="form-control form-control-sm" id="filterStatus" name="is_active">
+                                    <option value="">{{ translate('messages.All Status') }}</option>
+                                    <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                    <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="filterSort" class="form-label small">{{ translate('messages.Sort By') }}</label>
+                                <select class="form-control form-control-sm" id="filterSort" name="sort">
+                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
+                                    <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>{{ translate('messages.Title: A to Z') }}</option>
+                                    <option value="title_desc" {{ request('sort') == 'title_desc' ? 'selected' : '' }}>{{ translate('messages.Title: Z to A') }}</option>
+                                    <option value="position_asc" {{ request('sort') == 'position_asc' ? 'selected' : '' }}>{{ translate('messages.Position: Low to High') }}</option>
+                                    <option value="position_desc" {{ request('sort') == 'position_desc' ? 'selected' : '' }}>{{ translate('messages.Position: High to Low') }}</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
+                                    <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
+                                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -116,10 +160,41 @@
                     </tbody>
                 </table>
             </div>
+            {{ $banners->appends(request()->query())->links() }}
         </div>
     </div>
 @endsection
 
 @push('scripts')
-
+<script>
+    $(document).ready(function() {
+        // Apply filters button
+        $('#applyFiltersBtn').on('click', function() {
+            const type = $('#filterType').val();
+            const isActive = $('#filterStatus').val();
+            const sort = $('#filterSort').val();
+            
+            const params = new URLSearchParams();
+            
+            if (type) {
+                params.set('type', type);
+            }
+            
+            if (isActive !== '') {
+                params.set('is_active', isActive);
+            }
+            
+            if (sort && sort !== 'latest') {
+                params.set('sort', sort);
+            }
+            
+            window.location.href = '?' + params.toString();
+        });
+        
+        // Reset filters button
+        $('#resetFiltersBtn').on('click', function() {
+            window.location.href = window.location.pathname;
+        });
+    });
+</script>
 @endpush

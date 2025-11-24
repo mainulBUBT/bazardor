@@ -37,6 +37,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::post('units/import', [UnitController::class, 'import'])->name('units.import');
         Route::get('units/export', [UnitController::class, 'export'])->name('units.export');
         Route::resource('units', UnitController::class);
+        Route::get('banners/export', [BannerController::class, 'export'])->name('banners.export');
         Route::resource('banners', BannerController::class);
         Route::post('banners/status/{banner}', [BannerController::class, 'status'])->name('banners.status');
         

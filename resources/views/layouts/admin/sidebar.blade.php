@@ -132,15 +132,15 @@
     </div>
 
     <!-- Push Notifications -->
-    <li class="nav-item {{ request()->is('admin/notifications*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePushNotifications" aria-expanded="false" aria-controls="collapsePushNotifications">
+    <li class="nav-item {{ request()->is('admin/push-notifications*') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePushNotifications" aria-expanded="{{ request()->is('admin/push-notifications*') ? 'true' : 'false' }}" aria-controls="collapsePushNotifications">
             <i class="fas fa-fw fa-bell"></i>
             <span>{{translate('messages.Push Notifications') }}</span>
         </a>
-        <div id="collapsePushNotifications" class="collapse" aria-labelledby="headingPushNotifications" data-parent="#accordionSidebar">
+        <div id="collapsePushNotifications" class="collapse{{ request()->is('admin/push-notifications*') ? ' show' : '' }}" aria-labelledby="headingPushNotifications" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{route('admin.push-notifications.index')}}">{{translate('messages.All Notifications') }}</a>
-                <a class="collapse-item" href="{{route('admin.push-notifications.create')}}">{{translate('messages.Send Notification') }}</a>
+                <a class="collapse-item {{ request()->is('admin/push-notifications') ? 'active' : '' }}" href="{{route('admin.push-notifications.index')}}">{{translate('messages.All Notifications') }}</a>
+                <a class="collapse-item {{ request()->is('admin/push-notifications/create') ? 'active' : '' }}" href="{{route('admin.push-notifications.create')}}">{{translate('messages.Send Notification') }}</a>
             </div>
         </div>
     </li>

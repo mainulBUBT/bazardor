@@ -25,10 +25,19 @@ class ProductController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->productService->getProducts();
-        return view('admin.products.index', compact('products'));
+        $filters = [
+            'category_id' => $request->query('category_id'),
+            'status' => $request->query('status'),
+            'sort' => $request->query('sort', 'latest'),
+            'search' => $request->query('search'),
+        ];
+        
+        $products = $this->productService->getProducts($filters['search'], ['category', 'unit'], null, null, $filters);
+        $categories = $this->categoryService->getCategories(null, null)->getCollection();
+        
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function create()

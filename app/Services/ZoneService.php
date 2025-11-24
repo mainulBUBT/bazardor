@@ -134,6 +134,7 @@ class ZoneService
             }
             
             DB::commit();
+            return $zone;
         } catch (\Exception $e) {
             DB::rollBack();
             Toastr::error($e->getMessage() ?: translate('messages.failed_to_update_zone'));

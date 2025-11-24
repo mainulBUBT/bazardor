@@ -18,9 +18,12 @@ class ProductService
      *
      * @param string|null $search
      * @param array $with
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param array $filters
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getProducts($search = null, array $with = [], $limit = null, $offset = null)
+    public function getProducts($search = null, array $with = [], $limit = null, $offset = null, array $filters = [])
     {
         return $this->product
             ->when(!empty($with), function ($query) use ($with) {
@@ -29,7 +32,23 @@ class ProductService
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
             })
-            ->latest()
+            ->when(!empty($filters['category_id']), function ($query) use ($filters) {
+                $query->where('category_id', $filters['category_id']);
+            })
+            ->when(isset($filters['status']) && $filters['status'] !== '', function ($query) use ($filters) {
+                $query->where('status', $filters['status']);
+            })
+            ->when(!empty($filters['sort']), function ($query) use ($filters) {
+                match ($filters['sort']) {
+                    'name_asc' => $query->orderBy('name', 'asc'),
+                    'name_desc' => $query->orderBy('name', 'desc'),
+                    'price_asc' => $query->orderBy('base_price', 'asc'),
+                    'price_desc' => $query->orderBy('base_price', 'desc'),
+                    default => $query->latest(),
+                };
+            }, function ($query) {
+                $query->latest();
+            })
             ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
     }
 
