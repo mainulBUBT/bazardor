@@ -4,9 +4,21 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{url('/admin')}}">
         <div class="sidebar-brand-icon">
-            <i class="fas fa-store"></i>
+            @php
+                $logo = \App\Models\Setting::where('key_name', 'company_logo')->first();
+                $logoPath = $logo && isset($logo->value) ? asset('public/storage/company/'.$logo->value) : null;
+            @endphp
+            @if($logoPath)
+                <img src="{{ $logoPath }}" alt="Logo" style="max-height: 40px; max-width: 40px; object-fit: contain;">
+            @else
+                <i class="fas fa-store"></i>
+            @endif
         </div>
-        <div class="sidebar-brand-text mx-3">{{translate('messages.BazarDor Admin') }}</div>
+        @php
+            $appName = \App\Models\Setting::where('key_name', 'company_name')->first();
+            $appNameValue = $appName && isset($appName->value) ? $appName->value : 'BazarDor Admin';
+        @endphp
+        <div class="sidebar-brand-text mx-3">{{ $appNameValue }}</div>
     </a>
 
     <!-- Divider -->

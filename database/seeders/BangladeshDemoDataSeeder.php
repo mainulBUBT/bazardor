@@ -9,10 +9,14 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Market;
 use App\Models\Banner;
-use Illuminate\Support\Str;
+use App\Models\ProductMarketPrice;
+use App\Models\Admin;
+use App\Models\Role;
+use App\Models\Permission;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
 use MatanYadaev\EloquentSpatial\Objects\Point;
+use Illuminate\Support\Facades\Hash;
 
 class BangladeshDemoDataSeeder extends Seeder
 {
@@ -21,7 +25,7 @@ class BangladeshDemoDataSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Create Units
+        // 1. Create Units using Factory
         $units = [
             ['name' => 'Kilogram', 'symbol' => 'kg', 'unit_type' => 'weight', 'is_active' => true],
             ['name' => 'Gram', 'symbol' => 'gm', 'unit_type' => 'weight', 'is_active' => true],
@@ -33,15 +37,16 @@ class BangladeshDemoDataSeeder extends Seeder
         ];
 
         foreach ($units as $unitData) {
-            Unit::firstOrCreate(['symbol' => $unitData['symbol']], $unitData);
+            Unit::factory()->create($unitData);
         }
+        
+        // Retrieve for later use
         $unitKg = Unit::where('symbol', 'kg')->first();
         $unitL = Unit::where('symbol', 'L')->first();
         $unitPc = Unit::where('symbol', 'pc')->first();
         $unitDoz = Unit::where('symbol', 'doz')->first();
-        $unitHali = Unit::where('symbol', 'hali')->first();
 
-        // 2. Create Zones (Dhaka)
+        // 2. Create Zones (Dhaka) using Factory
         // Approximate polygon for Dhaka
         $dhakaPolygon = new Polygon([
             new LineString([
@@ -53,26 +58,24 @@ class BangladeshDemoDataSeeder extends Seeder
             ])
         ]);
 
-        $zone = Zone::firstOrCreate(
-            ['name' => 'Dhaka City'],
-            [
-                'is_active' => true,
-                'coordinates' => $dhakaPolygon
-            ]
-        );
+        $zone = Zone::factory()->create([
+            'name' => 'Dhaka City',
+            'is_active' => true,
+            'coordinates' => $dhakaPolygon
+        ]);
 
-        // 3. Create Categories
+        // 3. Create Categories using Factory
         $categories = [
-            ['name' => 'Vegetables', 'slug' => 'vegetables', 'description' => 'Fresh vegetables directly from farmers', 'image_path' => 'demo-veg.png'],
-            ['name' => 'Fruits', 'slug' => 'fruits', 'description' => 'Seasonal and imported fruits', 'image_path' => 'demo-fruit.png'],
-            ['name' => 'Fish', 'slug' => 'fish', 'description' => 'Freshwater and sea fish', 'image_path' => 'demo-fish.png'],
-            ['name' => 'Meat', 'slug' => 'meat', 'description' => 'Beef, Chicken, Mutton and others', 'image_path' => 'demo-meat.png'],
-            ['name' => 'Grocery', 'slug' => 'grocery', 'description' => 'Daily essentials', 'image_path' => 'demo-veg.png'],
-            ['name' => 'Spices', 'slug' => 'spices', 'description' => 'Authentic spices', 'image_path' => 'demo-veg.png'],
+            ['name' => 'Vegetables', 'slug' => 'vegetables', 'description' => 'Fresh vegetables directly from farmers', 'image_path' => 'categories/demo-veg.png'],
+            ['name' => 'Fruits', 'slug' => 'fruits', 'description' => 'Seasonal and imported fruits', 'image_path' => 'categories/demo-fruit.png'],
+            ['name' => 'Fish', 'slug' => 'fish', 'description' => 'Freshwater and sea fish', 'image_path' => 'categories/demo-fish.png'],
+            ['name' => 'Meat', 'slug' => 'meat', 'description' => 'Beef, Chicken, Mutton and others', 'image_path' => 'categories/demo-meat.png'],
+            ['name' => 'Grocery', 'slug' => 'grocery', 'description' => 'Daily essentials', 'image_path' => 'categories/demo-veg.png'],
+            ['name' => 'Spices', 'slug' => 'spices', 'description' => 'Authentic spices', 'image_path' => 'categories/demo-veg.png'],
         ];
 
         foreach ($categories as $catData) {
-            Category::updateOrCreate(['slug' => $catData['slug']], array_merge($catData, ['is_active' => true, 'position' => 0]));
+            Category::factory()->create(array_merge($catData, ['is_active' => true, 'position' => 0]));
         }
 
         $catVeg = Category::where('slug', 'vegetables')->first();
@@ -82,8 +85,8 @@ class BangladeshDemoDataSeeder extends Seeder
         $catGrocery = Category::where('slug', 'grocery')->first();
         $catSpices = Category::where('slug', 'spices')->first();
 
-        // 4. Create Markets
-        $markets = [
+        // 4. Create Markets using Factory
+        $marketsData = [
             [
                 'name' => 'Karwan Bazar',
                 'slug' => 'karwan-bazar',
@@ -95,7 +98,7 @@ class BangladeshDemoDataSeeder extends Seeder
                 'district' => 'Dhaka',
                 'upazila_or_thana' => 'Tejgaon',
                 'zone_id' => $zone->id,
-                'image_path' => 'demo-veg.png',
+                'image_path' => 'markets/demo-market.png',
             ],
             [
                 'name' => 'Hatirpool Kacha Bazar',
@@ -108,7 +111,7 @@ class BangladeshDemoDataSeeder extends Seeder
                 'district' => 'Dhaka',
                 'upazila_or_thana' => 'Dhanmondi',
                 'zone_id' => $zone->id,
-                'image_path' => 'demo-eid.png',
+                'image_path' => 'markets/demo-market.png',
             ],
             [
                 'name' => 'Mohammadpur Krishi Market',
@@ -121,7 +124,7 @@ class BangladeshDemoDataSeeder extends Seeder
                 'district' => 'Dhaka',
                 'upazila_or_thana' => 'Mohammadpur',
                 'zone_id' => $zone->id,
-                'image_path' => 'demo-winter.png',
+                'image_path' => 'markets/demo-market.png',
             ],
             [
                 'name' => 'Shantinagar Bazar',
@@ -134,7 +137,7 @@ class BangladeshDemoDataSeeder extends Seeder
                 'district' => 'Dhaka',
                 'upazila_or_thana' => 'Paltan',
                 'zone_id' => $zone->id,
-                'image_path' => 'demo-veg.png',
+                'image_path' => 'markets/demo-market.png',
             ],
             [
                 'name' => 'New Market',
@@ -147,19 +150,19 @@ class BangladeshDemoDataSeeder extends Seeder
                 'district' => 'Dhaka',
                 'upazila_or_thana' => 'New Market',
                 'zone_id' => $zone->id,
-                'image_path' => 'demo-eid.png',
+                'image_path' => 'markets/demo-market.png',
             ],
         ];
 
-        foreach ($markets as $marketData) {
-            Market::updateOrCreate(
-                ['slug' => $marketData['slug']],
+        $createdMarkets = [];
+        foreach ($marketsData as $marketData) {
+            $createdMarkets[] = Market::factory()->create(
                 array_merge($marketData, ['is_active' => true, 'is_featured' => true, 'visibility' => true])
             );
         }
 
-        // 5. Create Products (20 items)
-        $products = [
+        // 5. Create Products using Factory
+        $productsData = [
             // Rice & Grocery
             [
                 'name' => 'Miniket Rice',
@@ -348,9 +351,9 @@ class BangladeshDemoDataSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $prodData) {
-            Product::updateOrCreate(
-                ['sku' => $prodData['sku']],
+        $createdProducts = [];
+        foreach ($productsData as $prodData) {
+            $createdProducts[] = Product::factory()->create(
                 array_merge($prodData, [
                     'status' => 'active',
                     'is_visible' => true,
@@ -361,7 +364,24 @@ class BangladeshDemoDataSeeder extends Seeder
             );
         }
 
-        // 6. Create Banners
+        // 6. Create Product Market Prices (NEW)
+        foreach ($createdProducts as $product) {
+            foreach ($createdMarkets as $market) {
+                // Generate a price slightly different from base price
+                $variation = rand(-5, 10); // -5% to +10%
+                $price = $product->base_price * (1 + $variation / 100);
+                
+                ProductMarketPrice::factory()->create([
+                    'product_id' => $product->id,
+                    'market_id' => $market->id,
+                    'price' => round($price, 2),
+                    'discount_price' => rand(0, 10) > 8 ? round($price * 0.95, 2) : null, // 20% chance of discount
+                    'price_date' => now(),
+                ]);
+            }
+        }
+
+        // 7. Create Banners using Factory
         $banners = [
             [
                 'title' => 'Fresh Vegetables',
@@ -387,10 +407,28 @@ class BangladeshDemoDataSeeder extends Seeder
         ];
 
         foreach ($banners as $bannerData) {
-            Banner::updateOrCreate(
-                ['title' => $bannerData['title']],
-                $bannerData
-            );
+            Banner::factory()->create($bannerData);
+        }
+
+        // 8. Create Admin User with Spatie Roles
+        // Ensure 'admin' guard role exists
+        // $adminRole = Role::firstOrCreate(['name' => \App\Enums\UserType::SUPER_ADMIN->value, 'guard_name' => 'admin']);
+        
+        // Give all permissions to Super Admin
+        // $permissions = Permission::where('guard_name', 'admin')->get();
+        // $adminRole->syncPermissions($permissions);
+
+        // Check if admin exists first
+        $admin = Admin::where('email', 'admin@bazardor.com')->first();
+        
+        if (!$admin) {
+            $admin = Admin::factory()->create([
+                'name' => 'Super Admin',
+                'email' => 'admin@bazardor.com',
+                'password' => Hash::make('12345678'),
+                'is_active' => true,
+            ]);
+            // $admin->assignRole($adminRole);
         }
     }
 }

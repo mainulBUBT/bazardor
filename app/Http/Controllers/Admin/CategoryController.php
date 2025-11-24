@@ -28,8 +28,8 @@ class CategoryController extends Controller
             'sort' => $request->get('sort', 'latest'),
         ];
         
-        $categories = $this->categoryService->getCategories($filters);
-        $parentCategories = $this->categoryService->getCategories(['parent_id' => 'root']);
+        $categories = $this->categoryService->getCategories(filters: $filters);
+        $parentCategories = $this->categoryService->getCategories(filters: ['parent_id' => 'root']);
 
         return view("admin.categories.index", compact("categories", "parentCategories"));
     }
@@ -63,7 +63,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $parentCategories = $this->categoryService->getCategories()->where('parent_id', 0);
+        $parentCategories = $this->categoryService->getCategories(filters: ['parent_id' => 'root']);
         return view("admin.categories.create", compact("parentCategories"));
     }
 
@@ -85,7 +85,7 @@ class CategoryController extends Controller
     public function edit(string $id)
     {
         $category = $this->categoryService->findById($id);
-        $parentCategories = $this->categoryService->getCategories([]); 
+        $parentCategories = $this->categoryService->getCategories(); 
         return view("admin.categories.edit", compact("parentCategories", "category"));
     }
 

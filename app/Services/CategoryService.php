@@ -16,7 +16,7 @@ class CategoryService
      * @param array $filters
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getCategories(array $filters = [])
+    public function getCategories(?int $limit = null, ?int $offset = null, array $filters = [])
     {
         $query = $this->category
             ->with('parent')
@@ -44,7 +44,7 @@ class CategoryService
             default => $query->latest(),
         };
         
-        return $query->paginate(pagination_limit());
+        return $query->paginate($limit, ['*'], 'page', $offset ?? 1);
     }
 
     /**

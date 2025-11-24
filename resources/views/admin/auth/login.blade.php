@@ -9,7 +9,21 @@
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ translate('messages.Bazar-dor Admin - Login') }}</title>
+    @php
+        $appName = \App\Models\Setting::where('key_name', 'company_name')->first();
+        $appNameValue = $appName && isset($appName->value) ? $appName->value : 'BazarDor';
+        $logo = \App\Models\Setting::where('key_name', 'company_logo')->first();
+        $logoPath = $logo && isset($logo->value) ? asset('storage/company/' . $logo->value) : null;
+        $favicon = \App\Models\Setting::where('key_name', 'company_favicon')->first();
+        $faviconPath = $favicon && isset($favicon->value) ? asset('storage/company/' . $favicon->value) : null;
+    @endphp
+
+    <title>{{ $appNameValue }} - {{ translate('messages.Login') }}</title>
+
+    @if($faviconPath)
+        <link rel="icon" type="image/x-icon" href="{{ $faviconPath }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconPath }}">
+    @endif
 
     <!-- Custom fonts for this template-->
     <link href="{{ asset('public/assets/admin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -27,6 +41,14 @@
     <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptchaSiteKey }}"></script>
     @endif
 
+    <style>
+        :root {
+            --primary-color: #4e73df; /* Sidebar primary color */
+            --primary-dark: #2e59d9;
+            --primary-light: #6e8efb;
+        }
+    </style>
+
 </head>
 
 <body class="modern-login-body">
@@ -43,9 +65,13 @@
             <div class="login-brand-section">
                 <div class="brand-content">
                     <div class="brand-logo-wrapper">
-                        <i class="fas fa-shopping-basket brand-icon"></i>
+                        @if($logoPath)
+                            <img src="{{ $logoPath }}" alt="{{ $appNameValue }}" style="max-height: 80px; max-width: 80px; object-fit: contain;">
+                        @else
+                            <i class="fas fa-shopping-basket brand-icon"></i>
+                        @endif
                     </div>
-                    <h1 class="brand-title">Bazar-dor</h1>
+                    <h1 class="brand-title">{{ $appNameValue }}</h1>
                     <p class="brand-subtitle">{{ translate('messages.Admin Dashboard') }}</p>
                     <div class="brand-features">
                         <div class="feature-item">
@@ -151,7 +177,7 @@
 
                 <!-- Footer -->
                 <div class="login-footer">
-                    <p>&copy; {{ date('Y') }} Bazar-dor. {{ translate('messages.All rights reserved.') }}</p>
+                    <p>&copy; {{ date('Y') }} {{ $appNameValue }}. {{ translate('messages.All rights reserved.') }}</p>
                 </div>
             </div>
         </div>

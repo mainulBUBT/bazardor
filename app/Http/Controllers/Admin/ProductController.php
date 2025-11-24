@@ -35,14 +35,14 @@ class ProductController extends Controller
         ];
         
         $products = $this->productService->getProducts($filters['search'], ['category', 'unit'], null, null, $filters);
-        $categories = $this->categoryService->getCategories(null, null)->getCollection();
+        $categories = $this->categoryService->getCategories(filters: ['is_active' => 1])->getCollection();
         
         return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function create()
     {
-        $categories = $this->categoryService->getCategories(null, null)->getCollection();
+        $categories = $this->categoryService->getCategories(filters: ['is_active' => 1])->getCollection();
         $units = $this->unitService->getUnits()->getCollection();
         $markets = $this->marketService->getMarkets()->getCollection();
 
@@ -72,10 +72,10 @@ class ProductController extends Controller
         return view('admin.products.show', compact('product'));
     }
 
-    public function edit(string $id)
+    public function edit($id)
     {
-        $product = $this->productService->findById($id, ['tags']);
-        $categories = $this->categoryService->getCategories(null, null)->getCollection();
+        $product = $this->productService->findById($id, ['tags', 'category', 'unit']);
+        $categories = $this->categoryService->getCategories(filters: ['is_active' => 1])->getCollection();
         $units = $this->unitService->getUnits()->getCollection();
         return view('admin.products.edit', compact('product', 'categories', 'units'));
     }

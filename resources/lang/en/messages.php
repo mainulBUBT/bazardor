@@ -1272,4 +1272,5 @@
   'excel' => 'Excel',
   'Joined: Oldest First' => 'Joined: Oldest First',
   'Joined: Newest First' => 'Joined: Newest First',
+  'Login' => 'Login',
 );

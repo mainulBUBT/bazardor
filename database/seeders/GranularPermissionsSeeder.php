@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
+use App\Models\Permission;
+use App\Models\Role;
 
 class GranularPermissionsSeeder extends Seeder
 {
@@ -36,6 +37,8 @@ class GranularPermissionsSeeder extends Seeder
                 Permission::firstOrCreate([
                     'name' => "{$action}_{$resource}",
                     'guard_name' => 'admin',
+                ], [
+                    'id' => (string) Str::uuid(),
                 ]);
             }
         }

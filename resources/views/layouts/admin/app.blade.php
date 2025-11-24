@@ -6,7 +6,19 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>@yield('title', translate('messages.BazarDor Admin'))</title>
+        @php
+            $appName = \App\Models\Setting::where('key_name', 'company_name')->first();
+            $appNameValue = $appName && isset($appName->value) ? $appName->value : 'BazarDor';
+            $favicon = \App\Models\Setting::where('key_name', 'company_favicon')->first();
+            $faviconPath = $favicon && isset($favicon->value) ? asset('storage/company/' . $favicon->value) : null;
+        @endphp
+
+        <title>@yield('title', $appNameValue . ' Admin')</title>
+
+        @if($faviconPath)
+            <link rel="icon" type="image/x-icon" href="{{ $faviconPath }}">
+            <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconPath }}">
+        @endif
 
         <!-- Custom fonts for this template-->
         <link href="{{ asset('public/assets/admin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">

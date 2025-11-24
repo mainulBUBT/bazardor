@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->string('slug')->unique();
             $table->foreignUuid('category_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('unit_id')->constrained()->onDelete('cascade');
             $table->text('description')->nullable();
@@ -34,6 +35,7 @@ return new class extends Migration
 
 
             $table->index('name');
+            $table->index('slug');
             $table->index('status');
             $table->index('is_visible');
             $table->index('is_featured');
