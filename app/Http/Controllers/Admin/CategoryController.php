@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryStoreUpdateRequest;
 use App\Services\CategoryService;
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -18,12 +19,43 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = $this->categoryService->getCategories();
-        $parents = $this->categoryService->getCategories()->where('parent_id', 0);
+        $filters = [
+            'search' => $request->get('search'),
+            'is_active' => $request->get('is_active'),
+            'parent_id' => $request->get('parent_id'),
+            'sort' => $request->get('sort', 'latest'),
+        ];
+        
+        $categories = $this->categoryService->getCategories($filters);
+        $parentCategories = $this->categoryService->getCategories(['parent_id' => 'root']);
 
-        return view("admin.categories.index", compact("categories", "parents"));
+        return view("admin.categories.index", compact("categories", "parentCategories"));
+    }
+
+    /**
+     * Export categories
+     */
+    public function export(Request $request)
+    {
+        $format = $request->query('format', 'xlsx');
+        $extension = 'xlsx';
+        $writerType = \Maatwebsite\Excel\Excel::XLSX;
+
+        if ($format === 'csv') {
+            $extension = 'csv';
+            $writerType = \Maatwebsite\Excel\Excel::CSV;
+        } elseif ($format === 'pdf') {
+            $extension = 'pdf';
+            $writerType = \Maatwebsite\Excel\Excel::MPDF;
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\CategoriesExport,
+            'categories_' . date('Y-m-d_H-i-s') . '.' . $extension,
+            $writerType
+        );
     }
 
     /**
@@ -53,7 +85,7 @@ class CategoryController extends Controller
     public function edit(string $id)
     {
         $category = $this->categoryService->findById($id);
-        $parentCategories = $this->categoryService->getCategories(parentId: $category->parent_id); 
+        $parentCategories = $this->categoryService->getCategories([]); 
         return view("admin.categories.edit", compact("parentCategories", "category"));
     }
 

@@ -25,6 +25,7 @@ class MarketController extends Controller
     public function index(Request $request)
     {
         $filters = [
+            'search' => $request->get('search'),
             'division' => $request->get('division'),
             'type' => $request->get('type'),
             'is_active' => $request->get('is_active'),

@@ -1266,4 +1266,10 @@
   'Title: Z to A' => 'Title: Z to A',
   'Position: Low to High' => 'Position: Low to High',
   'Position: High to Low' => 'Position: High to Low',
+  'Search by name...' => 'Search by name...',
+  'Root Categories' => 'Root Categories',
+  'Search by name, email...' => 'Search by name  email...',
+  'excel' => 'Excel',
+  'Joined: Oldest First' => 'Joined: Oldest First',
+  'Joined: Newest First' => 'Joined: Newest First',
 );

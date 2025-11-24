@@ -15,21 +15,99 @@ class UserManagementService
     /**
      * Get paginated list of users.
      *
-     * @param string|null $search
-     * @param array $with
+     * @param string $user_type
+     * @param array $filters
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getUsers($user_type = UserType::USER->value, $search = null, $with = [])
+    public function getUsers($user_type = 'user', $filters = [])
     {
-        return $this->user->where('user_type', $user_type)
-            ->when($search, function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%");
-            })
-            ->when(!empty($with), function ($query) use ($with) {
-                $query->with($with);
-            })
-            ->latest()
-            ->paginate(pagination_limit());
+        $query = $this->user->where('user_type', $user_type);
+        
+        // Search filter
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
+            });
+        }
+        
+        // Status filter
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            if ($filters['status'] === 'active') {
+                $query->where('is_active', 0);
+            } elseif ($filters['status'] === 'pending') {
+                $query->where('is_active', 1);
+            } elseif ($filters['status'] === 'blocked') {
+                $query->where('is_active', 2);
+            }
+        }
+        
+        // Email verification filter
+        if (isset($filters['is_verified']) && $filters['is_verified'] !== '') {
+            if ($filters['is_verified'] === 'verified') {
+                $query->whereNotNull('email_verified_at');
+            } elseif ($filters['is_verified'] === 'unverified') {
+                $query->whereNull('email_verified_at');
+            }
+        }
+        
+        // Apply sorting
+        $sort = $filters['sort'] ?? 'latest';
+        $query = match ($sort) {
+            'name_asc' => $query->orderBy('first_name', 'asc'),
+            'name_desc' => $query->orderBy('first_name', 'desc'),
+            'joined_asc' => $query->orderBy('created_at', 'asc'),
+            'joined_desc' => $query->orderBy('created_at', 'desc'),
+            default => $query->latest(),
+        };
+        
+        return $query->paginate(pagination_limit());
+    }
+
+    /**
+     * Get all users for export (without pagination)
+     *
+     * @param string $user_type
+     * @param array $filters
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllUsersForExport($user_type = 'user', $filters = [])
+    {
+        $query = $this->user->where('user_type', $user_type);
+        
+        // Apply same filters as getUsers
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
+            });
+        }
+        
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            if ($filters['status'] === 'active') {
+                $query->where('is_active', 0);
+            } elseif ($filters['status'] === 'pending') {
+                $query->where('is_active', 1);
+            } elseif ($filters['status'] === 'blocked') {
+                $query->where('is_active', 2);
+            }
+        }
+        
+        if (isset($filters['is_verified']) && $filters['is_verified'] !== '') {
+            if ($filters['is_verified'] === 'verified') {
+                $query->whereNotNull('email_verified_at');
+            } elseif ($filters['is_verified'] === 'unverified') {
+                $query->whereNull('email_verified_at');
+            }
+        }
+        
+        return $query->latest()->get();
     }
 
     /**

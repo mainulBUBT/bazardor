@@ -22,6 +22,7 @@ class UnitController extends Controller
     public function index(Request $request)
     {
         $filters = [
+            'search' => $request->get('search'),
             'unit_type' => $request->get('unit_type'),
             'is_active' => $request->get('is_active'),
         ];

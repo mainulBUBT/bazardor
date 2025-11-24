@@ -13,19 +13,47 @@ class CategoryService
 
     /**
      * Summary of getCategories
-     * @param string|null $search
-     * @param string|null $parentId
+     * @param array $filters
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getCategories($search = null, $parentId = null)
+    public function getCategories(array $filters = [])
     {
-        return $this->category->when($search, function ($query) use ($search) {
-            $query->where('name', 'like', '%' . $search . '%');
-        })
-        ->when($parentId, function ($query) use ($parentId) {
-            $query->where('parent_id', $parentId);
-        })
-        ->latest()->paginate(pagination_limit());
+        $query = $this->category
+            ->with('parent')
+            ->when(!empty($filters['search']), function ($query) use ($filters) {
+                $query->where('name', 'like', '%' . $filters['search'] . '%');
+            })
+            ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function ($query) use ($filters) {
+                $query->where('is_active', (bool) $filters['is_active']);
+            })
+            ->when(isset($filters['parent_id']) && $filters['parent_id'] !== '', function ($query) use ($filters) {
+                if ($filters['parent_id'] === 'root') {
+                    $query->where('parent_id', 0);
+                } else {
+                    $query->where('parent_id', $filters['parent_id']);
+                }
+            });
+        
+        // Apply sorting
+        $sort = $filters['sort'] ?? 'latest';
+        $query = match ($sort) {
+            'name_asc' => $query->orderBy('name', 'asc'),
+            'name_desc' => $query->orderBy('name', 'desc'),
+            'position_asc' => $query->orderBy('position', 'asc'),
+            'position_desc' => $query->orderBy('position', 'desc'),
+            default => $query->latest(),
+        };
+        
+        return $query->paginate(pagination_limit());
+    }
+
+    /**
+     * Get all categories for export (without pagination)
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllCategoriesForExport()
+    {
+        return $this->category->with('parent')->latest()->get();
     }
 
     /**

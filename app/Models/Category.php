@@ -45,6 +45,22 @@ class Category extends Model
     }
 
     /**
+     * Get the parent category.
+     */
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get the child categories.
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    /**
      * Scope a query to only include active categories.
      */
     public function scopeActive($query)

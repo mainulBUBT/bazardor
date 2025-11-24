@@ -18,6 +18,17 @@ class MarketService
             ->when(!empty($with), function ($query) use ($with) {
                 $query->with($with);
             })
+            ->when(!empty($filters['search']), function ($query) use ($filters) {
+                $search = $filters['search'];
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('address', 'like', "%{$search}%")
+                      ->orWhere('type', 'like', "%{$search}%")
+                      ->orWhere('division', 'like', "%{$search}%")
+                      ->orWhere('district', 'like', "%{$search}%")
+                      ->orWhere('upazila_or_thana', 'like', "%{$search}%");
+                });
+            })
             ->when(!empty($filters['division']), function ($query) use ($filters) {
                 $query->where('division', $filters['division']);
             })

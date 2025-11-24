@@ -17,6 +17,14 @@ class UnitService
     {
         $query = Unit::query();
         
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('symbol', 'like', "%{$search}%");
+            });
+        }
+        
         if (!empty($filters['unit_type'])) {
             $query->where('unit_type', $filters['unit_type']);
         }

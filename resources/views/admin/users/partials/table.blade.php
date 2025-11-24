@@ -4,22 +4,30 @@
         <h6 class="m-0 font-weight-bold text-primary">
             {{ translate('messages.users_list') }}
         </h6>
-        <div class="d-flex">
-            <a href="{{ route('admin.users.create', ['userType' => 'user']) }}" class="btn btn-sm btn-primary mr-2">
+        <div class="d-flex align-items-center">
+            <div class="mr-2" style="min-width: 250px;">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name, email...') }}" value="{{ request('search') }}">
+                </div>
+            </div>
+            <a href="{{ route('admin.users.create', ['userType' => $type]) }}" class="btn btn-sm btn-primary mr-2">
                 <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_user') }}
-            </a>
-            <a href="#" class="btn btn-sm btn-success mr-2">
-                <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.import') }}
             </a>
             <div class="dropdown mr-2">
                 <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.export') }}
                 </button>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
-                    <a class="dropdown-item" href="#" id="exportCSV">
+                    <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'csv', 'user_type' => $type], request()->query())) }}">
                         <i class="fas fa-file-csv fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.csv') }}
                     </a>
-                    <a class="dropdown-item" href="#" id="exportPDF">
+                    <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'xlsx', 'user_type' => $type], request()->query())) }}">
+                        <i class="fas fa-file-excel fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.excel') }}
+                    </a>
+                    <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'pdf', 'user_type' => $type], request()->query())) }}">
                         <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.pdf') }}
                     </a>
                 </div>
@@ -32,30 +40,30 @@
                     <h6 class="dropdown-header">{{ translate('messages.filter_users') }}</h6>
                     <form id="filterFormDropdown">
                         <div class="mb-2">
-                            <label for="filterRoleDropdown" class="form-label small">{{ translate('messages.role') }}</label>
-                            <select class="form-control form-control-sm" id="filterRoleDropdown">
-                                <option value="" selected>{{ translate('messages.all_roles') }}</option>
-                                <option value="user">{{ translate('messages.user') }}</option>
-                                <option value="volunteer">{{ translate('messages.volunteer') }}</option>
-                                <option value="moderator">{{ translate('messages.moderator') }}</option>
-                                <option value="admin">{{ translate('messages.admin') }}</option>
-                            </select>
-                        </div>
-                        <div class="mb-2">
                             <label for="filterStatusDropdown" class="form-label small">{{ translate('messages.status') }}</label>
-                            <select class="form-control form-control-sm" id="filterStatusDropdown">
-                                <option value="" selected>{{ translate('messages.all_status') }}</option>
-                                <option value="active">{{ translate('messages.active') }}</option>
-                                <option value="pending">{{ translate('messages.pending') }}</option>
-                                <option value="blocked">{{ translate('messages.blocked') }}</option>
+                            <select class="form-control form-control-sm" id="filterStatusDropdown" name="status">
+                                <option value="">{{ translate('messages.all_status') }}</option>
+                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ translate('messages.active') }}</option>
+                                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>{{ translate('messages.pending') }}</option>
+                                <option value="blocked" {{ request('status') === 'blocked' ? 'selected' : '' }}>{{ translate('messages.blocked') }}</option>
                             </select>
                         </div>
                         <div class="mb-2">
                             <label for="filterVerificationDropdown" class="form-label small">{{ translate('messages.verification') }}</label>
-                            <select class="form-control form-control-sm" id="filterVerificationDropdown">
-                                <option value="" selected>{{ translate('messages.all_verification') }}</option>
-                                <option value="verified">{{ translate('messages.verified') }}</option>
-                                <option value="unverified">{{ translate('messages.unverified') }}</option>
+                            <select class="form-control form-control-sm" id="filterVerificationDropdown" name="is_verified">
+                                <option value="">{{ translate('messages.all_verification') }}</option>
+                                <option value="verified" {{ request('is_verified') === 'verified' ? 'selected' : '' }}>{{ translate('messages.verified') }}</option>
+                                <option value="unverified" {{ request('is_verified') === 'unverified' ? 'selected' : '' }}>{{ translate('messages.unverified') }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="filterSortDropdown" class="form-label small">{{ translate('messages.Sort By') }}</label>
+                            <select class="form-control form-control-sm" id="filterSortDropdown" name="sort">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
+                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
+                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
+                                <option value="joined_asc" {{ request('sort') == 'joined_asc' ? 'selected' : '' }}>{{ translate('messages.Joined: Oldest First') }}</option>
+                                <option value="joined_desc" {{ request('sort') == 'joined_desc' ? 'selected' : '' }}>{{ translate('messages.Joined: Newest First') }}</option>
                             </select>
                         </div>
                         <div class="d-flex justify-content-end">
@@ -141,3 +149,65 @@
         </div>
     </div>
 </div>
+
+@if(isset($users) && method_exists($users, 'links'))
+    <div class="d-flex justify-content-end">
+        {{ $users->appends(request()->query())->links() }}
+    </div>
+@endif
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        const userType = '{{ $type }}';
+        
+        // Search input with Enter key support
+        $('#searchInput').on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
+                applyFilters();
+            }
+        });
+
+        // Apply filters function
+        function applyFilters() {
+            const search = $('#searchInput').val();
+            const status = $('#filterStatusDropdown').val();
+            const isVerified = $('#filterVerificationDropdown').val();
+            const sort = $('#filterSortDropdown').val();
+            
+            const params = new URLSearchParams();
+            
+            // Always preserve user_type
+            params.set('user_type', userType);
+            
+            if (search) {
+                params.set('search', search);
+            }
+            
+            if (status) {
+                params.set('status', status);
+            }
+            
+            if (isVerified) {
+                params.set('is_verified', isVerified);
+            }
+            
+            if (sort && sort !== 'latest') {
+                params.set('sort', sort);
+            }
+            
+            window.location.href = '?' + params.toString();
+        }
+
+        // Apply filters button
+        $('#applyFiltersDropdownBtn').on('click', function() {
+            applyFilters();
+        });
+        
+        // Reset filters button
+        $('#resetFiltersDropdownBtn').on('click', function() {
+            window.location.href = '{{ route('admin.users.index') }}?user_type=' + userType;
+        });
+    });
+</script>
+@endpush

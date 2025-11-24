@@ -25,7 +25,15 @@ class UserManagementController extends Controller
     public function index(Request $request)
     {   
         $userType = $request->input('user_type', UserType::USER->value);
-        $users = $this->userService->getUsers($userType, $request->search);
+        
+        $filters = [
+            'search' => $request->get('search'),
+            'status' => $request->get('status'),
+            'is_verified' => $request->get('is_verified'),
+            'sort' => $request->get('sort', 'latest'),
+        ];
+        
+        $users = $this->userService->getUsers($userType, $filters);
         $userStats = $this->userService->getUserStats();
 
         return view('admin.users.index', compact(
@@ -33,6 +41,37 @@ class UserManagementController extends Controller
             'userStats',
             'userType'
         ));
+    }
+
+    /**
+     * Export users
+     */
+    public function export(Request $request)
+    {
+        $userType = $request->query('user_type', 'user');
+        $filters = [
+            'search' => $request->get('search'),
+            'status' => $request->get('status'),
+            'is_verified' => $request->get('is_verified'),
+        ];
+        
+        $format = $request->query('format', 'xlsx');
+        $extension = 'xlsx';
+        $writerType = \Maatwebsite\Excel\Excel::XLSX;
+
+        if ($format === 'csv') {
+            $extension = 'csv';
+            $writerType = \Maatwebsite\Excel\Excel::CSV;
+        } elseif ($format === 'pdf') {
+            $extension = 'pdf';
+            $writerType = \Maatwebsite\Excel\Excel::MPDF;
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\UsersExport($userType, $filters),
+            'users_' . $userType . '_' . date('Y-m-d_H-i-s') . '.' . $extension,
+            $writerType
+        );
     }
 
     /**

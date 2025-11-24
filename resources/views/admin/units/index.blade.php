@@ -46,7 +46,15 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Units') }}</h6>
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
+                <div class="mr-2" style="min-width: 250px;">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name...') }}" value="{{ request('search') }}">
+                    </div>
+                </div>
                 <a href="{{ route('admin.units.import-export') }}" class="btn btn-sm btn-success mr-2">
                     <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
                 </a>
@@ -175,12 +183,24 @@
             formAlert(formId, message);
         });
 
-        // Apply filters button
-        $('#applyFiltersBtn').on('click', function() {
+        // Search input with Enter key support
+        $('#searchInput').on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
+                applyFilters();
+            }
+        });
+
+        // Apply filters function
+        function applyFilters() {
+            const search = $('#searchInput').val();
             const unitType = $('#filterType').val();
             const isActive = $('#filterStatus').val();
             
             const params = new URLSearchParams();
+            
+            if (search) {
+                params.set('search', search);
+            }
             
             if (unitType) {
                 params.set('unit_type', unitType);
@@ -191,6 +211,11 @@
             }
             
             window.location.href = '?' + params.toString();
+        }
+
+        // Apply filters button
+        $('#applyFiltersBtn').on('click', function() {
+            applyFilters();
         });
         
         // Reset filters button

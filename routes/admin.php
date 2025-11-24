@@ -41,6 +41,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::resource('banners', BannerController::class);
         Route::post('banners/status/{banner}', [BannerController::class, 'status'])->name('banners.status');
         
+        Route::get('categories/export', [CategoryController::class, 'export'])->name('categories.export');
         Route::resource('categories', CategoryController::class);
         Route::post('categories/status/{category}', [CategoryController::class, 'status'])->name('categories.status');
 
@@ -76,14 +77,15 @@ Route::prefix('admin')->as('admin.')->group(function () {
         // API Users Management Routes
         Route::prefix('users')->as('users.')->group(function () {
             Route::get('/', [UserManagementController::class, 'index'])->name('index');
+            Route::get('export', [UserManagementController::class, 'export'])->name('export');
             Route::get('create/{userType}', [UserManagementController::class, 'create'])->name('create');
             Route::post('/', [UserManagementController::class, 'store'])->name('store');
-            Route::get('{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
-            Route::put('{user}', [UserManagementController::class, 'update'])->name('update');
-            Route::delete('{user}', [UserManagementController::class, 'destroy'])->name('destroy');
-            Route::get('show/{user}', [UserManagementController::class, 'show'])->name('show');
+            Route::get('{id}', [UserManagementController::class, 'show'])->name('show');
+            Route::get('{id}/edit', [UserManagementController::class, 'edit'])->name('edit');
+            Route::put('{id}', [UserManagementController::class, 'update'])->name('update');
+            Route::delete('{id}', [UserManagementController::class, 'destroy'])->name('destroy');
             Route::post('update-status/{user}', [UserManagementController::class, 'updateStatus'])->name('update-status');
-            Route::get('pending', [UserManagementController::class, 'pending'])->name('pending');
+            Route::get('pending/list', [UserManagementController::class, 'pending'])->name('pending');
             Route::get('{user}/approve', [UserManagementController::class, 'approve'])->name('approve');
             Route::get('{user}/reject', [UserManagementController::class, 'reject'])->name('reject');
         });
