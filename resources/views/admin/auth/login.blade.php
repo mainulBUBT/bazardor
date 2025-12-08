@@ -65,8 +65,12 @@
             <div class="login-brand-section">
                 <div class="brand-content">
                     <div class="brand-logo-wrapper">
+                       @php
+                        $logo = \App\Models\Setting::where('key_name', 'company_logo')->first();
+                        $logoPath = $logo && isset($logo->value) ? asset('public/storage/company/'.$logo->value) : null;
+                        @endphp
                         @if($logoPath)
-                            <img src="{{ $logoPath }}" alt="{{ $appNameValue }}" style="max-height: 80px; max-width: 80px; object-fit: contain;">
+                            <img src="{{ $logoPath }}" alt="Logo" style="max-height: 40px; max-width: 40px; object-fit: contain;">
                         @else
                             <i class="fas fa-shopping-basket brand-icon"></i>
                         @endif

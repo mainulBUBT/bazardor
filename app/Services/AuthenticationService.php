@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\UserType;
 
@@ -17,10 +17,11 @@ class AuthenticationService
      */
     public function attemptLogin(array $credentials, bool $remember = false): array
     {
-        if (Auth::attempt($credentials, $remember)) {
-            $user = Auth::user();
-            
-            if ($user->role === UserType::SUPER_ADMIN->value || $user->role === UserType::MODERATOR->value) {
+        $guard = Auth::guard('admin');
+        if ($guard->attempt($credentials, $remember)) {
+            $user = $guard->user();
+
+            if ($user instanceof Admin && $user->hasAnyRole([UserType::SUPER_ADMIN->value, UserType::MODERATOR->value])) {
                 return [
                     'success' => true,
                     'user' => $user,
@@ -29,7 +30,7 @@ class AuthenticationService
                 ];
             }
             
-            Auth::logout();
+            $guard->logout();
             return [
                 'success' => false,
                 'message' => translate('messages.you_do_not_have_permission_to_access_admin_panel'),
@@ -65,9 +66,9 @@ class AuthenticationService
      *
      * @return User|null
      */
-    public function getAuthenticatedUser(): ?User
+    public function getAuthenticatedUser(): ?Admin
     {
-        return Auth::user();
+        return Auth::guard('admin')->user();
     }
     
     /**
@@ -77,7 +78,7 @@ class AuthenticationService
      */
     public function isAuthenticated(): bool
     {
-        return Auth::check();
+        return Auth::guard('admin')->check();
     }
     
     /**
@@ -89,10 +90,10 @@ class AuthenticationService
     {
         $user = $this->getAuthenticatedUser();
         
-        if (!$user) {
+        if (!$user instanceof Admin) {
             return false;
         }
-        
-        return $user->role === UserType::SUPER_ADMIN->value || $user->role === UserType::MODERATOR->value;
+
+        return $user->hasAnyRole([UserType::SUPER_ADMIN->value, UserType::MODERATOR->value]);
     }
 } 

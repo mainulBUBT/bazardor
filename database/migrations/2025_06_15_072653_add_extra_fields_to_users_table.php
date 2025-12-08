@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('referred_by')->nullable()->after('referral_code');
             $table->string('status')->default('pending')->after('referred_by');
             $table->string('user_type')->default('user');
-            $table->foreignId('zone_id')->nullable();
+            $table->foreignUuid('zone_id')->nullable();
             $table->timestamp('last_login_at')->nullable();
         });
     }

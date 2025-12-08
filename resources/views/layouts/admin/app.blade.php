@@ -10,7 +10,15 @@
             $appName = \App\Models\Setting::where('key_name', 'company_name')->first();
             $appNameValue = $appName && isset($appName->value) ? $appName->value : 'BazarDor';
             $favicon = \App\Models\Setting::where('key_name', 'company_favicon')->first();
-            $faviconPath = $favicon && isset($favicon->value) ? asset('storage/company/' . $favicon->value) : null;
+            $faviconValue = $favicon->value ?? null;
+
+            if (is_array($faviconValue)) {
+                $faviconValue = $faviconValue['value'] ?? null;
+            }
+
+            $faviconPath = is_string($faviconValue) && $faviconValue !== ''
+                ? asset('public/storage/company/' . ltrim($faviconValue, '/'))
+                : null;
         @endphp
 
         <title>@yield('title', $appNameValue . ' Admin')</title>

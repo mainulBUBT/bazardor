@@ -28,7 +28,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
         });
     });
     
-    Route::middleware([])->group(function () {
+    Route::middleware(['web', 'admin'])->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         

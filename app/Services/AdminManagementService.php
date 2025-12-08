@@ -21,7 +21,11 @@ class AdminManagementService
      */
     public function getAdmins($search = null, $with = [])
     {
-        return $this->admin->when($search, function ($query) use ($search) {
+        return $this->admin
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'super_admin');
+            })
+            ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
                       ->orWhere('email', 'like', "%{$search}%");
             })

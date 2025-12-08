@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Admin;
 
 class GranularPermissionsSeeder extends Seeder
 {
@@ -43,6 +44,28 @@ class GranularPermissionsSeeder extends Seeder
             }
         }
 
+        // Ensure super admin role has full access
+        $superAdminRole = Role::firstOrCreate([
+            'name' => 'super_admin',
+            'guard_name' => 'admin',
+        ], [
+            'id' => (string) Str::uuid(),
+        ]);
+
+        $allPermissionNames = Permission::where('guard_name', 'admin')->pluck('name')->toArray();
+        $superAdminRole->syncPermissions($allPermissionNames);
+
+        // Create super admin user
+        $superAdmin = Admin::firstOrCreate([
+            'email' => 'superadmin@bazardor.com',
+        ], [
+            'id' => (string) Str::uuid(),
+            'name' => 'Super Admin',
+            'password' => bcrypt('admin123456'),
+        ]);
+
+        // Assign super admin role to the user
+        $superAdmin->assignRole('super_admin');
 
         // // Map old permissions to new granular permissions
         // $permissionMapping = [
@@ -75,4 +98,4 @@ class GranularPermissionsSeeder extends Seeder
         //     $role->syncPermissions($newPermissions);
         // }
     }
-} 
+}
