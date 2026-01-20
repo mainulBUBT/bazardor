@@ -26,7 +26,7 @@ class PushNotificationService
             ->paginate(pagination_limit());
     }
 
-    public function findNotification(int $id, array $with = [])
+    public function findNotification(int|string $id, array $with = [])
     {
         return $this->pushNotification->with($with)->findOrFail($id);
     }

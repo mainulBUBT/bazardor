@@ -38,10 +38,10 @@ class UnitService
 
     /**
      * Summary of findById
-     * @param int $id
+     * @param int|string $id
      * @return \App\Models\Unit
      */
-    public function findById(int $id)
+    public function findById(int|string $id)
     {
         return $this->unit->findOrFail($id);
     }   
@@ -59,10 +59,10 @@ class UnitService
     /**
      * Summary of updateUnit
      * @param array $validated
-     * @param int $id
+     * @param int|string $id
      * @return Unit
      */
-    public function updateUnit(array $validated, int $id)
+    public function updateUnit(array $validated, int|string $id)
     {
         $unit = $this->findById($id);
         $unit->update($validated);
@@ -71,10 +71,10 @@ class UnitService
 
     /**
      * Summary of deleteUnit
-     * @param int $id
+     * @param int|string $id
      * @return void
      */
-    public function deleteUnit(int $id)
+    public function deleteUnit(int|string $id)
     {
         $unit = $this->findById($id);
         $unit->delete();

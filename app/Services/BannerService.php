@@ -131,7 +131,7 @@ class BannerService
     /**
      * Delete a banner and its image.
      */
-    public function delete(int $bannerId): void
+    public function delete(int|string $bannerId): void
     {
         $banner = $this->findById($bannerId);
         if ($banner->image_path) {
@@ -145,7 +145,7 @@ class BannerService
      * @param \App\Models\Banner $banner
      * @return void
      */
-    public function status(int $bannerId, $status): void
+    public function status(int|string $bannerId, $status): void
     {
         $banner = $this->findById($bannerId);
         $banner->is_active = $status;
@@ -154,10 +154,10 @@ class BannerService
     
     /**
      * Summary of findById
-     * @param int $bannerId
+     * @param int|string $bannerId
      * @return Banner
      */
-    public function findById(int $bannerId): Banner
+    public function findById(int|string $bannerId): Banner
     {
         return $this->banner->findOrFail($bannerId);
     }   

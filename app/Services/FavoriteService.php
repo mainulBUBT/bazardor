@@ -27,13 +27,13 @@ class FavoriteService
 
     /**
      * Summary of list
-     * @param int $userId
+     * @param int|string $userId
      * @param string $type
      * @param int $limit
      * @param int $offset
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function list(int $userId, ?string $type = null, ?int $limit = null, ?int $offset = null): LengthAwarePaginator
+    public function list(int|string $userId, ?string $type = null, ?int $limit = null, ?int $offset = null): LengthAwarePaginator
     {
         $query = $this->favorite
             ->with('favoritable')
@@ -48,12 +48,12 @@ class FavoriteService
 
     /**
      * Summary of add
-     * @param int $userId
+     * @param int|string $userId
      * @param string $type
      * @param string $favoritableId
      * @return \App\Models\Favorite
      */
-    public function add(int $userId, string $type, string $favoritableId): Favorite
+    public function add(int|string $userId, string $type, string $favoritableId): Favorite
     {
         $favoritableClass = $this->resolveFavoritableClass($type);
         $favoritable = $this->findFavoritable($favoritableClass, $favoritableId);
@@ -67,12 +67,12 @@ class FavoriteService
 
     /**
      * Summary of remove
-     * @param int $userId
+     * @param int|string $userId
      * @param string $type
      * @param string $favoritableId
      * @return bool
      */
-    public function remove(int $userId, string $type, string $favoritableId): bool
+    public function remove(int|string $userId, string $type, string $favoritableId): bool
     {
         $favoritableClass = $this->resolveFavoritableClass($type);
 
