@@ -70,25 +70,31 @@ class ContributionService
     }
 
     /**
-     * Submit a price contribution for a user with rate limiting.
+     * Submit a price contribution with optional authentication.
      */
-    public function submitPrice(User $user, array $data, ?UploadedFile $proof = null): array
+    public function submitPrice(?User $user, array $data, ?UploadedFile $proof = null): array
     {
-        $lastContribution = $this->priceContribution
-            ->where('user_id', $user->id)
-            ->where('product_id', $data['product_id'])
-            ->where('market_id', $data['market_id'])
-            ->latest('updated_at')
-            ->first();
+        // Rate limiting only for authenticated users
+        if ($user) {
+            $lastContribution = $this->priceContribution
+                ->where('user_id', $user->id)
+                ->where('product_id', $data['product_id'])
+                ->where('market_id', $data['market_id'])
+                ->latest('updated_at')
+                ->first();
 
-        $lastSubmissionAt = $lastContribution?->updated_at ?? $lastContribution?->created_at;
+            $lastSubmissionAt = $lastContribution?->updated_at ?? $lastContribution?->created_at;
 
-        if ($lastSubmissionAt && $lastSubmissionAt->greaterThan(now()->subHour())) {
-            return [
-                'rate_limited' => true,
-                'last_submission_at' => $lastSubmissionAt->toIso8601String(),
-                'contribution' => null,
-            ];
+            if ($lastSubmissionAt && $lastSubmissionAt->greaterThan(now()->subHour())) {
+                return [
+                    'rate_limited' => true,
+                    'last_submission_at' => $lastSubmissionAt->toIso8601String(),
+                    'contribution' => null,
+                ];
+            }
+        } else {
+            // For anonymous users, no rate limiting
+            $lastContribution = null;
         }
 
         $proofPath = $lastContribution?->proof_image;
@@ -102,16 +108,24 @@ class ContributionService
             );
         }
 
+        // Build criteria for updateOrCreate
+        $criteria = [
+            'product_id' => $data['product_id'],
+            'market_id' => $data['market_id'],
+        ];
+
+        // Only include user_id in criteria if user is authenticated
+        if ($user) {
+            $criteria['user_id'] = $user->id;
+        }
+
         $contribution = $this->priceContribution->updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'product_id' => $data['product_id'],
-                'market_id' => $data['market_id'],
-            ],
+            $criteria,
             [
                 'submitted_price' => $data['submitted_price'],
                 'proof_image' => $proofPath,
                 'status' => 'pending',
+                'user_id' => $user?->id, // null for anonymous submissions
             ]
         )->fresh();
 

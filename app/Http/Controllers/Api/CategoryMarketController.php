@@ -258,4 +258,86 @@ class CategoryMarketController extends Controller
             $offset
         ), 200);
     }
+
+    /**
+     * Get detailed information about a specific market
+     *
+     * @param string $id
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMarketDetails(string $id, Request $request): JsonResponse
+    {
+        if (!$request->hasHeader('zoneId')) {
+            return response()->json(
+                formated_response(constant: ZONE_ID_REQUIRED_403),
+                403
+            );
+        }
+
+        $zoneId = $request->header('zoneId');
+
+        $market = $this->marketService->findById($id, [
+            'marketInformation',
+            'openingHours',
+            'zone'
+        ]);
+
+        if ($market->zone_id !== $zoneId) {
+            return response()->json(
+                formated_response(constant: MARKET_NOT_FOUND_404),
+                404
+            );
+        }
+
+        return response()->json(formated_response(
+            MARKET_200,
+            new MarketResource($market)
+        ), 200);
+    }
+
+    /**
+     * Get paginated list of products available in a specific market
+     *
+     * @param string $id
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMarketProducts(string $id, Request $request): JsonResponse
+    {
+        if (!$request->hasHeader('zoneId')) {
+            return response()->json(
+                formated_response(constant: ZONE_ID_REQUIRED_403),
+                403
+            );
+        }
+
+        $zoneId = $request->header('zoneId');
+        $limit = (int) ($request->limit ?? pagination_limit());
+        $offset = (int) ($request->offset ?? 1);
+        $categoryId = $request->category_id;
+
+        $market = $this->marketService->findById($id);
+
+        if ($market->zone_id !== $zoneId) {
+            return response()->json(
+                formated_response(constant: MARKET_NOT_FOUND_404),
+                404
+            );
+        }
+
+        $products = $this->marketService->getMarketProducts(
+            marketId: $id,
+            categoryId: $categoryId,
+            limit: $limit,
+            offset: $offset
+        );
+
+        return response()->json(formated_response(
+            PRODUCT_200,
+            ProductResource::collection($products),
+            $limit,
+            $offset
+        ), 200);
+    }
 }

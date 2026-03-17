@@ -269,4 +269,37 @@ class MarketService
 
         return $query->paginate($limit, ['*'], 'page', $offset);
     }
+
+    /**
+     * Get products available in a specific market with pagination
+     *
+     * @param string $marketId
+     * @param string|null $categoryId
+     * @param int $limit
+     * @param int $offset
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getMarketProducts(
+        string $marketId,
+        ?string $categoryId = null,
+        int $limit = 15,
+        int $offset = 1
+    ): \Illuminate\Pagination\LengthAwarePaginator {
+        return \App\Models\ProductMarketPrice::with([
+            'product.category:id,name,slug,description,image_path,is_active,position',
+            'product.unit:id,name,symbol,unit_type,is_active',
+            'market:id,name'
+        ])
+        ->where('market_id', $marketId)
+        ->whereHas('product', function ($q) use ($categoryId) {
+            $q->where('status', 'active')
+              ->where('is_visible', true);
+
+            if ($categoryId) {
+                $q->where('category_id', $categoryId);
+            }
+        })
+        ->latest('price_date')
+        ->paginate($limit, ['*'], 'page', $offset);
+    }
 }

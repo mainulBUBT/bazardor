@@ -30,20 +30,20 @@ Route::middleware('auth:api')->prefix('users')->group(function () {
     Route::get('profile', [UserManagementController::class, 'profile']);
     Route::post('update-profile', [UserManagementController::class, 'updateProfile']);
     Route::post('logout', [AuthController::class, 'logout']);
-    
+
     Route::prefix('favorites')->group(function () {
         Route::get('list', [UserManagementController::class, 'listFavorites']);
         Route::post('add', [UserManagementController::class, 'addFavorite']);
         Route::delete('remove', [UserManagementController::class, 'removeFavorite']);
     });
-
-    Route::prefix('products')->group(function () {
-        Route::post('create', [UserManagementController::class, 'createProduct']);
-        Route::post('submit-price', [UserManagementController::class, 'submitPrice']);
-    });
 });
 
 // Public API
+Route::prefix('products')->group(function () {
+    Route::post('create', [UserManagementController::class, 'createProduct']);
+    Route::post('submit-price', [UserManagementController::class, 'submitPrice']);
+});
+
 Route::prefix('categories')->group(function () {
     Route::get('list', [CategoryMarketController::class, 'getCategoriesList']);
     Route::get('get-category', [CategoryMarketController::class, 'getCategory']);
@@ -58,7 +58,13 @@ Route::prefix('markets')->group(function () {
     Route::get('random-product-list', [CategoryMarketController::class, 'getRandomProductList']);
     Route::get('list', [CategoryMarketController::class, 'getMarketsList']);
     Route::get('compare', [CategoryMarketController::class, 'compareMarkets']);
+
     Route::get('compare-products', [CategoryMarketController::class, 'compareMarketProducts']);
+});
+
+Route::prefix('market')->group(function () {
+    Route::get('details/{id}', [CategoryMarketController::class, 'getMarketDetails']);
+    Route::get('products/{id}', [CategoryMarketController::class, 'getMarketProducts']);
 });
 
 Route::prefix('config')->group(function () {

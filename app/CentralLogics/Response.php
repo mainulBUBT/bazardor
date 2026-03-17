@@ -184,3 +184,13 @@ const MARKET_PRODUCTS_COMPARISON_200 = [
     'response_code' => 'market_products_comparison_200',
     'message' => 'Market products comparison retrieved successfully'
 ];
+
+const MARKET_NOT_FOUND_404 = [
+    'response_code' => 'market_not_found_404',
+    'message' => 'Market not found'
+];
+
+const MARKET_ID_REQUIRED_404 = [
+    'response_code' => 'market_id_required_404',
+    'message' => 'Market ID is required'
+];

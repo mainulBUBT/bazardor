@@ -125,7 +125,7 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Allow an authenticated user to submit a product price contribution.
+     * Allow anyone to submit a product price contribution.
      */
     public function submitPrice(Request $request): JsonResponse
     {
@@ -136,13 +136,16 @@ class UserManagementController extends Controller
             'proof_image' => ['nullable', 'image', 'max:2048'],
         ]);
 
+        $user = $request->user(); // null for anonymous users
+
         $result = $this->contributionService->submitPrice(
-            user: $request->user(),
+            user: $user,
             data: $validated,
             proof: $request->file('proof_image')
         );
 
-        if ($result['rate_limited']) {
+        // Only check rate limiting for authenticated users
+        if ($user && $result['rate_limited']) {
             return response()->json(
                 formated_response(
                     constant: PRICE_SUBMISSION_RATE_LIMITED_429,
@@ -168,28 +171,28 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Allow an authenticated user to create a product (pending admin approval).
-     * 
+     * Allow anyone to create a product (pending admin approval).
+     *
      * @param ProductStoreUpdateRequest $request
      * @return JsonResponse
      */
     public function createProduct(ProductStoreUpdateRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        
+
         // Override status and visibility for user-submitted products
         $validated['status'] = 'draft'; // Pending approval
         $validated['is_visible'] = false; // Hidden until approved
         $validated['is_featured'] = false;
         $validated['added_by'] = 'user';
-        $validated['added_by_id'] = $request->user()->id;
-        
+        $validated['added_by_id'] = $request->user()?->id; // null for anonymous users
+
         // Use ProductService to create the product
         $product = $this->productService->store($validated);
-        
+
         // Load relationships for resource
         $product->load(['category', 'unit']);
-        
+
         return response()->json(
             formated_response(
                 constant: PRODUCT_SUBMISSION_CREATED_200,
