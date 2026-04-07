@@ -129,24 +129,17 @@ class UserManagementController extends Controller
      */
     public function submitPrice(Request $request): JsonResponse
     {
-        // Handle "null" or "undefined" string usually sent by FormData in frontend
-        if (in_array($request->input('proof_image'), ['null', 'undefined'], true)) {
-            $request->merge(['proof_image' => null]);
-        }
-
         $validated = $request->validate([
             'product_id' => ['required', 'uuid', 'exists:products,id'],
             'market_id' => ['required', 'uuid', 'exists:markets,id'],
             'submitted_price' => ['required', 'numeric', 'min:0.01'],
-            'proof_image' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $user = $request->user(); // null for anonymous users
 
         $result = $this->contributionService->submitPrice(
             user: $user,
-            data: $validated,
-            proof: $request->file('proof_image')
+            data: $validated
         );
 
         // Only check rate limiting for authenticated users

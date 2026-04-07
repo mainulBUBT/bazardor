@@ -72,7 +72,7 @@ class ContributionService
     /**
      * Submit a price contribution with optional authentication.
      */
-    public function submitPrice(?User $user, array $data, ?UploadedFile $proof = null): array
+    public function submitPrice(?User $user, array $data): array
     {
         // Rate limiting only for authenticated users
         if ($user) {
@@ -92,20 +92,6 @@ class ContributionService
                     'contribution' => null,
                 ];
             }
-        } else {
-            // For anonymous users, no rate limiting
-            $lastContribution = null;
-        }
-
-        $proofPath = $lastContribution?->proof_image;
-
-        if ($proof) {
-            $proofPath = handle_file_upload(
-                dir: 'price-contributions',
-                format: $proof->getClientOriginalExtension(),
-                newFile: $proof,
-                oldFile: $lastContribution?->proof_image
-            );
         }
 
         // Build criteria for updateOrCreate
@@ -123,7 +109,6 @@ class ContributionService
             $criteria,
             [
                 'submitted_price' => $data['submitted_price'],
-                'proof_image' => $proofPath,
                 'status' => 'pending',
                 'user_id' => $user?->id, // null for anonymous submissions
             ]
