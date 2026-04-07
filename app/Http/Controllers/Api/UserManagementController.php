@@ -129,6 +129,11 @@ class UserManagementController extends Controller
      */
     public function submitPrice(Request $request): JsonResponse
     {
+        // Handle "null" or "undefined" string usually sent by FormData in frontend
+        if (in_array($request->input('proof_image'), ['null', 'undefined'], true)) {
+            $request->merge(['proof_image' => null]);
+        }
+
         $validated = $request->validate([
             'product_id' => ['required', 'uuid', 'exists:products,id'],
             'market_id' => ['required', 'uuid', 'exists:markets,id'],
