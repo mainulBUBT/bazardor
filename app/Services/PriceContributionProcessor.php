@@ -111,11 +111,13 @@ class PriceContributionProcessor
             foreach ($contributions as $contribution) {
                 $isValid = $valid->contains(fn (PriceContribution $item) => $item->id === $contribution->id);
 
-                $this->updateUserStatistics(
-                    userId: $contribution->user_id,
-                    isValid: $isValid,
-                    timestamp: $timestamp
-                );
+                if ($contribution->user_id) {
+                    $this->updateUserStatistics(
+                        userId: $contribution->user_id,
+                        isValid: $isValid,
+                        timestamp: $timestamp
+                    );
+                }
 
                 $historyPayload[] = [
                     'id' => $contribution->id,
