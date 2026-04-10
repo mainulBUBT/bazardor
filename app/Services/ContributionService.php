@@ -72,16 +72,24 @@ class ContributionService
     /**
      * Submit a price contribution with optional authentication.
      */
-    public function submitPrice(?User $user, array $data): array
+    public function submitPrice(?User $user, ?string $deviceId, array $data): array
     {
-        // Rate limiting only for authenticated users
-        if ($user) {
-            $lastContribution = $this->priceContribution
-                ->where('user_id', $user->id)
+        $rateLimitKey = $user?->id ?? $deviceId;
+
+        // Rate limiting for both authenticated and guest users
+        if ($rateLimitKey) {
+            $query = $this->priceContribution
                 ->where('product_id', $data['product_id'])
                 ->where('market_id', $data['market_id'])
-                ->latest('updated_at')
-                ->first();
+                ->latest('updated_at');
+
+            if ($user) {
+                $query->where('user_id', $user->id);
+            } else {
+                $query->where('device_id', $deviceId);
+            }
+
+            $lastContribution = $query->first();
 
             $lastSubmissionAt = $lastContribution?->updated_at ?? $lastContribution?->created_at;
 
@@ -100,9 +108,10 @@ class ContributionService
             'market_id' => $data['market_id'],
         ];
 
-        // Only include user_id in criteria if user is authenticated
         if ($user) {
             $criteria['user_id'] = $user->id;
+        } elseif ($deviceId) {
+            $criteria['device_id'] = $deviceId;
         }
 
         $contribution = $this->priceContribution->updateOrCreate(
@@ -110,7 +119,8 @@ class ContributionService
             [
                 'submitted_price' => $data['submitted_price'],
                 'status' => 'pending',
-                'user_id' => $user?->id, // null for anonymous submissions
+                'user_id' => $user?->id,
+                'device_id' => $user ? null : $deviceId,
             ]
         )->fresh();
 

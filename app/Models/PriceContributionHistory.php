@@ -17,6 +17,7 @@ class PriceContributionHistory extends Model
         'product_id',
         'market_id',
         'user_id',
+        'device_id',
         'submitted_price',
         'proof_image',
         'status',

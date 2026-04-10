@@ -133,17 +133,20 @@ class UserManagementController extends Controller
             'product_id' => ['required', 'uuid', 'exists:products,id'],
             'market_id' => ['required', 'uuid', 'exists:markets,id'],
             'submitted_price' => ['required', 'numeric', 'min:0.01'],
+            'device_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         $user = $request->user(); // null for anonymous users
+        $deviceId = $request->attributes->get('device_id') ?? $validated['device_id'] ?? null;
 
         $result = $this->contributionService->submitPrice(
             user: $user,
+            deviceId: $deviceId,
             data: $validated
         );
 
-        // Only check rate limiting for authenticated users
-        if ($user && $result['rate_limited']) {
+        // Rate limiting applies to both authenticated and guest users
+        if ($result['rate_limited']) {
             return response()->json(
                 formated_response(
                     constant: PRICE_SUBMISSION_RATE_LIMITED_429,
@@ -184,6 +187,8 @@ class UserManagementController extends Controller
         $validated['is_featured'] = false;
         $validated['added_by'] = 'user';
         $validated['added_by_id'] = $request->user()?->id; // null for anonymous users
+        $validated['device_id'] = $request->attributes->get('device_id')
+                             ?? $request->input('device_id');
 
         // Use ProductService to create the product
         $product = $this->productService->store($validated);

@@ -15,6 +15,11 @@ const BANNER_LIST_200 = [
     'message' => 'Banner list retrieved successfully'
 ];
 
+const UNIT_LIST_200 = [
+    'response_code' => 'unit_list_200',
+    'message' => 'Unit list retrieved successfully'
+];
+
 const AUTH_LOGIN_200 = [
     'response_code' => 'auth_login_200',
     'message' => 'Login successful'

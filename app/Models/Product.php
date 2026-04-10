@@ -38,6 +38,7 @@ class Product extends Model
         'country_of_origin',
         'added_by',
         'added_by_id',
+        'device_id',
     ];
 
     /**

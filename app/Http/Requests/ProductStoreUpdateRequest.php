@@ -21,7 +21,7 @@ class ProductStoreUpdateRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'unit_id' => 'required|exists:units,id',
             'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive,draft',
+            'status' => 'nullable|in:active,inactive,draft',
             'is_visible' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',

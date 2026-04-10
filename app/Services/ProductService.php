@@ -82,6 +82,9 @@ class ProductService
                 'brand' => $data['brand'] ?? null,
                 'base_price' => $data['base_price'] ?? 0,
                 'country_of_origin' => $data['country_of_origin'] ?? null,
+                'added_by' => $data['added_by'] ?? 'admin',
+                'added_by_id' => $data['added_by_id'] ?? null,
+                'device_id' => $data['device_id'] ?? null,
             ]);
 
             // Create price threshold if provided

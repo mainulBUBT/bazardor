@@ -106,7 +106,7 @@
                             <tr>
                                 <td>{{ $loop->iteration + ($contributions->currentPage() - 1) * $contributions->perPage() }}</td>
                                 <td>
-                                    <strong>{{ $contribution->user?->name ?? translate('messages.Anonymous') }}</strong>
+                                    <strong>{{ $contribution->user?->name ?? ($contribution->device_id ? 'Guest ' . Str::substr($contribution->device_id, 0, 8) . '...' : translate('messages.Anonymous')) }}</strong>
                                     <div class="small text-muted">{{ $contribution->user?->email }}</div>
                                 </td>
                                 <td>{{ $contribution->market?->name ?? translate('messages.Unknown Market') }}</td>

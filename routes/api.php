@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserManagementController;
 use App\Http\Controllers\Api\ConfigController;
+use App\Http\Controllers\Api\UnitController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,7 +40,7 @@ Route::middleware('auth:api')->prefix('users')->group(function () {
 });
 
 // Public API
-Route::prefix('products')->group(function () {
+Route::middleware('guest-track')->prefix('products')->group(function () {
     Route::post('create', [UserManagementController::class, 'createProduct']);
     Route::post('submit-price', [UserManagementController::class, 'submitPrice']);
 });
@@ -70,4 +71,8 @@ Route::prefix('market')->group(function () {
 Route::prefix('config')->group(function () {
     Route::get('/', [ConfigController::class, 'getConfig']);
     Route::get('get-zone', [ConfigController::class, 'getZone']);
+});
+
+Route::prefix('units')->group(function () {
+    Route::get('list', [UnitController::class, 'getUnitsList']);
 });

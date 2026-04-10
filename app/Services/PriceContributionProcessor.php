@@ -124,6 +124,7 @@ class PriceContributionProcessor
                     'product_id' => $contribution->product_id,
                     'market_id' => $contribution->market_id,
                     'user_id' => $contribution->user_id,
+                    'device_id' => $contribution->device_id,
                     'submitted_price' => $contribution->submitted_price,
                     'proof_image' => $contribution->proof_image,
                     'status' => $isValid ? 'validated' : 'invalid',

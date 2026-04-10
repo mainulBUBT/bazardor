@@ -122,7 +122,7 @@
                                 <tbody>
                                     @foreach ($pendingContributions as $contribution)
                                         <tr>
-                                            <td>{{ Str::limit($contribution->user?->name ?? 'Anonymous', 15) }}</td>
+                                            <td>{{ Str::limit($contribution->user?->name ?? ($contribution->device_id ? 'Guest ' . Str::substr($contribution->device_id, 0, 8) . '...' : 'Anonymous'), 15) }}</td>
                                             <td>{{ Str::limit($contribution->product?->name ?? 'N/A', 20) }}</td>
                                             <td>{{ Str::limit($contribution->market?->name ?? 'N/A', 20) }}</td>
                                             <td class="text-right">{{ number_format($contribution->submitted_price, 2) }}</td>
