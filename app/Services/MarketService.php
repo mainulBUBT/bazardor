@@ -285,21 +285,28 @@ class MarketService
         int $limit = 15,
         int $offset = 1
     ): \Illuminate\Pagination\LengthAwarePaginator {
-        return \App\Models\ProductMarketPrice::with([
-            'product.category:id,name,slug,description,image_path,is_active,position',
-            'product.unit:id,name,symbol,unit_type,is_active',
-            'market:id,name'
-        ])
-        ->where('market_id', $marketId)
-        ->whereHas('product', function ($q) use ($categoryId) {
-            $q->where('status', 'active')
-              ->where('is_visible', true);
-
-            if ($categoryId) {
-                $q->where('category_id', $categoryId);
+        return \App\Models\Product::with([
+            'category:id,name,slug,description,image_path,is_active,position',
+            'unit:id,name,symbol,unit_type,is_active',
+            'marketPrices' => function ($query) use ($marketId) {
+                $query->where('market_id', $marketId)->latest('price_date');
             }
+        ])
+        ->whereHas('marketPrices', function ($query) use ($marketId) {
+            $query->where('market_id', $marketId);
         })
-        ->latest('price_date')
+        ->active()
+        ->visible()
+        ->when($categoryId, function ($query) use ($categoryId) {
+            $query->where('category_id', $categoryId);
+        })
+        ->orderByDesc(
+            \App\Models\ProductMarketPrice::select('price_date')
+                ->whereColumn('product_id', 'products.id')
+                ->where('market_id', $marketId)
+                ->latest('price_date')
+                ->limit(1)
+        )
         ->paginate($limit, ['*'], 'page', $offset);
     }
 }
