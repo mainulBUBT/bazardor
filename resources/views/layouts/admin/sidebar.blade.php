@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon">
             @php
                 $logo = \App\Models\Setting::where('key_name', 'company_logo')->first();
-                $logoPath = $logo && isset($logo->value) ? asset('public/storage/company/'.$logo->value) : null;
+                $logoPath = $logo && isset($logo->value) ? asset('storage/company/'.$logo->value) : null;
             @endphp
             @if($logoPath)
                 <img src="{{ $logoPath }}" alt="Logo" style="max-height: 40px; max-width: 40px; object-fit: contain;">

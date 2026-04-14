@@ -205,7 +205,7 @@
                         <div class="image-preview-container mb-3" style="cursor: pointer;" onclick="document.getElementById('marketImage').click();">
                             <div class="image-preview" id="imagePreview">
                                 @if($market->image_path)
-                                    <img src="{{ asset('public/storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-fluid" style="max-height: 160px; border-radius: 8px;">
+                                    <img src="{{ asset('storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-fluid" style="max-height: 160px; border-radius: 8px;">
                                 @else
                                     <i class="fas fa-camera fa-2x text-secondary"></i>
                                     <div class="mt-2">{{ translate('messages.Click to Upload Image') }}</div>

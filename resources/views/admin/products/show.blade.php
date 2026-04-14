@@ -78,7 +78,7 @@
             </div>
             <div class="card-body text-center">
                 @if($product->image_path)
-                    <img src="{{ asset('public/storage/products/'.$product->image_path) }}" alt="Product Image" class="img-fluid img-thumbnail mb-2" style="max-width: 220px; max-height: 220px;">
+                    <img src="{{ asset('storage/products/'.$product->image_path) }}" alt="Product Image" class="img-fluid img-thumbnail mb-2" style="max-width: 220px; max-height: 220px;">
                 @else
                     <img src="{{ asset('adminpanel/img/product-placeholder.png') }}" class="img-fluid img-thumbnail mb-2" style="max-width: 220px; max-height: 220px;" alt="placeholder">
                 @endif

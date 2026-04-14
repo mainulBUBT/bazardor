@@ -110,7 +110,7 @@
                                 <td>{{ $product->id }}</td>
                                 <td>
                                     @if($product->image_path)
-                                        <img src="{{ asset('public/storage/products/'.$product->image_path) }}" alt="{{ $product->name }}" class="img-fluid img-thumbnail" width="60">
+                                        <img src="{{ asset('storage/products/'.$product->image_path) }}" alt="{{ $product->name }}" class="img-fluid img-thumbnail" width="60">
                                     @else
                                         <img src="{{ asset('adminpanel/img/product-placeholder.png') }}" class="img-fluid img-thumbnail" width="60" alt="placeholder">
                                     @endif

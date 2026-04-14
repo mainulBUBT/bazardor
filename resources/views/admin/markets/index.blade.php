@@ -119,9 +119,9 @@
                         <td class="text-center">
                             <div class="market-thumbnail">
                                 @if($market->image_path)
-                                    <img src="{{ asset('public/storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <img src="{{ asset('storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                                 @else
-                                    <img src="{{ asset('public/storage/markets/default.png') }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <img src="{{ asset('storage/markets/default.png') }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                                 @endif
                             </div>
                         </td>

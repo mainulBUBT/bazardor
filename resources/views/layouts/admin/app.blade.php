@@ -17,7 +17,7 @@
             }
 
             $faviconPath = is_string($faviconValue) && $faviconValue !== ''
-                ? asset('public/storage/company/' . ltrim($faviconValue, '/'))
+                ? asset('storage/company/' . ltrim($faviconValue, '/'))
                 : null;
         @endphp
 
@@ -29,11 +29,11 @@
         @endif
 
         <!-- Custom fonts for this template-->
-        <link href="{{ asset('public/assets/admin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ asset('assets/admin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
         <!-- Custom styles for this template-->
-        <link href="{{ asset('public/assets/admin/css/sb-admin-2.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/admin/css/sb-admin-2.min.css') }}" rel="stylesheet">
         <!-- Leaflet CSS -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
         <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.css" />
@@ -67,13 +67,13 @@
                 margin-top: auto;
             }
         </style>
-        <link href="{{ asset('public/assets/admin/css/custom.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/admin/css/custom.css') }}" rel="stylesheet">
         <!-- Toastr CSS -->
-        <link href="{{ asset('public/assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>  
+        <link href="{{ asset('assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>  
         <!-- SweetAlert2 CSS -->
-        <link href="{{ asset('public/assets/admin/vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('assets/admin/vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"/>
         <!-- Select2 CSS -->
-        <link href="{{ asset('public/assets/admin/vendor/select2/select2.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('assets/admin/vendor/select2/select2.min.css') }}" rel="stylesheet" />
     @stack('styles')
     </head>
     <body id="page-top">
@@ -122,7 +122,7 @@
         @include('layouts.admin.logout-modal')
 
         <!-- Bootstrap core JavaScript-->
-        <script src="{{ asset('public/assets/admin/vendor/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/admin/vendor/jquery/jquery.min.js') }}"></script>
         <!-- Page level custom scripts -->
     <script src="{{ asset('assets/admin/js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('assets/admin/js/demo/chart-pie-demo.js') }}"></script>
@@ -131,19 +131,19 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.umd.js"></script>
         <!-- Select2 JS -->
-        <script src="{{ asset('public/assets/admin/vendor/select2/select2.min.js') }}"></script>
-        <script src="{{ asset('public/assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('assets/admin/vendor/select2/select2.min.js') }}"></script>
+        <script src="{{ asset('assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
         <!-- Core plugin JavaScript-->
-        <script src="{{ asset('public/assets/admin/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+        <script src="{{ asset('assets/admin/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
         <!-- Custom scripts for all pages-->
-        <script src="{{ asset('public/assets/admin/js/sb-admin-2.min.js') }}"></script>
+        <script src="{{ asset('assets/admin/js/sb-admin-2.min.js') }}"></script>
 
         <!-- Toastr JS -->
-        <script src="{{ asset('public/assets/admin/vendor/toastr/toastr.js') }}"></script>
+        <script src="{{ asset('assets/admin/vendor/toastr/toastr.js') }}"></script>
         <!-- SweetAlert2 JS -->
-        <script src="{{ asset('public/assets/admin/vendor/sweetalert2/sweetalert2.min.js') }}"></script>
+        <script src="{{ asset('assets/admin/vendor/sweetalert2/sweetalert2.min.js') }}"></script>
         {!! Toastr::message() !!}
 
         <script>

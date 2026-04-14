@@ -99,7 +99,7 @@
                         @forelse ($banners as $banner)
                         <tr>
                             <td>{{ $banner->id }}</td>
-                            <td><img src="{{ asset('public/storage/' . $banner->image_path) }}" alt="Banner" class="banner-image"></td>
+                            <td><img src="{{ asset('storage/' . $banner->image_path) }}" alt="Banner" class="banner-image"></td>
                             <td>{{ $banner->title }}</td>
                             <td>
                                 @if($banner->type === 'featured')

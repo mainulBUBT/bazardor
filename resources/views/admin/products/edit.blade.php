@@ -143,7 +143,7 @@
                     <div class="image-preview-container mb-3" onclick="document.getElementById('productImageInput').click();">
                         <div class="image-preview" id="imagePreview">
                             @if($product->image_path)
-                                <img src="{{ asset('public/storage/products/'.$product->image_path) }}" alt="Product Image" style="max-width:100%;max-height:180px;">
+                                <img src="{{ asset('storage/products/'.$product->image_path) }}" alt="Product Image" style="max-width:100%;max-height:180px;">
                             @else
                                 <i class="fas fa-camera"></i>
                                 <span>{{ translate('messages.Click to Upload Image') }}</span>

@@ -110,9 +110,9 @@
                             <td>{{ $category->slug }}</td>
                             <td>
                                 @if($category->image_path)
-                                    <img src="{{ asset('public/storage/categories/' . $category->image_path) }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
+                                    <img src="{{ asset('storage/categories/' . $category->image_path) }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
                                 @else
-                                    <img src="{{ asset('public/storage/categories/default.png') }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
+                                    <img src="{{ asset('storage/categories/default.png') }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
                                 @endif
                             </td>   
                             <td>

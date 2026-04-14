@@ -26,15 +26,15 @@
     @endif
 
     <!-- Custom fonts for this template-->
-    <link href="{{ asset('public/assets/admin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/admin/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="{{ asset('public/assets/admin/css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin/css/sb-admin-2.min.css') }}" rel="stylesheet">
     <!-- Custom styles for login page -->
-    <link href="{{ asset('public/assets/admin/css/custom.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin/css/custom.css') }}" rel="stylesheet">
     <!-- Toastr CSS -->
-    <link href="{{ asset('public/assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>
     
     <!-- Google reCAPTCHA v3 (only if configured) -->
     @if(isset($recaptchaSiteKey) && $recaptchaSiteKey && ($recaptchaEnabled ?? false))
@@ -67,7 +67,7 @@
                     <div class="brand-logo-wrapper">
                        @php
                         $logo = \App\Models\Setting::where('key_name', 'company_logo')->first();
-                        $logoPath = $logo && isset($logo->value) ? asset('public/storage/company/'.$logo->value) : null;
+                        $logoPath = $logo && isset($logo->value) ? asset('storage/company/'.$logo->value) : null;
                         @endphp
                         @if($logoPath)
                             <img src="{{ $logoPath }}" alt="Logo" style="max-height: 40px; max-width: 40px; object-fit: contain;">
@@ -188,17 +188,17 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('public/assets/admin/vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('public/assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="{{ asset('public/assets/admin/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="{{ asset('public/assets/admin/js/sb-admin-2.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/sb-admin-2.min.js') }}"></script>
     
     <!-- Toastr JS -->
-    <script src="{{ asset('public/assets/admin/vendor/toastr/toastr.js') }}"></script>
+    <script src="{{ asset('assets/admin/vendor/toastr/toastr.js') }}"></script>
     {!! Toastr::message() !!}
 
     <!-- Custom Login Scripts -->
