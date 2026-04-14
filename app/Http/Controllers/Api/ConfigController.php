@@ -66,7 +66,7 @@ class ConfigController extends Controller
 
         $configList = [
             'business_name' => $generalSettings['company_name'] ?? null,
-            'logo' => $generalSettings['company_logo'] ?? null,
+            'logo' => isset($generalSettings['company_logo']) ? get_image_url($generalSettings['company_logo'], 'company') : null,
             'address' => $generalSettings['company_address'] ?? null,
             'phone' => $generalSettings['company_phone'] ?? null,
             'email' => $generalSettings['company_email'] ?? null,

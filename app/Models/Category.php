@@ -61,6 +61,14 @@ class Category extends Model
     }
 
     /**
+     * Get the full URL for the category's image.
+     */
+    public function getImageFullUrlAttribute(): string
+    {
+        return get_image_url($this->image_path, 'categories');
+    }
+
+    /**
      * Scope a query to only include active categories.
      */
     public function scopeActive($query)

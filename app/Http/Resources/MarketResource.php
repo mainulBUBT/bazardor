@@ -18,7 +18,7 @@ class MarketResource extends JsonResource
             'slug' => $this->slug,
             'type' => $this->type,
             'description' => $this->description,
-            'image_path' => $this->image_path,
+            'image_path' => $this->image_full_url,
             'address' => $this->address,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,

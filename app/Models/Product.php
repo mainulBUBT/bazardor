@@ -146,6 +146,14 @@ class Product extends Model
         return $this->morphOne(\App\Models\EntityCreator::class, 'creatable');
     }
 
+    /**
+     * Get the full URL for the product's image.
+     */
+    public function getImageFullUrlAttribute(): string
+    {
+        return get_image_url($this->image_path, 'products');
+    }
+
     protected static function booted(): void
     {
         static::created(function (Product $product) {

@@ -127,3 +127,28 @@ if (!function_exists('format_coordiantes')) {
         return $data;
     }
 }
+if (!function_exists('get_image_url')) {
+    function get_image_url($path, $type): string
+    {
+        if (empty($path)) {
+            return asset('assets/img/placeholder.png');
+        }
+        
+        // Handle cases where path might already be a full URL
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        $dir = match ($type) {
+            'markets' => 'markets/',
+            'categories' => 'categories/',
+            'banners' => 'banners/',
+            'products' => 'products/',
+            'company' => 'company/',
+            'profile' => 'profile/',
+            default => '',
+        };
+
+        return asset('storage/' . $dir . $path);
+    }
+}

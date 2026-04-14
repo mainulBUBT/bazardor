@@ -88,4 +88,12 @@ class Banner extends Model
     {
         return $this->belongsTo(Zone::class);
     }
+
+    /**
+     * Get the full URL for the banner's image.
+     */
+    public function getImageFullUrlAttribute(): string
+    {
+        return get_image_url($this->image_path, 'banners');
+    }
 }

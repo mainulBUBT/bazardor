@@ -233,6 +233,14 @@ class Market extends Model
     }
 
     /**
+     * Get the full URL for the market's image.
+     */
+    public function getImageFullUrlAttribute(): string
+    {
+        return get_image_url($this->image_path, 'markets');
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot()
