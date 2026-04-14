@@ -253,7 +253,7 @@ class CategoryMarketController extends Controller
 
         return response()->json(formated_response(
             MARKET_PRODUCTS_COMPARISON_200,
-            ProductComparisonResource::collection($comparisonProducts->items()),
+            ProductComparisonResource::collection($comparisonProducts),
             $limit,
             $offset
         ), 200);
