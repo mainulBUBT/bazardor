@@ -282,6 +282,7 @@ class MarketService
     public function getMarketProducts(
         string $marketId,
         ?string $categoryId = null,
+        ?string $search = null,
         int $limit = 15,
         int $offset = 1
     ): \Illuminate\Pagination\LengthAwarePaginator {
@@ -299,6 +300,9 @@ class MarketService
         ->visible()
         ->when($categoryId, function ($query) use ($categoryId) {
             $query->where('category_id', $categoryId);
+        })
+        ->when($search, function ($query) use ($search) {
+            $query->where('name', 'like', "%{$search}%");
         })
         ->orderByDesc(
             \App\Models\ProductMarketPrice::select('price_date')

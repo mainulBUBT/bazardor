@@ -316,6 +316,7 @@ class CategoryMarketController extends Controller
         $limit = (int) ($request->limit ?? pagination_limit());
         $offset = (int) ($request->offset ?? 1);
         $categoryId = $request->category_id;
+        $search = $request->q;
 
         $market = $this->marketService->findById($id);
 
@@ -329,6 +330,7 @@ class CategoryMarketController extends Controller
         $products = $this->marketService->getMarketProducts(
             marketId: $id,
             categoryId: $categoryId,
+            search: $search,
             limit: $limit,
             offset: $offset
         );
