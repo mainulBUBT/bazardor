@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductTag;
 use App\Models\EntityCreator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProductService
 {
@@ -68,8 +69,12 @@ class ProductService
             }
             unset($data['image']);
 
+            // Generate unique slug from name
+            $slug = Str::slug($data['name']) . '-' . Str::uuid();
+
             $product = $this->product->create([
                 'name' => $data['name'],
+                'slug' => $slug,
                 'category_id' => $data['category_id'],
                 'unit_id' => $data['unit_id'],
                 'description' => $data['description'] ?? null,
@@ -143,8 +148,16 @@ class ProductService
             }
             unset($data['image']);
 
+            // Regenerate slug if name changed
+            if (isset($data['name']) && $data['name'] !== $product->name) {
+                $slug = Str::slug($data['name']) . '-' . Str::uuid();
+            } else {
+                $slug = $product->slug;
+            }
+
             $product->update([
                 'name' => $data['name'] ?? $product->name,
+                'slug' => $slug,
                 'category_id' => $data['category_id'] ?? $product->category_id,
                 'unit_id' => $data['unit_id'] ?? $product->unit_id,
                 'description' => $data['description'] ?? $product->description,
