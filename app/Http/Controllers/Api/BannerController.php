@@ -11,7 +11,7 @@ class BannerController extends Controller
 {
     public function __construct(protected BannerService $bannerService)
     {
-        
+
     }
     public function getBannersList(Request $request)
     {

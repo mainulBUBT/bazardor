@@ -16,7 +16,7 @@ class CategoryMarketResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'image_path' => $this->image_path,
+            'image_path' => $this->image_full_url,
             'position' => $this->position,
             'is_active' => (bool) $this->is_active,
             'unique_market_count' => (int) $this->unique_market_count,

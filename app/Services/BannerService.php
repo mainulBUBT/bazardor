@@ -11,7 +11,7 @@ class BannerService
 {
     public function __construct(private Banner $banner)
     {
-        
+
     }
 
     /**
@@ -61,12 +61,12 @@ class BannerService
     {
         // Handle file uploads
         if (isset($data['image']) && $data['image']->isValid()) {
-            $data['image_path'] = handle_file_upload('banners/', $data['image']->getClientOriginalExtension());
+            $data['image_path'] = handle_file_upload('banners/', $data['image']->getClientOriginalExtension(), $data['image']);
         }
         unset($data['image']);
-        
+
         $this->banner->title = $data['title'];
-        $this->banner->image_path = $data['image_path'];
+        $this->banner->image_path = $data['image_path'] ?? null;
         $this->banner->url = $data['url'] ?? null;
         $this->banner->type = $data['type'] ?? 'general';
         $this->banner->description = $data['description'] ?? null;
@@ -97,12 +97,14 @@ class BannerService
      */
     public function update(Banner $banner, array $data): Banner
     {
+        $oldImagePath = $banner->image_path;
+
         if (isset($data['image']) && $data['image']->isValid()) {
-            $data['image_path'] = handle_file_upload('banners/', $data['image']->getClientOriginalExtension());
+            $data['image_path'] = handle_file_upload('banners/', $data['image']->getClientOriginalExtension(), $data['image'], $oldImagePath);
         }
         unset($data['image']);
         $banner->title = $data['title'];
-        $banner->image_path = $data['image_path'];
+        $banner->image_path = $data['image_path'] ?? $banner->image_path;
         $banner->url = $data['url'] ?? null;
         $banner->type = $data['type'] ?? 'general';
         $banner->description = $data['description'] ?? null;
@@ -151,7 +153,7 @@ class BannerService
         $banner->is_active = $status;
         $banner->save();
     }
-    
+
     /**
      * Summary of findById
      * @param int|string $bannerId
@@ -160,5 +162,5 @@ class BannerService
     public function findById(int|string $bannerId): Banner
     {
         return $this->banner->findOrFail($bannerId);
-    }   
+    }
 }

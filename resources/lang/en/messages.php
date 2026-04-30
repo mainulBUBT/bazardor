@@ -1287,4 +1287,5 @@
   'Ready to Leave?' => 'Ready to Leave ',
   'Are you sure you want to logout?' => 'Are you sure you want to logout ',
   'You will need to login again to access the admin panel.' => 'You will need to login again to access the admin panel.',
+  'Action' => 'Action',
 );
