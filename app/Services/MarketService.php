@@ -286,9 +286,10 @@ class MarketService
         int $limit = 15,
         int $offset = 1
     ): \Illuminate\Pagination\LengthAwarePaginator {
-        return \App\Models\Product::with([
+        $paginator = \App\Models\Product::with([
             'category:id,name,slug,description,image_path,is_active,position',
             'unit:id,name,symbol,unit_type,is_active',
+            'priceThreshold',
             'marketPrices' => function ($query) use ($marketId) {
                 $query->where('market_id', $marketId)->latest('price_date');
             }
@@ -312,5 +313,29 @@ class MarketService
                 ->limit(1)
         )
         ->paginate($limit, ['*'], 'page', $offset);
+
+        $paginator->getCollection()->transform(function ($product) {
+            $prices   = $product->marketPrices; // ordered by price_date desc
+            $current  = $prices->get(0);
+            $previous = $prices->get(1);
+
+            if ($current && $previous) {
+                $curr  = (float) $current->price;
+                $prev  = (float) $previous->price;
+                $trend = $curr > $prev ? 'up' : ($curr < $prev ? 'down' : 'stable');
+                $current->setAttribute('price_trend', $trend);
+                $current->setAttribute('previous_price', $prev);
+                $current->setAttribute('change_amount', round($curr - $prev, 2));
+            } elseif ($current) {
+                $current->setAttribute('price_trend', 'stable');
+                $current->setAttribute('previous_price', null);
+                $current->setAttribute('change_amount', null);
+            }
+
+            $product->setRelation('marketPrices', $current ? collect([$current]) : collect());
+            return $product;
+        });
+
+        return $paginator;
     }
 }

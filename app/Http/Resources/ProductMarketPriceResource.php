@@ -19,6 +19,9 @@ class ProductMarketPriceResource extends JsonResource
             'id' => $this->id,
             'price' => (float) $this->price,
             'discount_price' => $this->discount_price !== null ? (float) $this->discount_price : null,
+            'price_trend' => $this->price_trend,
+            'previous_price' => $this->previous_price !== null ? (float) $this->previous_price : null,
+            'change_amount' => $this->change_amount !== null ? (float) $this->change_amount : null,
             'price_date' => $priceDate?->toISOString(),
             'last_update' => $lastUpdate,
             'market' => $this->whenLoaded('market', function () {

@@ -22,6 +22,13 @@ class ProductResource extends JsonResource
             'is_featured' => (bool) $this->is_featured,
             'brand' => $this->brand,
             'country_of_origin' => $this->country_of_origin,
+            'base_price' => $this->base_price !== null ? (float) $this->base_price : null,
+            'price_range' => $this->whenLoaded('priceThreshold', function () {
+                return $this->priceThreshold ? [
+                    'min' => (float) $this->priceThreshold->min_price,
+                    'max' => (float) $this->priceThreshold->max_price,
+                ] : null;
+            }),
             'category' => CategoryResource::make(
                 $this->whenLoaded('category')
             ),

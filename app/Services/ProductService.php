@@ -256,6 +256,7 @@ class ProductService
             ->with([
                 'category:id,name,slug,description,image_path,is_active,position',
                 'unit:id,name,symbol,unit_type,is_active',
+                'priceThreshold',
                 'marketPrices' => function ($query) use ($zoneId) {
                     $query
                         ->select('id', 'product_id', 'market_id', 'price', 'discount_price', 'price_date')
@@ -266,8 +267,7 @@ class ProductService
                                 ->where('visibility', 1);
                         })
                         ->with(['market:id,name'])
-                        ->orderBy('price')
-                        ->limit(1);
+                        ->orderBy('price_date', 'desc');
                 },
             ])
             ->active()
@@ -276,14 +276,35 @@ class ProductService
             ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
 
         $paginator->getCollection()->transform(function ($product) {
-            $marketPrices = $product->marketPrices
-                ->sortBy(function ($price) {
-                    return (float) $price->price;
-                })
-                ->take(1)
-                ->values();
+            $byMarket = $product->marketPrices->groupBy('market_id');
 
-            $product->setRelation('marketPrices', $marketPrices);
+            // Latest price per market (first entry = most recent due to price_date desc)
+            $latestPerMarket = $byMarket->map(fn($entries) => $entries->first());
+
+            // Pick a random market for this product
+            $selected = $latestPerMarket->shuffle()->first();
+
+            if ($selected) {
+                $history  = $byMarket->get($selected->market_id);
+                $previous = $history?->get(1); // second entry = previous record for same market
+
+                if ($previous) {
+                    $curr  = (float) $selected->price;
+                    $prev  = (float) $previous->price;
+                    $trend = $curr > $prev ? 'up' : ($curr < $prev ? 'down' : 'stable');
+                    $selected->setAttribute('price_trend', $trend);
+                    $selected->setAttribute('previous_price', $prev);
+                    $selected->setAttribute('change_amount', round($curr - $prev, 2));
+                } else {
+                    $selected->setAttribute('price_trend', 'stable');
+                    $selected->setAttribute('previous_price', null);
+                    $selected->setAttribute('change_amount', null);
+                }
+
+                $product->setRelation('marketPrices', collect([$selected]));
+            } else {
+                $product->setRelation('marketPrices', collect());
+            }
 
             return $product;
         });
