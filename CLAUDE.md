@@ -23,7 +23,7 @@ npm run dev          # watch + HMR
 php artisan roles:setup
 
 # Process pending price contributions against thresholds
-php artisan contributions:process
+php artisan price-contributions:process
 
 # After any config/.env change
 php artisan config:clear && php artisan cache:clear
@@ -153,12 +153,18 @@ All app configuration lives in the `settings` table as JSON rows (`key_name`, `v
 
 ### Price contribution flow
 
-1. `POST /api/products/submit-price` → row in `price_contributions` (status `pending`)
-2. `php artisan contributions:process` validates against `price_thresholds.min_price / max_price`
-3. Approved → `product_market_prices` updated, row archived to `price_contributions_history`
-4. Admin can manually override at `/admin/contributions`
+**Path A — automated processor (primary):**
+1. `POST /api/products/submit-price` → `price_contributions` row (`status = pending`). Rate-limited to 1 submission/hour per user or device per product+market pair (`PRICE_SUBMISSION_RATE_LIMITED_429`).
+2. `php artisan price-contributions:process` groups all pending rows by `(product_id, market_id)` and, inside a DB transaction per group:
+   - Checks `price_thresholds.min_price / max_price` for the product. If no threshold exists, all positive prices pass.
+   - **Valid** contributions: `AVG(submitted_price)` → `updateOrCreate` on `product_market_prices`.
+   - All contributions (valid + invalid) are bulk-inserted into `price_contributions_history` (`status = validated | invalid`) and then **hard-deleted** from `price_contributions`.
+   - `user_statistics.reputation_score` is incremented (+1 valid / -1 invalid) for each authenticated contributor.
+3. The command is **not yet scheduled** — it must be run manually or added to the cron via `routes/console.php`.
 
-Price submission is rate-limited: the `PRICE_SUBMISSION_RATE_LIMITED_429` constant covers this case.
+**Path B — admin manual override:**
+- Admin sets `status = approved | rejected` via `/admin/contributions` (`ContributionController`).
+- This only changes the status column — it does **not** update `product_market_prices` or archive to history. The automated processor handles archiving when it next runs.
 
 ### Polymorphic relations
 

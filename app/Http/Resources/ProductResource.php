@@ -29,6 +29,7 @@ class ProductResource extends JsonResource
                     'max' => (float) $this->priceThreshold->max_price,
                 ] : null;
             }),
+            'zone_price_range' => $this->resource->getAttribute('zone_price_range'),
             'category' => CategoryResource::make(
                 $this->whenLoaded('category')
             ),

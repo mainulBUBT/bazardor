@@ -81,7 +81,21 @@ class PriceContributionProcessor
                 ->where('product_id', $productId)
                 ->first();
 
-            [$valid, $invalid] = $this->partitionContributions($contributions, $threshold);
+            // Zone-scoped prices for IQR validation (one extra query per group)
+            $zoneId = DB::table('markets')->where('id', $marketId)->value('zone_id');
+            $zonePrices = collect();
+            if ($zoneId) {
+                $zonePrices = DB::table('product_market_prices')
+                    ->join('markets', 'markets.id', '=', 'product_market_prices.market_id')
+                    ->where('product_market_prices.product_id', $productId)
+                    ->where('markets.zone_id', $zoneId)
+                    ->orderBy('product_market_prices.price')
+                    ->pluck('product_market_prices.price')
+                    ->map(fn($p) => (float) $p)
+                    ->values();
+            }
+
+            [$valid, $invalid] = $this->partitionContributions($contributions, $threshold, $zonePrices);
 
             $timestamp = CarbonImmutable::now();
 
@@ -104,6 +118,7 @@ class PriceContributionProcessor
                     );
 
                 $priceUpdated = true;
+                $this->recalibrateThreshold($productId);
             }
 
             $historyPayload = [];
@@ -150,13 +165,16 @@ class PriceContributionProcessor
         });
     }
 
-    private function partitionContributions(EloquentCollection $contributions, ?PriceThreshold $threshold): array
-    {
-        $valid = new Collection();
+    private function partitionContributions(
+        EloquentCollection $contributions,
+        ?PriceThreshold $threshold,
+        Collection $zonePrices
+    ): array {
+        $valid   = new Collection();
         $invalid = new Collection();
 
         foreach ($contributions as $contribution) {
-            if ($this->isContributionRealistic($contribution, $threshold)) {
+            if ($this->isContributionRealistic($contribution, $threshold, $zonePrices)) {
                 $valid->push($contribution);
             } else {
                 $invalid->push($contribution);
@@ -166,18 +184,72 @@ class PriceContributionProcessor
         return [$valid, $invalid];
     }
 
-    private function isContributionRealistic(PriceContribution $contribution, ?PriceThreshold $threshold): bool
-    {
+    private function isContributionRealistic(
+        PriceContribution $contribution,
+        ?PriceThreshold $threshold,
+        Collection $zonePrices
+    ): bool {
         if ($contribution->submitted_price <= 0) {
             return false;
         }
 
+        // Prefer zone-scoped IQR over static threshold
+        $bounds = $this->computeIqrBounds($zonePrices);
+        if ($bounds !== null) {
+            return $contribution->submitted_price >= $bounds['lower']
+                && $contribution->submitted_price <= $bounds['upper'];
+        }
+
+        // Fallback: global product threshold
         if ($threshold === null) {
             return true;
         }
 
         return $contribution->submitted_price >= $threshold->min_price
             && $contribution->submitted_price <= $threshold->max_price;
+    }
+
+    private function computeIqrBounds(Collection $sortedPrices): ?array
+    {
+        $count = $sortedPrices->count();
+        if ($count < config('pricing.min_samples_for_calibration', 3)) {
+            return null;
+        }
+
+        $q1  = $sortedPrices[(int) floor(($count - 1) * 0.25)];
+        $q3  = $sortedPrices[(int) floor(($count - 1) * 0.75)];
+        $iqr = $q3 - $q1;
+
+        return [
+            'lower' => max(0.01, $q1 - 1.5 * $iqr),
+            'upper' => $q3 + 1.5 * $iqr,
+        ];
+    }
+
+    private function recalibrateThreshold(string $productId): void
+    {
+        $prices = $this->productMarketPrice
+            ->newQuery()
+            ->where('product_id', $productId)
+            ->pluck('price')
+            ->map(fn($p) => (float) $p)
+            ->sort()
+            ->values();
+
+        if ($prices->count() < config('pricing.min_samples_for_calibration', 3)) {
+            return;
+        }
+
+        $median    = compute_median($prices);
+        $tolerance = config('pricing.threshold_tolerance', 0.20);
+
+        PriceThreshold::query()->updateOrCreate(
+            ['product_id' => $productId],
+            [
+                'min_price' => max(0.01, round($median * (1 - $tolerance), 2)),
+                'max_price' => round($median * (1 + $tolerance), 2),
+            ]
+        );
     }
 
     private function updateUserStatistics(string $userId, bool $isValid, CarbonImmutable $timestamp): void

@@ -270,6 +270,14 @@ class ProductService
                         ->orderBy('price_date', 'desc');
                 },
             ])
+            ->whereHas('marketPrices', function ($query) use ($zoneId) {
+                $query->whereHas('market', function ($marketQuery) use ($zoneId) {
+                    $marketQuery
+                        ->where('zone_id', $zoneId)
+                        ->where('is_active', 1)
+                        ->where('visibility', 1);
+                });
+            })
             ->active()
             ->visible()
             ->inRandomOrder()
@@ -280,6 +288,10 @@ class ProductService
 
             // Latest price per market (first entry = most recent due to price_date desc)
             $latestPerMarket = $byMarket->map(fn($entries) => $entries->first());
+
+            // Zone range — computed from in-memory data, zero extra queries
+            $allPrices = $latestPerMarket->map(fn($mp) => $mp->price);
+            $product->setAttribute('zone_price_range', compute_zone_price_range($allPrices));
 
             // Pick a random market for this product
             $selected = $latestPerMarket->shuffle()->first();

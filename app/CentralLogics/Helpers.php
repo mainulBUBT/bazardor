@@ -117,6 +117,32 @@ if (!function_exists('formated_response')) {
     }
 }
 
+if (!function_exists('compute_median')) {
+    function compute_median(\Illuminate\Support\Collection $sorted): float
+    {
+        $count = $sorted->count();
+        if ($count === 0) return 0.0;
+        $mid = (int) ($count / 2);
+        return $count % 2 === 0
+            ? ($sorted[$mid - 1] + $sorted[$mid]) / 2
+            : (float) $sorted[$mid];
+    }
+}
+
+if (!function_exists('compute_zone_price_range')) {
+    function compute_zone_price_range(\Illuminate\Support\Collection $prices): ?array
+    {
+        $sorted = $prices->map(fn($p) => (float) $p)->sort()->values();
+        if ($sorted->isEmpty()) return null;
+        return [
+            'min'          => round($sorted->first(), 2),
+            'max'          => round($sorted->last(), 2),
+            'typical'      => round(compute_median($sorted), 2),
+            'market_count' => $sorted->count(),
+        ];
+    }
+}
+
 if (!function_exists('format_coordiantes')) {
     function format_coordiantes($coordinates)
     {

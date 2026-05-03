@@ -194,11 +194,29 @@ See [admin-panel.md](admin-panel.md#roles--permissions) for the full breakdown. 
 `zones.coordinates` is stored as a PostGIS `Polygon` via `laravel-eloquent-spatial`. The `ZoneService::getZoneByCoordinates()` method uses spatial queries to resolve which zone a lat/lng falls into.
 
 ### Price Contribution Flow
-1. User (or guest with device ID) submits a price via `POST /api/products/submit-price`
-2. Contribution lands in `price_contributions` with `status = pending`
-3. `ProcessPriceContributions` artisan command (scheduled) validates against `price_thresholds.min_price / max_price`
-4. Approved contributions update `product_market_prices` and are archived to `price_contributions_history`
-5. Admin can manually approve/reject from the Contributions module
+
+There are two paths by which a product price gets updated:
+
+**Path A — automated processor (primary path)**
+
+1. User (authenticated) or anonymous guest (`X-Device-ID` header) calls `POST /api/products/submit-price`.
+2. `ContributionService::submitPrice()` enforces a **1-submission-per-hour** rate limit per user or device, per product+market pair. On pass, it `updateOrCreate`s a row in `price_contributions` with `status = pending`.
+3. `php artisan price-contributions:process` (`PriceContributionProcessor`) runs (manually or via cron — **not yet scheduled**):
+   - Groups all `pending` rows by `(product_id, market_id)`.
+   - For each group, inside a DB transaction with `lockForUpdate`:
+     - Fetches `price_thresholds` for the product (`min_price` / `max_price`). If none exists, all prices `> 0` are considered valid.
+     - Partitions contributions into **valid** and **invalid**.
+     - If valid contributions exist: calculates `AVG(submitted_price)` → `updateOrCreate` on `product_market_prices`.
+     - Bulk-inserts all contributions (valid + invalid) into `price_contributions_history` (`status = validated | invalid`).
+     - Hard-deletes (`forceDelete`) all processed rows from `price_contributions`.
+     - Updates `user_statistics` for each authenticated contributor: `+1 reputation` for valid, `-1` for invalid.
+
+**Path B — admin manual override**
+
+Admin visits `/admin/contributions` and clicks Approve or Reject.
+- `ContributionService::approve/reject()` only updates the `status` column on `price_contributions`.
+- It does **not** update `product_market_prices` or archive to history — the automated processor handles archiving when it next runs.
+- This path is for human review of edge cases, not the primary update mechanism.
 
 ### Soft Deletes
 `Product`, `Category`, `Banner`, `Unit`, and `PriceContribution` use `SoftDeletes`. Records are never hard-deleted from these tables by normal CRUD operations.

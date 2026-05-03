@@ -286,6 +286,8 @@ class MarketService
         int $limit = 15,
         int $offset = 1
     ): \Illuminate\Pagination\LengthAwarePaginator {
+        $zoneId = DB::table('markets')->where('id', $marketId)->value('zone_id');
+
         $paginator = \App\Models\Product::with([
             'category:id,name,slug,description,image_path,is_active,position',
             'unit:id,name,symbol,unit_type,is_active',
@@ -314,7 +316,23 @@ class MarketService
         )
         ->paginate($limit, ['*'], 'page', $offset);
 
-        $paginator->getCollection()->transform(function ($product) {
+        // Batch-load zone price ranges for all products on this page (one JOIN query, no N+1)
+        $productIds = $paginator->getCollection()->pluck('id')->all();
+        $zoneRanges = [];
+        if ($zoneId && !empty($productIds)) {
+            DB::table('product_market_prices')
+                ->join('markets', 'markets.id', '=', 'product_market_prices.market_id')
+                ->whereIn('product_market_prices.product_id', $productIds)
+                ->where('markets.zone_id', $zoneId)
+                ->select('product_market_prices.product_id', 'product_market_prices.price')
+                ->get()
+                ->groupBy('product_id')
+                ->each(function ($rows, $pid) use (&$zoneRanges) {
+                    $zoneRanges[$pid] = compute_zone_price_range($rows->pluck('price'));
+                });
+        }
+
+        $paginator->getCollection()->transform(function ($product) use ($zoneRanges) {
             $prices   = $product->marketPrices; // ordered by price_date desc
             $current  = $prices->get(0);
             $previous = $prices->get(1);
@@ -333,6 +351,7 @@ class MarketService
             }
 
             $product->setRelation('marketPrices', $current ? collect([$current]) : collect());
+            $product->setAttribute('zone_price_range', $zoneRanges[$product->id] ?? null);
             return $product;
         });
 
