@@ -1,0 +1,730 @@
+{
+  "/Applications/MAMP/htdocs/bazardor/app/Traits/PushNotificationTrait.php": {
+    "mtime": 1777371566.7814236,
+    "hash": "8782886d043cc6ff374b9a290b616678"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Traits/HasUuid.php": {
+    "mtime": 1777371566.7813497,
+    "hash": "9b80675bc9cc101e4e99fc93462d7b65"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Mail/TestEmail.php": {
+    "mtime": 1777371566.778984,
+    "hash": "fa8c211a5e68652820ad0c230dc39a77"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Providers/AppServiceProvider.php": {
+    "mtime": 1777371566.7799518,
+    "hash": "77ae2dba23ef56fd82cb5f128b7eec7c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Enums/MarketType.php": {
+    "mtime": 1777371566.775648,
+    "hash": "fda6e49fdc89d003b52b553471abeb5d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Enums/UserType.php": {
+    "mtime": 1777371566.7757215,
+    "hash": "8fb2a0251a952e2870f2820d3ae10f8c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Enums/Location.php": {
+    "mtime": 1777371566.7756152,
+    "hash": "0b9c0976fff1eff071f5da0a9e507168"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Enums/Permission.php": {
+    "mtime": 1777371566.7756834,
+    "hash": "729131e59734179a9cbb6046a8888053"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/PriceThreshold.php": {
+    "mtime": 1777371566.77951,
+    "hash": "0774c0fe8467311e3bf426bde3d3c6d5"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Category.php": {
+    "mtime": 1777371566.7791312,
+    "hash": "7aa7b1afb9741a6c5366add5a962e91d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Product.php": {
+    "mtime": 1777377892.7962666,
+    "hash": "091ad4604747a0e6056d43cda9b4b990"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Banner.php": {
+    "mtime": 1777371566.779094,
+    "hash": "0b0e8f9b258ce1ec54c66d6ba830e902"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/PriceContribution.php": {
+    "mtime": 1777371566.7794025,
+    "hash": "95d83f2ecc066851821edc4829bd99ae"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/User.php": {
+    "mtime": 1777371566.7798223,
+    "hash": "78727705e3081b28e270d2cbf493adf8"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Role.php": {
+    "mtime": 1777371566.7797122,
+    "hash": "36319d8c253f671ce153f94335eb85c9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/MarketOperatingHour.php": {
+    "mtime": 1777371566.7793314,
+    "hash": "868806806d089f22194fd4b4222d626d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Unit.php": {
+    "mtime": 1777371566.779782,
+    "hash": "1be2f8e22dd667bdfdd9c2166bc34676"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/MarketInformation.php": {
+    "mtime": 1777371566.7792993,
+    "hash": "22a111d023ff499b5d4fa955f2538148"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/UserStatistics.php": {
+    "mtime": 1777371566.7798572,
+    "hash": "779c5a31c3d5f49087e58d9b1849e5f0"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/ProductTag.php": {
+    "mtime": 1777371566.779643,
+    "hash": "78ca8979b2c4603ffbf8fb10cdefa863"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/PriceContributionVote.php": {
+    "mtime": 1777371566.7794716,
+    "hash": "f8e492dcc32af28080cb5c1f3e955ce0"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/EntityCreator.php": {
+    "mtime": 1777371566.7791653,
+    "hash": "71c05b3cb8fe2cf17e11ae51de73efaa"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/ProductMarketPrice.php": {
+    "mtime": 1777371566.7796075,
+    "hash": "e4a90915b14efed807ee8363272ef724"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Zone.php": {
+    "mtime": 1777371566.779893,
+    "hash": "d142dba2f0491b5f2c56ed78037b5e0c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/PushNotification.php": {
+    "mtime": 1777371566.779679,
+    "hash": "02d7c79bf9d65827c9772b4513f82ae9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Market.php": {
+    "mtime": 1777371566.7792668,
+    "hash": "3ae9640789e68a41ddbd16d9ab891b9f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Admin.php": {
+    "mtime": 1777371566.7790463,
+    "hash": "3d41026423b339c9ba2113da896b090b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/PriceContributionHistory.php": {
+    "mtime": 1777371566.7794402,
+    "hash": "4156d832e61f8ea7066cc483ea39f1aa"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Setting.php": {
+    "mtime": 1777371566.779747,
+    "hash": "8c0ea7ccd1f2a47bfb985a7509d48f2f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Permission.php": {
+    "mtime": 1777371566.779364,
+    "hash": "b54c00e10ab0c87b0d5e7ef3f346cbf8"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Models/Favorite.php": {
+    "mtime": 1777371566.7791977,
+    "hash": "2ed3c86f19c0477cde74aae11762f2fa"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Imports/UnitsImport.php": {
+    "mtime": 1777371566.778923,
+    "hash": "0889f65c7df6fd0859f6b4e077d1686e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Imports/ProductsImport.php": {
+    "mtime": 1777371566.7788887,
+    "hash": "51b71c710d60a698ff4f015f38afdd0e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Exports/CategoriesExport.php": {
+    "mtime": 1777371566.7758179,
+    "hash": "6377dbfdc6ab06dab3b03d710bc3aa17"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Exports/ProductsExport.php": {
+    "mtime": 1777371566.7758508,
+    "hash": "9f50c8d538dbcdcadb5ddd472ca02e9d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Exports/BannersExport.php": {
+    "mtime": 1777371566.7757776,
+    "hash": "266d02e1501711570fad571c507abcb2"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Exports/UsersExport.php": {
+    "mtime": 1777371566.7759142,
+    "hash": "27e687bcfebd0fbc6bbca6e7eaf87f50"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Exports/UnitsExport.php": {
+    "mtime": 1777371566.7758827,
+    "hash": "7e010524aeaa8693359d78ab568cd697"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/CentralLogics/Response.php": {
+    "mtime": 1777371566.775448,
+    "hash": "c9b75c91a0a06a44283b91f70f725238"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/CentralLogics/Constants.php": {
+    "mtime": 1777371566.775323,
+    "hash": "c9888c8377b723d88fc12589ed51565c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/CentralLogics/Helpers.php": {
+    "mtime": 1777807674.7862127,
+    "hash": "e29b7c3a381c7485991fbad5398609d7"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Middleware/ResolveGuestIdentifier.php": {
+    "mtime": 1777371566.7772713,
+    "hash": "f458a0f8704eed5296854f5fb39f5d68"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Middleware/RoleMiddleware.php": {
+    "mtime": 1777371566.7773051,
+    "hash": "f94150e44fe2ba902a3f365fc882c9a4"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Middleware/AdminMiddleware.php": {
+    "mtime": 1777371566.7771971,
+    "hash": "22e6069c92cb6961f545b7e358af067a"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Middleware/PermissionMiddleware.php": {
+    "mtime": 1777371566.7772367,
+    "hash": "9ca385e3dec7d55ff5842a0cc1f51b74"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/ProductResource.php": {
+    "mtime": 1777809104.4654357,
+    "hash": "057e7f2d44cbe9252c5dc3622b105531"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/MarketResource.php": {
+    "mtime": 1777371566.778575,
+    "hash": "5175a1cd69fc1497525077b80de5e9d9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/ProductComparisonResource.php": {
+    "mtime": 1777371566.7786474,
+    "hash": "e9afb3882a14c5f918aa3195c90e55f5"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/MarketsComparisonResource.php": {
+    "mtime": 1777371566.7786121,
+    "hash": "3a724ffc813ce1fc8386181a3a507443"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/BannerResource.php": {
+    "mtime": 1777371566.7783754,
+    "hash": "89633b25772b9da70294b40b1fcb4171"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/UserResource.php": {
+    "mtime": 1777371566.7787802,
+    "hash": "a77b42a9dd6320b82eefc1b94a78c7a3"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/MarketComparisonResource.php": {
+    "mtime": 1777371566.7785363,
+    "hash": "7af1199ee9fda9a84799ccb7c7c709a7"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/CategoryResource.php": {
+    "mtime": 1777371566.7784562,
+    "hash": "e6558df7ba83dda0d8bb63197fed7176"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/CategoryMarketResource.php": {
+    "mtime": 1777550529.129465,
+    "hash": "62353d9ede0e21aba14424b31a4b1bf9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/UnitResource.php": {
+    "mtime": 1777371566.7787468,
+    "hash": "9e5b7bf2bd99643700968a35005a86c7"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/ZoneResource.php": {
+    "mtime": 1777371566.7788167,
+    "hash": "d730b07d1f7c3a0ae7acec3ac6a58a99"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/ProductMarketPriceResource.php": {
+    "mtime": 1777722932.729196,
+    "hash": "b62061b1a92810c041fb593bcfdff63e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Resources/FavoriteResource.php": {
+    "mtime": 1777371566.7784944,
+    "hash": "8a8794f959898adde7341b47df1abd81"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/CategoryStoreUpdateRequest.php": {
+    "mtime": 1777371566.77786,
+    "hash": "6c4881d54706848a4ab46d753ddeea24"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/UpdateSettingsRequest.php": {
+    "mtime": 1777371566.7782235,
+    "hash": "9d79e5b73079520e64e05b0d61b159b0"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/BannerStoreUpdateRequest.php": {
+    "mtime": 1777371566.7778215,
+    "hash": "5a72b9f6d1c87498550fc87ad1a617a8"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/AdminStoreUpdateRequest.php": {
+    "mtime": 1777371566.7774177,
+    "hash": "06fc1b34f578631f1f68f413838e40d2"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/MarketStoreUpdateRequest.php": {
+    "mtime": 1777371566.7779725,
+    "hash": "b2b2dbf0d4080e5d3e4b8b7364d3df13"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/UnitStoreUpdateRequest.php": {
+    "mtime": 1777371566.7781668,
+    "hash": "aabe960e12c4dc4a4eb2e112480dbf9b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/ZoneStoreUpdateRequest.php": {
+    "mtime": 1777371566.7783065,
+    "hash": "81ded9fe7244be7913832320c43bc858"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/CompareMarketsRequest.php": {
+    "mtime": 1777371566.7779293,
+    "hash": "4879a335565b9da2a16325da741094f0"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/ProductStoreUpdateRequest.php": {
+    "mtime": 1777371566.7780507,
+    "hash": "991a6d72afc67465a53230b40a87104b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/RoleStoreUpdateRequest.php": {
+    "mtime": 1777371566.7781317,
+    "hash": "bc0b720d512e478657bacce409e94b75"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/PriceContributionRequest.php": {
+    "mtime": 1777371566.7780125,
+    "hash": "940edec20f38af3d0f162eeb4acc5e80"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/CompareMarketProductsRequest.php": {
+    "mtime": 1777371566.7778933,
+    "hash": "ceedfd3aa5cd51aada504b417696b99f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/PushNotificationStoreUpdateRequest.php": {
+    "mtime": 1777371566.7780883,
+    "hash": "d387d7636f4e14e869a3a91f9f0db38b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/UserStoreUpdateRequest.php": {
+    "mtime": 1777371566.7782614,
+    "hash": "366ee1f4567e36223359cca0dd62afbb"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/Admin/LoginRequest.php": {
+    "mtime": 1777371566.7773802,
+    "hash": "a59cbcf4984f8acb7cc261a31fd8124f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/Api/SocialLoginRequest.php": {
+    "mtime": 1777371566.7777228,
+    "hash": "f46126ca5d148fa3537acbddbfd840a3"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/Api/UpdateProfileRequest.php": {
+    "mtime": 1777371566.7777603,
+    "hash": "0f4d02c0a64e11dfad21c5b3d91d4c85"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/Api/RegisterRequest.php": {
+    "mtime": 1777371566.7776496,
+    "hash": "1ada254b3a6a3d16807911c8eb043fd9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/Api/OtpVerificationRequest.php": {
+    "mtime": 1777371566.7776134,
+    "hash": "a50801698e5a2de1b487020e03da9a10"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/Api/LoginRequest.php": {
+    "mtime": 1777371566.7775762,
+    "hash": "f35a95708ba72387c265031fa687941d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Requests/Api/AddFavoriteRequest.php": {
+    "mtime": 1777371566.7774932,
+    "hash": "fb6c629e37b1558bf838c6d0e675b2c8"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Controller.php": {
+    "mtime": 1777371566.7771356,
+    "hash": "545353270d70df9aab31a327069f5da7"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/DashboardController.php": {
+    "mtime": 1777371566.7762587,
+    "hash": "8ab98f61422f9469e4d2f57d491dd79f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/AdminManagementController.php": {
+    "mtime": 1777371566.7760172,
+    "hash": "e8961b01baf4a2cbb7ba83856dad0381"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/RoleController.php": {
+    "mtime": 1777371566.7765229,
+    "hash": "ea1b06de78a9e62fbfc29c48fb04558c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/UserManagementController.php": {
+    "mtime": 1777371566.7766602,
+    "hash": "bf3c9ce2580cf5c4eb949be36132f8f4"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/ReportController.php": {
+    "mtime": 1777371566.7764764,
+    "hash": "20a422327bd4f1c705f44ec2e0f5da52"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/SettingController.php": {
+    "mtime": 1777371566.7765713,
+    "hash": "235ce463bbeecf310abd11104a45a467"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/MarketController.php": {
+    "mtime": 1777371566.7763143,
+    "hash": "020a5aa3ac4175ee704611835c01b2fd"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/PushNotificationController.php": {
+    "mtime": 1777371566.7764273,
+    "hash": "61a4d34eb42e8bfc452a5d79d1a8ea2c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/BannerController.php": {
+    "mtime": 1777371566.776132,
+    "hash": "e0f5186ad8c03263b33f646013c71633"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/ProductController.php": {
+    "mtime": 1777371566.7763743,
+    "hash": "34f74ed7f9bc473ac1c3b0455828b26f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/UnitController.php": {
+    "mtime": 1777371566.77661,
+    "hash": "d50daaabf80e0064774c2887fed95c74"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/CategoryController.php": {
+    "mtime": 1777371566.7761765,
+    "hash": "2bc4b0978cc765e9db8befbddc3385b5"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/ContributionController.php": {
+    "mtime": 1777371566.7762125,
+    "hash": "655ea6d063e02020cb86273cf6ffff0d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/ZoneController.php": {
+    "mtime": 1777371566.776709,
+    "hash": "eff868bf6b56d6a99ad92fee0849cdf1"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Admin/Auth/LoginController.php": {
+    "mtime": 1777371566.7760873,
+    "hash": "43cdc889fe7a9f611ec889807d868462"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Api/LocationController.php": {
+    "mtime": 1777371566.7770123,
+    "hash": "048f69c8cdf91681ffef7df094e44a2b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Api/UserManagementController.php": {
+    "mtime": 1777371566.7770972,
+    "hash": "7055d7d14f3cd773dddb97ac99615cbe"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Api/CategoryMarketController.php": {
+    "mtime": 1777378856.3973992,
+    "hash": "0a5fbe3fcf2c8e9892898e15e53f1862"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Api/AuthController.php": {
+    "mtime": 1777371566.776781,
+    "hash": "48f9df1009214a192ee8c5ceba75a645"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Api/ConfigController.php": {
+    "mtime": 1777375323.6832619,
+    "hash": "073dd9d0fee5b4270e4dd47b6dfe1ed2"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Api/BannerController.php": {
+    "mtime": 1777550813.982697,
+    "hash": "dfab1461fb351f39ae7141597f280684"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Http/Controllers/Api/UnitController.php": {
+    "mtime": 1777371566.7770455,
+    "hash": "526270f30db4e7fb3a612d20fdefc79e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/ContributionService.php": {
+    "mtime": 1777371566.7803397,
+    "hash": "b9a72f9c5a2e32452e6f1c188c740145"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/PushNotificationService.php": {
+    "mtime": 1777371566.7808177,
+    "hash": "c0960b333b760f6344e4f92a02feb667"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/PriceContributionProcessor.php": {
+    "mtime": 1777809081.4711626,
+    "hash": "a333bdc1b8cc96a789e6d42514d905b4"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/AuthenticationService.php": {
+    "mtime": 1777371566.7801378,
+    "hash": "a1d9ee9cb2708926b2994cdde5f5acdd"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/CategoryService.php": {
+    "mtime": 1777371566.780287,
+    "hash": "e2b2ca55d075d2fbbd41c9c532475a66"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/AdminManagementService.php": {
+    "mtime": 1777371566.780026,
+    "hash": "3cfc39c5e69f8b7ac6f7c61be929c70e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/RoleService.php": {
+    "mtime": 1777371566.7809606,
+    "hash": "35a327e650fadca81bdbe0299220f8db"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/ProductService.php": {
+    "mtime": 1777809090.5781145,
+    "hash": "5c23e249b640fefdb023427f518f1976"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/BannerService.php": {
+    "mtime": 1777550813.9927826,
+    "hash": "40fbbf126c3977cfe7031b46bd0404ec"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/UserManagementService.php": {
+    "mtime": 1777371566.7812016,
+    "hash": "1aa607bc0cb09bc6ffd6f66699400480"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/RecaptchaService.php": {
+    "mtime": 1777371566.7808867,
+    "hash": "0bc4469f30b145ef1278b2ba0879b468"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/MarketComparisonService.php": {
+    "mtime": 1777371566.7804484,
+    "hash": "443601a39de596475504d19abcc73d76"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/ProductMarketPriceService.php": {
+    "mtime": 1777371566.780641,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/SettingService.php": {
+    "mtime": 1777371566.7810636,
+    "hash": "9f92a4062b9815fd2976c5d02e398916"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/FavoriteService.php": {
+    "mtime": 1777371566.7803853,
+    "hash": "d8b9b5a547e207d0cb64dec75e16f1f4"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/MarketService.php": {
+    "mtime": 1777809129.459766,
+    "hash": "519b56c2751afaa8758eed517474beea"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/ZoneService.php": {
+    "mtime": 1777371566.781275,
+    "hash": "087468e7d2dda83c18a922c74ad41e1a"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/UnitService.php": {
+    "mtime": 1777371566.7811105,
+    "hash": "2440004f15d983e72662132accc4b7da"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Services/Api/AuthService.php": {
+    "mtime": 1777371566.780099,
+    "hash": "3cbf6bd8fdf5fb6e2697f4ec6ba2ca6b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Console/Commands/SetupRolesAndPermissions.php": {
+    "mtime": 1777371566.7755594,
+    "hash": "651e6d01122c03ff93e3f7a6a69e8ff4"
+  },
+  "/Applications/MAMP/htdocs/bazardor/app/Console/Commands/ProcessPriceContributions.php": {
+    "mtime": 1777371566.775524,
+    "hash": "d61e33687a2ef0a887c9dc4f8d65f844"
+  },
+  "/Applications/MAMP/htdocs/bazardor/routes/console.php": {
+    "mtime": 1777809139.624877,
+    "hash": "a9b5ac8af28dd49658834d252b961e05"
+  },
+  "/Applications/MAMP/htdocs/bazardor/routes/web.php": {
+    "mtime": 1777371566.8765852,
+    "hash": "cac27032557553993e299a6746892375"
+  },
+  "/Applications/MAMP/htdocs/bazardor/routes/api.php": {
+    "mtime": 1777371566.8764856,
+    "hash": "a763a70ab2e65fa87b180428a693266f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/routes/admin.php": {
+    "mtime": 1777371566.8764188,
+    "hash": "3316466f741f263167247acdaf5cf3a9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_11_05_190353_add_social_login_fields_to_users_table.php": {
+    "mtime": 1777371566.784962,
+    "hash": "fba9c662dc8732d9602a3df9d23606a9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_11_11_160842_create_price_contributions_history_table.php": {
+    "mtime": 1777371566.7850878,
+    "hash": "96b685a8a371fa5b41d4b58d9ef9485a"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_11_11_155753_create_user_statistics_table.php": {
+    "mtime": 1777371566.7850451,
+    "hash": "4890218786430f63fb698465954d3273"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_15_072653_add_extra_fields_to_users_table.php": {
+    "mtime": 1777371566.7846863,
+    "hash": "c40b5d9cb934124e9c748d1f2036f2b4"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/0001_01_01_000000_create_users_table.php": {
+    "mtime": 1777371566.783833,
+    "hash": "1de6c5bb97f55a24358737ad2ace25d7"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_05_21_182131_create_settings_table.php": {
+    "mtime": 1777371566.784094,
+    "hash": "8bab6c9fc33e96ce544f9613f68ee4a6"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000009_create_market_operating_hours_table.php": {
+    "mtime": 1777371566.7845538,
+    "hash": "efa398daf61dea89a59c55f3aa350495"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/0001_01_01_000001_create_cache_table.php": {
+    "mtime": 1777371566.783897,
+    "hash": "6803c10a1aa695d40633ec8bea5576d5"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2023_07_25_000000_create_zones_table.php": {
+    "mtime": 1777371566.7840004,
+    "hash": "135c707425eed2c79b1f74eb4d79379b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000006_create_price_contributions_table.php": {
+    "mtime": 1777371566.7844644,
+    "hash": "ad5f158081ced1c7d9a92ef224ebb4e6"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000001_create_products_table.php": {
+    "mtime": 1777371566.7842934,
+    "hash": "e1053ce86b859bd1db97e21c69b4f961"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/0001_01_01_000002_create_jobs_table.php": {
+    "mtime": 1777371566.7839503,
+    "hash": "ead9cce2650b36345454f85e8c0214a0"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2026_04_07_171618_make_user_id_nullable_in_price_contributions_tables.php": {
+    "mtime": 1777371566.78517,
+    "hash": "4e18c93ba60e740462158f8bfa0e4185"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_10_31_174204_create_push_notifications_table.php": {
+    "mtime": 1777371566.7848303,
+    "hash": "a396f455d252fe2675d295217d31323a"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000000_create_categories_table.php": {
+    "mtime": 1777371566.7841995,
+    "hash": "ffcbad0682f135b0276d9fd8aa36a849"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_11_06_103500_create_favorites_table.php": {
+    "mtime": 1777371566.7850049,
+    "hash": "01111ca8df66c3bcad2cffe33ca08bc9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000002_create_product_tags_table.php": {
+    "mtime": 1777371566.784332,
+    "hash": "d96e6e14a83e49a40bca17c092551c6c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_11_01_163839_create_admins_table.php": {
+    "mtime": 1777371566.7848706,
+    "hash": "559cc22aa2b2960b5c679df0c60ee650"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000003_create_product_market_prices_table.php": {
+    "mtime": 1777371566.7843764,
+    "hash": "5f7e89cc495e58cbec2917b0b00804c7"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000005_create_banners_table.php": {
+    "mtime": 1777371566.7844193,
+    "hash": "a81c9d69a0b0429a221e679ab639a64c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_14_000100_create_entity_creators_table.php": {
+    "mtime": 1777371566.7846355,
+    "hash": "2f8dcd06cc92672b99aafaf9c6552e69"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_24_173349_create_permission_tables.php": {
+    "mtime": 1777371566.7847478,
+    "hash": "76ea2cd3e482f804c61f3ffb13923a6b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2026_04_11_000001_add_device_id_to_contributions_and_products.php": {
+    "mtime": 1777371566.785208,
+    "hash": "c65163a00d7b9f8659c4d042863bb28d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_12_102222_create_market_information_table.php": {
+    "mtime": 1777371566.7845912,
+    "hash": "7eced705445fe2f7c277db971b769709"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000001_create_markets_table.php": {
+    "mtime": 1777371566.7842462,
+    "hash": "d7f225e8aa716754d97778c582bd9623"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_06_02_000008_create_price_thresholds_table.php": {
+    "mtime": 1777371566.7845056,
+    "hash": "23783d51609dd8d25be25a2587e60062"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/migrations/2025_05_24_164956_create_units_table.php": {
+    "mtime": 1777371566.784145,
+    "hash": "77531ff4161ce1fc49d255391adc933d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/seeders/AdminSeeder.php": {
+    "mtime": 1777371566.7852678,
+    "hash": "59be1631eb5f5b77dca74a173ed31a8c"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/seeders/BangladeshDemoDataSeeder.php": {
+    "mtime": 1777371566.7853131,
+    "hash": "faf0617465f7ee9608268aca1a71a281"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/seeders/RolePermissionSeeder.php": {
+    "mtime": 1777371566.7854688,
+    "hash": "d3d15b90ec90cd7c6422905a7bdd4dfd"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/seeders/GranularPermissionsSeeder.php": {
+    "mtime": 1777371566.7854307,
+    "hash": "0c6ab51b27be047a76482e3d8e72d4f0"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/seeders/DatabaseSeeder.php": {
+    "mtime": 1777371566.7853584,
+    "hash": "d695382b15e2eb725465a9c4b3574ae8"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/CategoryFactory.php": {
+    "mtime": 1777371566.783474,
+    "hash": "f6968f442691f88f8e9305c1cc23297f"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/ProductMarketPriceFactory.php": {
+    "mtime": 1777371566.7836094,
+    "hash": "79ac3ef75b0db23a05070156c1790fc2"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/MarketFactory.php": {
+    "mtime": 1777371566.783513,
+    "hash": "6e4f0c56de67d193243563bc84419660"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/AdminFactory.php": {
+    "mtime": 1777371566.7833889,
+    "hash": "197556d0c86b8982319a9fb7c6976148"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/ZoneFactory.php": {
+    "mtime": 1777371566.783747,
+    "hash": "ad2e5eec971b9956113048076cc004e3"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/UserFactory.php": {
+    "mtime": 1777371566.7837017,
+    "hash": "19ade3fd57ddc72736e127911b36d785"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/UnitFactory.php": {
+    "mtime": 1777371566.7836568,
+    "hash": "6555428be85ad3ad1b6f36ce5709463e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/ProductFactory.php": {
+    "mtime": 1777371566.7835538,
+    "hash": "7e05fb3fd5c9402cce27bd74fe3df46d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database/factories/BannerFactory.php": {
+    "mtime": 1777371566.7834327,
+    "hash": "8284b256fc9199bcc80d87ef54660ae9"
+  },
+  "/Applications/MAMP/htdocs/bazardor/index.php": {
+    "mtime": 1777371566.7855852,
+    "hash": "1f86fd52cea5840b789733c648817a0d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/vite.config.js": {
+    "mtime": 1777371566.8777535,
+    "hash": "ba4996e1d8e73333d5c9195b824b4219"
+  },
+  "/Applications/MAMP/htdocs/bazardor/artisan": {
+    "mtime": 1777371566.7814693,
+    "hash": "e66bb13691f6184c762c196427d8e685"
+  },
+  "/Applications/MAMP/htdocs/bazardor/docs/architecture.md": {
+    "mtime": 1777787102.2050543,
+    "hash": "63d4f8ed8e0013cf39bbe8d3865848a8"
+  },
+  "/Applications/MAMP/htdocs/bazardor/docs/setup.md": {
+    "mtime": 1777785242.5161352,
+    "hash": "528a55908e08aead65822b221e703d5b"
+  },
+  "/Applications/MAMP/htdocs/bazardor/docs/README.md": {
+    "mtime": 1777785003.3481603,
+    "hash": "eeff1073e176ddcdde3a8b99a9de09f6"
+  },
+  "/Applications/MAMP/htdocs/bazardor/docs/admin-panel.md": {
+    "mtime": 1777785207.0451207,
+    "hash": "34d3860bd2aa365d762136c7fa81c6f3"
+  },
+  "/Applications/MAMP/htdocs/bazardor/docs/api-reference.md": {
+    "mtime": 1777785099.7412455,
+    "hash": "0f7e72c1f71e7dfe3ec44eb31b2612ad"
+  },
+  "/Applications/MAMP/htdocs/bazardor/docs/database.md": {
+    "mtime": 1777785156.3795025,
+    "hash": "7346187fdfba3ee2bb5313273965ca6e"
+  },
+  "/Applications/MAMP/htdocs/bazardor/database_schema.md": {
+    "mtime": 1777371566.7855523,
+    "hash": "67d6b5fc6c9c241c741d077bbed88663"
+  },
+  "/Applications/MAMP/htdocs/bazardor/price_contribution_tables.md": {
+    "mtime": 1777371566.785694,
+    "hash": "92cef21f03053f91e38c9af059b4304d"
+  },
+  "/Applications/MAMP/htdocs/bazardor/README.md": {
+    "mtime": 1777371566.6722822,
+    "hash": "e223bd6abc2cc26b9a77a995ef09f6db"
+  },
+  "/Applications/MAMP/htdocs/bazardor/SPATIE_PERMISSION_FIXES.md": {
+    "mtime": 1777371566.672411,
+    "hash": "934fb11dcaa91a26fb3d80e32713c486"
+  },
+  "/Applications/MAMP/htdocs/bazardor/CLAUDE.md": {
+    "mtime": 1777787075.228227,
+    "hash": "dc4501fb35d2b16a94854141d347efe2"
+  }
+}
