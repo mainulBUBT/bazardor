@@ -43,20 +43,19 @@
                             </td>
                             <td>{{ $role->created_at->format('M d, Y') }}</td>
                             <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.roles.edit', $role) }}" 
-                                       class="btn btn-sm btn-outline-primary"
+                                <div class="d-flex flex-nowrap align-items-center">
+                                    <a href="{{ route('admin.roles.edit', $role) }}"
+                                       class="btn btn-primary btn-circle btn-sm mr-1"
                                        title="{{ translate('messages.Edit') }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     @if(!in_array($role->name, ['super_admin', 'moderator', 'volunteer', 'user']))
-                                        <form id="delete-role-{{ $role->id }}" action="{{ route('admin.roles.destroy', $role) }}" 
-                                              method="POST" 
-                                              class="d-inline">
+                                        <form id="delete-role-{{ $role->id }}" action="{{ route('admin.roles.destroy', $role) }}"
+                                              method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-outline-danger"
+                                            <button type="button"
+                                                    class="btn btn-danger btn-circle btn-sm"
                                                     onclick="formAlert('delete-role-{{ $role->id }}', '{{ translate('messages.Are you sure you want to delete this role?') }}')"
                                                     title="{{ translate('messages.Delete') }}">
                                                 <i class="fas fa-trash"></i>

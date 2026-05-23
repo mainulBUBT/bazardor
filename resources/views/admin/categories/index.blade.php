@@ -127,16 +127,18 @@
                             </td>
                             <td>{{ $category->created_at->format('Y-m-d') }}</td>
                             <td>
-                                <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-primary btn-circle btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form id="delete-category-{{ $category->id }}" action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="formAlert('delete-category-{{ $category->id }}', '{{ translate('messages.Want to delete this category?') }}')" class="btn btn-danger btn-circle btn-sm delete-category">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <div class="d-flex flex-nowrap align-items-center">
+                                    <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-primary btn-circle btn-sm mr-1" title="{{ translate('messages.edit') }}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form id="delete-category-{{ $category->id }}" action="{{ route('admin.categories.destroy', $category->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="formAlert('delete-category-{{ $category->id }}', '{{ translate('messages.Want to delete this category?') }}')" class="btn btn-danger btn-circle btn-sm delete-category" title="{{ translate('messages.delete') }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

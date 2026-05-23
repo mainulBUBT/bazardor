@@ -128,19 +128,21 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-info btn-circle btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary btn-circle btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form id="delete-product-{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-danger btn-circle btn-sm delete-product" data-form-id="delete-product-{{ $product->id }}" data-message="{{ translate('messages.Want to delete this product?') }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-flex flex-nowrap align-items-center">
+                                        <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-info btn-circle btn-sm mr-1" title="{{ translate('messages.view_details') }}">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary btn-circle btn-sm mr-1" title="{{ translate('messages.edit') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form id="delete-product-{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-danger btn-circle btn-sm delete-product" data-form-id="delete-product-{{ $product->id }}" data-message="{{ translate('messages.Want to delete this product?') }}" title="{{ translate('messages.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

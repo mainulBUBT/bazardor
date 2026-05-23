@@ -148,16 +148,18 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.zones.edit', $zone->id) }}" class="btn btn-primary btn-circle btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form id="delete-zone-{{ $zone->id }}" action="" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" onclick="formAlert('delete-zone-{{ $zone->id }}', '{{ translate('messages.Want to delete this zone?') }}')" class="btn btn-danger btn-circle btn-sm delete-zone">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-flex flex-nowrap align-items-center">
+                                        <a href="{{ route('admin.zones.edit', $zone->id) }}" class="btn btn-primary btn-circle btn-sm mr-1" title="{{ translate('messages.edit') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form id="delete-zone-{{ $zone->id }}" action="" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" onclick="formAlert('delete-zone-{{ $zone->id }}', '{{ translate('messages.Want to delete this zone?') }}')" class="btn btn-danger btn-circle btn-sm delete-zone" title="{{ translate('messages.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

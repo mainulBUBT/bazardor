@@ -47,35 +47,37 @@
                                     <td>{{ $notification->recipients_count ?? 0 }}</td>
                                     <td>{!! $notification->status_badge !!}</td>
                                     <td>
-                                        <a href="{{ route('admin.push-notifications.show', $notification) }}" class="btn btn-info btn-circle btn-sm" title="{{ translate('messages.View') }}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        @if($notification->status === 'draft')
-                                            <a href="{{ route('admin.push-notifications.edit', $notification) }}" class="btn btn-warning btn-circle btn-sm" title="{{ translate('messages.Edit') }}">
-                                                <i class="fas fa-edit"></i>
+                                        <div class="d-flex flex-nowrap align-items-center">
+                                            <a href="{{ route('admin.push-notifications.show', $notification) }}" class="btn btn-info btn-circle btn-sm mr-1" title="{{ translate('messages.View') }}">
+                                                <i class="fas fa-eye"></i>
                                             </a>
-                                            <form id="send-notification-{{ $notification->id }}" action="{{ route('admin.push-notifications.send', $notification->id) }}" method="POST" class="d-inline">
+                                            @if($notification->status === 'draft')
+                                                <a href="{{ route('admin.push-notifications.edit', $notification) }}" class="btn btn-warning btn-circle btn-sm mr-1" title="{{ translate('messages.Edit') }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form id="send-notification-{{ $notification->id }}" action="{{ route('admin.push-notifications.send', $notification->id) }}" method="POST" class="mr-1">
+                                                    @csrf
+                                                    <button type="button" onclick="formAlert('send-notification-{{ $notification->id }}', '{{ translate('messages.Are you sure you want to send this notification?') }}')" class="btn btn-primary btn-circle btn-sm" title="{{ translate('messages.Send') }}">
+                                                        <i class="fas fa-paper-plane"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            @if($notification->status === 'sent')
+                                                <form id="resend-notification-{{ $notification->id }}" action="{{ route('admin.push-notifications.resend', $notification->id) }}" method="POST" class="mr-1">
+                                                    @csrf
+                                                    <button type="button" onclick="formAlert('resend-notification-{{ $notification->id }}', '{{ translate('messages.Are you sure you want to resend this notification?') }}')" class="btn btn-success btn-circle btn-sm" title="{{ translate('messages.Resend') }}">
+                                                        <i class="fas fa-redo"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            <form id="delete-notification-{{ $notification->id }}" action="{{ route('admin.push-notifications.destroy', $notification->id) }}" method="POST">
                                                 @csrf
-                                                <button type="button" onclick="formAlert('send-notification-{{ $notification->id }}', '{{ translate('messages.Are you sure you want to send this notification?') }}')" class="btn btn-primary btn-circle btn-sm" title="{{ translate('messages.Send') }}">
-                                                    <i class="fas fa-paper-plane"></i>
+                                                @method('DELETE')
+                                                <button type="button" onclick="formAlert('delete-notification-{{ $notification->id }}', '{{ translate('messages.Are you sure you want to delete this notification?') }}')" class="btn btn-danger btn-circle btn-sm" title="{{ translate('messages.Delete') }}">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                        @endif
-                                        @if($notification->status === 'sent')
-                                            <form id="resend-notification-{{ $notification->id }}" action="{{ route('admin.push-notifications.resend', $notification->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="button" onclick="formAlert('resend-notification-{{ $notification->id }}', '{{ translate('messages.Are you sure you want to resend this notification?') }}')" class="btn btn-success btn-circle btn-sm" title="{{ translate('messages.Resend') }}">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                            </form>
-                                        @endif
-                                        <form id="delete-notification-{{ $notification->id }}" action="{{ route('admin.push-notifications.destroy', $notification->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" onclick="formAlert('delete-notification-{{ $notification->id }}', '{{ translate('messages.Are you sure you want to delete this notification?') }}')" class="btn btn-danger btn-circle btn-sm" title="{{ translate('messages.Delete') }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

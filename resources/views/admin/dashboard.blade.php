@@ -128,18 +128,20 @@
                                             <td class="text-right">{{ number_format($contribution->submitted_price, 2) }}</td>
                                             <td>{{ $contribution->created_at?->diffForHumans() }}</td>
                                             <td class="text-center">
-                                                <form action="{{ route('admin.contributions.approve', $contribution) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-xs btn-success" title="Approve">
-                                                        <i class="fas fa-check"></i>
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('admin.contributions.reject', $contribution) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-xs btn-danger" title="Reject">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </form>
+                                                <div class="d-flex flex-nowrap align-items-center justify-content-center">
+                                                    <form action="{{ route('admin.contributions.approve', $contribution) }}" method="POST" class="mr-1">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-success btn-circle btn-sm" title="Approve">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form action="{{ route('admin.contributions.reject', $contribution) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger btn-circle btn-sm" title="Reject">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -181,7 +183,7 @@
                                                 @if(!$market->latitude) <span class="badge badge-warning badge-sm">Location</span> @endif
                                             </div>
                                         </div>
-                                        <a href="{{ route('admin.markets.edit', $market->id) }}" class="btn btn-xs btn-outline-primary">
+                                        <a href="{{ route('admin.markets.edit', $market->id) }}" class="btn btn-primary btn-circle btn-sm" title="{{ translate('messages.edit') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     </div>

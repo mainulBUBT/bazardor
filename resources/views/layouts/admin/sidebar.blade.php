@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion d-flex flex-column" id="accordionSidebar" style="min-height: 100vh; overflow-y: auto; overflow-x: hidden;">
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion d-flex flex-column" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{url('/admin')}}">
@@ -19,6 +19,7 @@
             $appNameValue = $appName && isset($appName->value) ? $appName->value : 'BazarDor Admin';
         @endphp
         <div class="sidebar-brand-text mx-3">{{ $appNameValue }}</div>
+        <button id="sidebarClose" class="ml-auto mr-2"><i class="fas fa-times"></i></button>
     </a>
 
     <!-- Divider -->
@@ -63,7 +64,7 @@
 
     <!-- Categories -->
     <li class="nav-item {{ request()->is('admin/categories*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="{{ request()->is('admin/categories*') ? 'true' : 'false' }}" aria-controls="collapseCategories">
+        <a class="nav-link {{ request()->is('admin/categories*') ? '' : 'collapsed' }}" href="#" data-toggle="collapse" data-target="#collapseCategories" aria-expanded="{{ request()->is('admin/categories*') ? 'true' : 'false' }}" aria-controls="collapseCategories">
             <i class="fas fa-fw fa-images"></i>
             <span>{{translate('messages.Categories') }}</span>
         </a>
@@ -77,7 +78,7 @@
 
     <!-- Products -->
     <li class="nav-item {{ request()->is('admin/products*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="{{ request()->is('admin/products*') ? 'true' : 'false' }}" aria-controls="collapseProducts">
+        <a class="nav-link {{ request()->is('admin/products*') ? '' : 'collapsed' }}" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="{{ request()->is('admin/products*') ? 'true' : 'false' }}" aria-controls="collapseProducts">
             <i class="fas fa-fw fa-box-open"></i>
             <span>{{translate('messages.Products') }}</span>
         </a>
@@ -91,7 +92,7 @@
 
     <!-- Markets -->
     <li class="nav-item {{ request()->is('admin/markets*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMarkets" aria-expanded="{{ request()->is('admin/markets*') ? 'true' : 'false' }}" aria-controls="collapseMarkets">
+        <a class="nav-link {{ request()->is('admin/markets*') ? '' : 'collapsed' }}" href="#" data-toggle="collapse" data-target="#collapseMarkets" aria-expanded="{{ request()->is('admin/markets*') ? 'true' : 'false' }}" aria-controls="collapseMarkets">
             <i class="fas fa-fw fa-images"></i>
             <span>{{translate('messages.Markets') }}</span>
         </a>
@@ -113,7 +114,7 @@
 
     <!-- Users Management Collapsible Section -->
     <li class="nav-item {{ request()->is('admin/users*') || request()->is('admin/admins*') || request()->is('admin/roles*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="{{ request()->is('admin/users*') || request()->is('admin/admins*') || request()->is('admin/roles*') ? 'true' : 'false' }}" aria-controls="collapseUsers">
+        <a class="nav-link {{ request()->is('admin/users*') || request()->is('admin/admins*') || request()->is('admin/roles*') ? '' : 'collapsed' }}" href="#" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="{{ request()->is('admin/users*') || request()->is('admin/admins*') || request()->is('admin/roles*') ? 'true' : 'false' }}" aria-controls="collapseUsers">
             <i class="fas fa-fw fa-users"></i>
             <span>{{translate('messages.Users Management') }}</span>
         </a>
@@ -145,7 +146,7 @@
 
     <!-- Push Notifications -->
     <li class="nav-item {{ request()->is('admin/push-notifications*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePushNotifications" aria-expanded="{{ request()->is('admin/push-notifications*') ? 'true' : 'false' }}" aria-controls="collapsePushNotifications">
+        <a class="nav-link {{ request()->is('admin/push-notifications*') ? '' : 'collapsed' }}" href="#" data-toggle="collapse" data-target="#collapsePushNotifications" aria-expanded="{{ request()->is('admin/push-notifications*') ? 'true' : 'false' }}" aria-controls="collapsePushNotifications">
             <i class="fas fa-fw fa-bell"></i>
             <span>{{translate('messages.Push Notifications') }}</span>
         </a>
@@ -159,7 +160,7 @@
 
     <!-- Banners -->
     <li class="nav-item {{ request()->is('admin/banners*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBanners" aria-expanded="{{ request()->is('admin/banners*') ? 'true' : 'false' }}" aria-controls="collapseBanners">
+        <a class="nav-link {{ request()->is('admin/banners*') ? '' : 'collapsed' }}" href="#" data-toggle="collapse" data-target="#collapseBanners" aria-expanded="{{ request()->is('admin/banners*') ? 'true' : 'false' }}" aria-controls="collapseBanners">
             <i class="fas fa-fw fa-images"></i>
             <span>{{translate('messages.Banners') }}</span>
         </a>
