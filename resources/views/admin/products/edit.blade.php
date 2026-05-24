@@ -65,21 +65,23 @@
             </div>
             <!-- MARKET PRICING -->
             <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Market Pricing') }}</h6>
-                    <button class="btn btn-sm btn-primary" type="button" id="addMarketPriceBtn">
-                        <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add Market Price') }}
-                    </button>
+                <div class="card-header py-3">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Market Pricing') }}</h6>
+                        <button class="btn btn-sm btn-primary" type="button" id="addMarketPriceBtn">
+                            <i class="fas fa-plus"></i> {{ translate('messages.Add Market Price') }}
+                        </button>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-2 p-sm-3">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="marketPriceTable" width="100%" cellspacing="0">
-                            <thead>
+                        <table class="table table-bordered table-sm mb-0" id="marketPriceTable" width="100%" cellspacing="0" style="min-width: 500px;">
+                            <thead class="thead-light">
                                 <tr>
-                                    <th>{{ translate('messages.Market') }}</th>
-                                    <th>{{ translate('messages.Price') }}</th>
-                                    <th>{{ translate('messages.Date') }}</th>
-                                    <th>{{ translate('messages.Actions') }}</th>
+                                    <th style="min-width: 140px;">{{ translate('messages.Market') }}</th>
+                                    <th style="min-width: 120px;">{{ translate('messages.Price') }}</th>
+                                    <th style="min-width: 130px;">{{ translate('messages.Date') }}</th>
+                                    <th style="min-width: 60px;">{{ translate('messages.Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody id="marketPriceRows">
@@ -292,20 +294,22 @@ $(document).ready(function() {
         });
         tr.innerHTML = `
             <td>
-                <select class=\"form-control select2 market-select\" name=\"market_prices[${marketRowCount}][market_id]\">${marketOptions}</select>
+                <select class=\"form-control form-control-sm select2 market-select\" name=\"market_prices[${marketRowCount}][market_id]\">${marketOptions}</select>
             </td>
             <td>
-                <div class=\"input-group\">
+                <div class=\"input-group input-group-sm\">
                     <div class=\"input-group-prepend\">
                         <span class=\"input-group-text\">$</span>
                     </div>
-                    <input type=\"number\" class=\"form-control\" name=\"market_prices[${marketRowCount}][price]\" placeholder=\"0.00\" step=\"0.01\" value=\"${rowData.price || ''}\">\n                </div>
+                    <input type=\"number\" class=\"form-control\" name=\"market_prices[${marketRowCount}][price]\" placeholder=\"0.00\" step=\"0.01\" value=\"${rowData.price || ''}\">
+                </div>
             </td>
             <td>
-                <input type=\"date\" class=\"form-control\" name=\"market_prices[${marketRowCount}][price_date]\" value=\"${rowData.price_date || (new Date().toISOString().split('T')[0])}\">
+                <input type=\"date\" class=\"form-control form-control-sm\" name=\"market_prices[${marketRowCount}][price_date]\" value=\"${rowData.price_date || (new Date().toISOString().split('T')[0])}\">
             </td>
-            <td>
-                <button type=\"button\" class=\"btn btn-sm btn-danger remove-market-row\" data-row-id=\"${marketRowCount}\">\n                    <i class=\"fas fa-trash\"></i>
+            <td class=\"text-center\">
+                <button type=\"button\" class=\"btn btn-sm btn-danger remove-market-row\" data-row-id=\"${marketRowCount}\">
+                    <i class=\"fas fa-trash\"></i>
                 </button>
             </td>
         `;

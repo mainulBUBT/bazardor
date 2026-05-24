@@ -1306,4 +1306,7 @@
   'Save Price Settings' => 'Save Price Settings',
   'Outdated Price Threshold (days)' => 'Outdated Price Threshold (days)',
   'Prices older than this many days are flagged as outdated' => 'Prices older than this many days are flagged as outdated',
+  'Price Trends (Last 30 Days)' => 'Price Trends (Last 30 Days)',
+  'Min Price' => 'Min Price',
+  'Max Price' => 'Max Price',
 );
