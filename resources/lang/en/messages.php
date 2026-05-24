@@ -1291,4 +1291,5 @@
   'Anonymous' => 'Anonymous',
   'Approve' => 'Approve',
   'Reject' => 'Reject',
+  'update_zone' => 'Update zone',
 );

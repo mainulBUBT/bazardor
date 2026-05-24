@@ -3,7 +3,6 @@
 @section('title', translate('messages.Push Notifications'))
 
 @section('content')
-    <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">{{ translate('messages.Push Notifications') }}</h1>
@@ -11,10 +10,10 @@
 
         <!-- Push Notifications Table -->
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Push Notifications') }}</h6>
-                <div class="d-flex">
-                    <a href="{{ route('admin.push-notifications.create') }}" class="btn btn-sm btn-primary mr-2">
+            <div class="card-header py-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Push Notifications') }}</h6>
+                    <a href="{{ route('admin.push-notifications.create') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-paper-plane fa-sm"></i> {{ translate('messages.Send New Notification') }}
                     </a>
                 </div>
@@ -90,7 +89,6 @@
                 </div>
             </div>
         </div>
-    </div>
 @endsection
 
 @push('scripts')

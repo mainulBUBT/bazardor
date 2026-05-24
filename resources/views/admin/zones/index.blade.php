@@ -3,7 +3,6 @@
 @section('title', translate('messages.zones'))
 
 @section('content')
-<div class="container-fluid">
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-2">
         <h1 class="h3 mb-0 text-gray-800">{{translate('messages.zones')}}</h1>
@@ -68,56 +67,60 @@
 
     <!-- Zones DataTable -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Zones') }}</h6>
-            <div class="d-flex align-items-center">
-                <div class="mr-2" style="min-width: 250px;">
-                    <div class="input-group input-group-sm">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <div class="card-header py-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Zones') }}</h6>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <div class="w-auto" style="min-width: 180px;">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                            <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name...') }}" value="{{ request('search') }}">
                         </div>
-                        <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name...') }}" value="{{ request('search') }}">
                     </div>
-                </div>
-                <a href="#" class="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#importUnitModal">
-                    <i class="fas fa-file-import fa-sm"></i> {{ translate('messages.Import') }}
-                </a>
-                <div class="dropdown mr-2">
-                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.Export') }}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
-                        <a class="dropdown-item" href="#" id="exportCSV">
-                            <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
+                    <div class="d-flex flex-nowrap align-items-center gap-1">
+                        <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#importUnitModal" title="{{ translate('messages.Import') }}">
+                            <i class="fas fa-file-import"></i>
                         </a>
-                        <a class="dropdown-item" href="#" id="exportPDF">
-                            <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
-                        </a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 250px;">
-                        <form id="filterForm">
-                            <div class="mb-3">
-                                <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
-                                <select class="form-control form-control-sm" id="filterStatus" name="is_active">
-                                    <option value="">{{ translate('messages.All Status') }}</option>
-                                    <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
-                                    <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
-                                </select>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.Export') }}">
+                                <i class="fas fa-file-export"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                                <a class="dropdown-item" href="#" id="exportCSV">
+                                    <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
+                                </a>
+                                <a class="dropdown-item" href="#" id="exportPDF">
+                                    <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
+                                </a>
                             </div>
-                            <div class="d-flex justify-content-end">
-                                <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
-                                    <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
-                                </button>
-                                <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
-                                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
-                                </button>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.Filter') }}">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 250px;">
+                                <form id="filterForm">
+                                    <div class="mb-3">
+                                        <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
+                                        <select class="form-control form-control-sm" id="filterStatus" name="is_active">
+                                            <option value="">{{ translate('messages.All Status') }}</option>
+                                            <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                            <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
+                                            <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
+                                            <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -178,7 +181,6 @@
             {{ $zones->links() }}
         </div>
     @endif
-</div>
 @endsection
 
 @push('css')

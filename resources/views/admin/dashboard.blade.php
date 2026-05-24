@@ -92,7 +92,7 @@
         <!-- Pending Contributions (Needs Action) -->
         <div class="col-lg-8 mb-4">
             <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h6 class="m-0 font-weight-bold text-warning">
                         <i class="fas fa-exclamation-circle mr-1"></i> {{ translate('messages.Pending Contributions - Needs Review') }}
                     </h6>
@@ -113,9 +113,9 @@
                                     <tr>
                                         <th>{{ translate('messages.Contributor') }}</th>
                                         <th>{{ translate('messages.Product') }}</th>
-                                        <th>{{ translate('messages.Market') }}</th>
+                                        <th class="d-none d-sm-table-cell">{{ translate('messages.Market') }}</th>
                                         <th class="text-right">{{ translate('messages.Price') }}</th>
-                                        <th>{{ translate('messages.Submitted') }}</th>
+                                        <th class="d-none d-sm-table-cell">{{ translate('messages.Submitted') }}</th>
                                         <th class="text-center">{{ translate('messages.Action') }}</th>
                                     </tr>
                                 </thead>
@@ -124,9 +124,9 @@
                                         <tr>
                                             <td>{{ Str::limit($contribution->user?->name ?? ($contribution->device_id ? 'Guest ' . Str::substr($contribution->device_id, 0, 8) . '...' : 'Anonymous'), 15) }}</td>
                                             <td>{{ Str::limit($contribution->product?->name ?? 'N/A', 20) }}</td>
-                                            <td>{{ Str::limit($contribution->market?->name ?? 'N/A', 20) }}</td>
+                                            <td class="d-none d-sm-table-cell">{{ Str::limit($contribution->market?->name ?? 'N/A', 20) }}</td>
                                             <td class="text-right">{{ number_format($contribution->submitted_price, 2) }}</td>
-                                            <td>{{ $contribution->created_at?->diffForHumans() }}</td>
+                                            <td class="d-none d-sm-table-cell">{{ $contribution->created_at?->diffForHumans() }}</td>
                                             <td class="text-center">
                                                 <div class="d-flex flex-nowrap align-items-center justify-content-center">
                                                     <form action="{{ route('admin.contributions.approve', $contribution) }}" method="POST" class="mr-1">
@@ -156,15 +156,15 @@
         <!-- Incomplete Markets (Needs Attention) -->
         <div class="col-lg-4 mb-4">
             <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h6 class="m-0 font-weight-bold text-danger">
                         <i class="fas fa-exclamation-triangle mr-1"></i> {{ translate('messages.Incomplete Markets') }}
                     </h6>
-                    <a href="{{ route('admin.reports.data-quality') }}" class="btn btn-sm btn-danger btn-sm">
+                    <a href="{{ route('admin.reports.data-quality') }}" class="btn btn-sm btn-danger">
                         {{ translate('messages.View All') }}
                     </a>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-2 p-sm-3">
                     @if($incompleteMarkets->isEmpty())
                         <div class="text-center text-muted py-4">
                             <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
@@ -174,16 +174,16 @@
                         <ul class="list-group list-group-flush">
                             @foreach ($incompleteMarkets as $market)
                                 <li class="list-group-item px-0 py-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
+                                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-1">
+                                        <div class="flex-grow-1 mr-2">
                                             <strong>{{ Str::limit($market->name, 25) }}</strong>
                                             <div class="small text-muted">
-                                                @if(!$market->phone) <span class="badge badge-warning badge-sm">Phone</span> @endif
-                                                @if(!$market->address) <span class="badge badge-warning badge-sm">Address</span> @endif
-                                                @if(!$market->latitude) <span class="badge badge-warning badge-sm">Location</span> @endif
+                                                @if(!$market->phone) <span class="badge badge-warning">Phone</span> @endif
+                                                @if(!$market->address) <span class="badge badge-warning">Address</span> @endif
+                                                @if(!$market->latitude) <span class="badge badge-warning">Location</span> @endif
                                             </div>
                                         </div>
-                                        <a href="{{ route('admin.markets.edit', $market->id) }}" class="btn btn-primary btn-circle btn-sm" title="{{ translate('messages.edit') }}">
+                                        <a href="{{ route('admin.markets.edit', $market->id) }}" class="btn btn-primary btn-circle btn-sm flex-shrink-0" title="{{ translate('messages.edit') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     </div>

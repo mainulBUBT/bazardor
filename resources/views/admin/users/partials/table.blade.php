@@ -1,80 +1,84 @@
 <!-- Users Table Card (Consistent with Markets Table) -->
 <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">
-            {{ translate('messages.users_list') }}
-        </h6>
-        <div class="d-flex align-items-center">
-            <div class="mr-2" style="min-width: 250px;">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+    <div class="card-header py-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <h6 class="m-0 font-weight-bold text-primary">
+                {{ translate('messages.users_list') }}
+            </h6>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <div class="w-auto" style="min-width: 180px;">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name, email...') }}" value="{{ request('search') }}">
                     </div>
-                    <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name, email...') }}" value="{{ request('search') }}">
                 </div>
-            </div>
-            <a href="{{ route('admin.users.create', ['userType' => $type]) }}" class="btn btn-sm btn-primary mr-2">
-                <i class="fas fa-user-plus fa-sm"></i> {{ translate('messages.add_user') }}
-            </a>
-            <div class="dropdown mr-2">
-                <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.export') }}
-                </button>
-                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
-                    <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'csv', 'user_type' => $type], request()->query())) }}">
-                        <i class="fas fa-file-csv fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.csv') }}
+                <div class="d-flex flex-nowrap align-items-center gap-1">
+                    <a href="{{ route('admin.users.create', ['userType' => $type]) }}" class="btn btn-sm btn-primary" title="{{ translate('messages.add_user') }}">
+                        <i class="fas fa-user-plus"></i>
                     </a>
-                    <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'xlsx', 'user_type' => $type], request()->query())) }}">
-                        <i class="fas fa-file-excel fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.excel') }}
-                    </a>
-                    <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'pdf', 'user_type' => $type], request()->query())) }}">
-                        <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.pdf') }}
-                    </a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.filter') }}
-                </button>
-                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 300px;">
-                    <h6 class="dropdown-header">{{ translate('messages.filter_users') }}</h6>
-                    <form id="filterFormDropdown">
-                        <div class="mb-2">
-                            <label for="filterStatusDropdown" class="form-label small">{{ translate('messages.status') }}</label>
-                            <select class="form-control form-control-sm" id="filterStatusDropdown" name="status">
-                                <option value="">{{ translate('messages.all_status') }}</option>
-                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ translate('messages.active') }}</option>
-                                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>{{ translate('messages.pending') }}</option>
-                                <option value="blocked" {{ request('status') === 'blocked' ? 'selected' : '' }}>{{ translate('messages.blocked') }}</option>
-                            </select>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.export') }}">
+                            <i class="fas fa-file-export"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                            <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'csv', 'user_type' => $type], request()->query())) }}">
+                                <i class="fas fa-file-csv fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.csv') }}
+                            </a>
+                            <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'xlsx', 'user_type' => $type], request()->query())) }}">
+                                <i class="fas fa-file-excel fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.excel') }}
+                            </a>
+                            <a class="dropdown-item" href="{{ route('admin.users.export', array_merge(['format' => 'pdf', 'user_type' => $type], request()->query())) }}">
+                                <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.pdf') }}
+                            </a>
                         </div>
-                        <div class="mb-2">
-                            <label for="filterVerificationDropdown" class="form-label small">{{ translate('messages.verification') }}</label>
-                            <select class="form-control form-control-sm" id="filterVerificationDropdown" name="is_verified">
-                                <option value="">{{ translate('messages.all_verification') }}</option>
-                                <option value="verified" {{ request('is_verified') === 'verified' ? 'selected' : '' }}>{{ translate('messages.verified') }}</option>
-                                <option value="unverified" {{ request('is_verified') === 'unverified' ? 'selected' : '' }}>{{ translate('messages.unverified') }}</option>
-                            </select>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.filter') }}">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 300px;">
+                            <h6 class="dropdown-header">{{ translate('messages.filter_users') }}</h6>
+                            <form id="filterFormDropdown">
+                                <div class="mb-2">
+                                    <label for="filterStatusDropdown" class="form-label small">{{ translate('messages.status') }}</label>
+                                    <select class="form-control form-control-sm" id="filterStatusDropdown" name="status">
+                                        <option value="">{{ translate('messages.all_status') }}</option>
+                                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ translate('messages.active') }}</option>
+                                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>{{ translate('messages.pending') }}</option>
+                                        <option value="blocked" {{ request('status') === 'blocked' ? 'selected' : '' }}>{{ translate('messages.blocked') }}</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="filterVerificationDropdown" class="form-label small">{{ translate('messages.verification') }}</label>
+                                    <select class="form-control form-control-sm" id="filterVerificationDropdown" name="is_verified">
+                                        <option value="">{{ translate('messages.all_verification') }}</option>
+                                        <option value="verified" {{ request('is_verified') === 'verified' ? 'selected' : '' }}>{{ translate('messages.verified') }}</option>
+                                        <option value="unverified" {{ request('is_verified') === 'unverified' ? 'selected' : '' }}>{{ translate('messages.unverified') }}</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="filterSortDropdown" class="form-label small">{{ translate('messages.Sort By') }}</label>
+                                    <select class="form-control form-control-sm" id="filterSortDropdown" name="sort">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
+                                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
+                                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
+                                        <option value="joined_asc" {{ request('sort') == 'joined_asc' ? 'selected' : '' }}>{{ translate('messages.Joined: Oldest First') }}</option>
+                                        <option value="joined_desc" {{ request('sort') == 'joined_desc' ? 'selected' : '' }}>{{ translate('messages.Joined: Newest First') }}</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersDropdownBtn">
+                                        <i class="fas fa-undo fa-sm"></i> {{ translate('messages.reset') }}
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary" id="applyFiltersDropdownBtn">
+                                        <i class="fas fa-filter fa-sm"></i> {{ translate('messages.apply') }}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="mb-3">
-                            <label for="filterSortDropdown" class="form-label small">{{ translate('messages.Sort By') }}</label>
-                            <select class="form-control form-control-sm" id="filterSortDropdown" name="sort">
-                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
-                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
-                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
-                                <option value="joined_asc" {{ request('sort') == 'joined_asc' ? 'selected' : '' }}>{{ translate('messages.Joined: Oldest First') }}</option>
-                                <option value="joined_desc" {{ request('sort') == 'joined_desc' ? 'selected' : '' }}>{{ translate('messages.Joined: Newest First') }}</option>
-                            </select>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersDropdownBtn">
-                                <i class="fas fa-undo fa-sm"></i> {{ translate('messages.reset') }}
-                            </button>
-                            <button type="button" class="btn btn-sm btn-primary" id="applyFiltersDropdownBtn">
-                                <i class="fas fa-filter fa-sm"></i> {{ translate('messages.apply') }}
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

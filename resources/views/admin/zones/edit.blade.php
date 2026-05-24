@@ -3,11 +3,10 @@
 @section('title', translate('messages.edit_zone'))
 
 @section('content')
-<div class="container-fluid">
     <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-2">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
         <h1 class="h3 mb-0 text-gray-800">{{translate('messages.edit_zone')}}</h1>
-        <a href="{{route('admin.zones.index')}}" class="d-none d-sm-inline-block btn btn-secondary shadow-sm">
+        <a href="{{route('admin.zones.index')}}" class="btn btn-secondary shadow-sm">
             <i class="fas fa-arrow-left fa-sm text-white-50"></i> {{translate('messages.back')}}
         </a>
     </div>
@@ -38,13 +37,14 @@
                                 </div>
                                 @error('is_active')
                                     <div class="text-danger">{{ $message }}</div>
+
                                 @enderror
                             </div>
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save mr-1"></i>{{ translate('messages.update') }}
+                                    <i class="fas fa-save mr-1"></i>{{ translate('messages.update_zone') }}
                                 </button>
-                                <button type="button" id="editClearPolygon" class="btn btn-warning" style="display: none;">
+                                <button type="button" id="clearPolygon" class="btn btn-warning" style="display: none;">
                                     <i class="fas fa-redo mr-1"></i>Clear Polygon
                                 </button>
                             </div>
@@ -55,27 +55,24 @@
                                 <span class="text-muted small">{{ translate('messages.click_on_map_to_draw_polygon') }}</span>
                             </label>
                             <div style="position: relative; height: 400px;">
-                                <div id="editMap" style="height: 100%; width: 100%; border-radius: 5px; position: relative;"></div>
+                                <div id="map" style="height: 100%; width: 100%; border-radius: 5px; position: relative;"></div>
                                 <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 460px; z-index: 999;">
                                     <div class="input-group" style="box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                                        <input type="text" id="editSearchBox" class="form-control" placeholder="Search location..." autocomplete="off">
+                                        <input type="text" id="searchBox" class="form-control" placeholder="Search location..." autocomplete="off">
                                         <div class="input-group-append">
-                                            <button type="button" id="editStartPolygon" class="btn btn-primary" title="Draw polygon">
+                                            <button type="button" id="editPolygon" class="btn btn-primary" title="Edit polygon">
                                                 <i class="fas fa-draw-polygon"></i>
                                             </button>
                                         </div>
                                     </div>
-                                    <div id="editSearchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-top: none; max-height: 200px; overflow-y: auto; display: none; z-index: 1000; margin-top: 2px; border-radius: 0 0 4px 4px;"></div>
+                                    <div id="searchResults" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-top: none; max-height: 200px; overflow-y: auto; display: none; z-index: 1000; margin-top: 2px; border-radius: 0 0 4px 4px;"></div>
                                 </div>
                                 <div style="position: absolute; bottom: 20px; left: 20px; z-index: 999; background: rgba(255,255,255,0.9); padding: 6px 12px; border-radius: 4px; font-size: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-                                    <span><span style="display:inline-block;width:12px;height:12px;background:#2563eb;border-radius:2px;margin-right:6px;"></span>Current zone & New drawing</span>
+                                    <span><span style="display:inline-block;width:12px;height:12px;background:#2563eb;border-radius:2px;margin-right:6px;"></span>Boundary</span>
                                     <span class="ml-3"><span style="display:inline-block;width:12px;height:12px;background:#f97316;border-radius:2px;margin-right:6px;"></span>Other zones</span>
                                 </div>
                             </div>
-                            <input type="hidden" name="coordinates" id="editCoordinates" value="{{ old('coordinates') }}" data-has-old="{{ old('coordinates') ? '1' : '0' }}">
-                            @error('coordinates')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
+                            <input type="hidden" name="coordinates" id="coordinates" value="{{ old('coordinates', $zone->coordinates) }}">
                         </div>
                     </form>
                 </div>
@@ -120,7 +117,7 @@ const ZoneMapConfig = {
 $(function() {
     const currentZoneCoords = @json($currentZoneCoords ?? []);
     const otherZones = @json($otherZonesCoords ?? []);
-    const zoneMap = new ZoneMapEdit('editMap', currentZoneCoords, otherZones);
+    const zoneMap = new ZoneMapEdit('map', currentZoneCoords, otherZones);
     zoneMap.init();
 });
 

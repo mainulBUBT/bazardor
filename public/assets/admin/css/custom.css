@@ -39,6 +39,15 @@
     overflow-x: hidden !important;
 }
 
+/* Always show sidebar brand text (SB Admin 2 hides it on mobile) */
+.sidebar .sidebar-brand .sidebar-brand-text {
+    display: inline !important;
+}
+
+.sidebar.toggled .sidebar-brand .sidebar-brand-text {
+    display: inline !important;
+}
+
 /* Force collapse submenus inline (not floating popover) */
 .sidebar .nav-item .collapse {
     position: relative !important;
@@ -46,6 +55,10 @@
     top: 0 !important;
     margin: 0 1rem !important;
     animation: none !important;
+}
+
+.sidebar .nav-item .collapse:not(.show) {
+    overflow: hidden;
 }
 
 .sidebar .nav-item .collapsing {
@@ -157,6 +170,9 @@
 /* Always show collapse arrows (SB Admin 2 hides them when .toggled) */
 .sidebar .nav-item .nav-link[data-toggle=collapse]::after {
     display: inline-block !important;
+    float: right;
+    width: 1rem;
+    text-align: center;
     color: rgba(255, 255, 255, 0.5) !important;
 }
 
@@ -1928,4 +1944,15 @@ input:checked+.toggle-slider:before {
 /* Hide reCAPTCHA badge */
 .grecaptcha-badge {
     visibility: hidden;
+}
+
+/* Gap utilities (Bootstrap 4 doesn't ship these) */
+.gap-1 {
+    gap: 0.25rem;
+}
+.gap-2 {
+    gap: 0.5rem;
+}
+.gap-3 {
+    gap: 1rem;
 }

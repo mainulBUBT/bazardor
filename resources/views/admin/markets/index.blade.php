@@ -8,89 +8,92 @@
 
     <!-- Markets DataTable -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Markets List') }}</h6>
-            <div class="d-flex align-items-center">
-                <div class="mr-2" style="min-width: 250px;">
-                    <div class="input-group input-group-sm">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <div class="card-header py-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Markets List') }}</h6>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <div class="w-auto" style="min-width: 180px;">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                            <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name...') }}" value="{{ request('search') }}">
                         </div>
-                        <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name...') }}" value="{{ request('search') }}">
                     </div>
-                </div>
-                <a href="{{ route('admin.markets.create') }}" class="btn btn-sm btn-primary mr-2">
-                    <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add New Market') }}
-                </a>
-                <div class="dropdown mr-2">
-                    <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-download fa-sm"></i> {{ translate('messages.Export') }}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
-                        <a class="dropdown-item" href="#" id="exportCSV">
-                            <i class="fas fa-file-csv fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.CSV') }}
+                    <div class="d-flex flex-nowrap align-items-center gap-1">
+                        <a href="{{ route('admin.markets.create') }}" class="btn btn-sm btn-primary" title="{{ translate('messages.Add New Market') }}">
+                            <i class="fas fa-plus"></i>
                         </a>
-                        <a class="dropdown-item" href="#" id="exportPDF">
-                            <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.PDF') }}
-                        </a>
-                    </div>
-                </div>
-                <!-- CHANGED Filter Button to Dropdown -->
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 280px;">
-                        <form id="filterForm">
-                            <div class="mb-2">
-                                <label for="filterDivision" class="form-label small">{{ translate('messages.Division') }}</label>
-                                <select class="form-control form-control-sm" id="filterDivision" name="division">
-                                    <option value="">{{ translate('messages.All Divisions') }}</option>
-                                    <option value="Dhaka" {{ request('division') == 'Dhaka' ? 'selected' : '' }}>Dhaka</option>
-                                    <option value="Chattogram" {{ request('division') == 'Chattogram' ? 'selected' : '' }}>Chattogram</option>
-                                    <option value="Rajshahi" {{ request('division') == 'Rajshahi' ? 'selected' : '' }}>Rajshahi</option>
-                                    <option value="Khulna" {{ request('division') == 'Khulna' ? 'selected' : '' }}>Khulna</option>
-                                    <option value="Barishal" {{ request('division') == 'Barishal' ? 'selected' : '' }}>Barishal</option>
-                                    <option value="Sylhet" {{ request('division') == 'Sylhet' ? 'selected' : '' }}>Sylhet</option>
-                                    <option value="Rangpur" {{ request('division') == 'Rangpur' ? 'selected' : '' }}>Rangpur</option>
-                                    <option value="Mymensingh" {{ request('division') == 'Mymensingh' ? 'selected' : '' }}>Mymensingh</option>
-                                </select>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.Export') }}">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                                <a class="dropdown-item" href="#" id="exportCSV">
+                                    <i class="fas fa-file-csv fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.CSV') }}
+                                </a>
+                                <a class="dropdown-item" href="#" id="exportPDF">
+                                    <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i> {{ translate('messages.PDF') }}
+                                </a>
                             </div>
-                            <div class="mb-2">
-                                <label for="filterType" class="form-label small">{{ translate('messages.Type') }}</label>
-                                <select class="form-control form-control-sm" id="filterType" name="type">
-                                    <option value="">{{ translate('messages.All Types') }}</option>
-                                    <option value="Wholesale Market" {{ request('type') == 'Wholesale Market' ? 'selected' : '' }}>{{ translate('messages.Wholesale Market') }}</option>
-                                    <option value="Retail Market" {{ request('type') == 'Retail Market' ? 'selected' : '' }}>{{ translate('messages.Retail Market') }}</option>
-                                    <option value="Supermarket" {{ request('type') == 'Supermarket' ? 'selected' : '' }}>{{ translate('messages.Supermarket') }}</option>
-                                    <option value="Local Shop" {{ request('type') == 'Local Shop' ? 'selected' : '' }}>{{ translate('messages.Local Shop') }}</option>
-                                </select>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.Filter') }}">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 280px;">
+                                <form id="filterForm">
+                                    <div class="mb-2">
+                                        <label for="filterDivision" class="form-label small">{{ translate('messages.Division') }}</label>
+                                        <select class="form-control form-control-sm" id="filterDivision" name="division">
+                                            <option value="">{{ translate('messages.All Divisions') }}</option>
+                                            <option value="Dhaka" {{ request('division') == 'Dhaka' ? 'selected' : '' }}>Dhaka</option>
+                                            <option value="Chattogram" {{ request('division') == 'Chattogram' ? 'selected' : '' }}>Chattogram</option>
+                                            <option value="Rajshahi" {{ request('division') == 'Rajshahi' ? 'selected' : '' }}>Rajshahi</option>
+                                            <option value="Khulna" {{ request('division') == 'Khulna' ? 'selected' : '' }}>Khulna</option>
+                                            <option value="Barishal" {{ request('division') == 'Barishal' ? 'selected' : '' }}>Barishal</option>
+                                            <option value="Sylhet" {{ request('division') == 'Sylhet' ? 'selected' : '' }}>Sylhet</option>
+                                            <option value="Rangpur" {{ request('division') == 'Rangpur' ? 'selected' : '' }}>Rangpur</option>
+                                            <option value="Mymensingh" {{ request('division') == 'Mymensingh' ? 'selected' : '' }}>Mymensingh</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="filterType" class="form-label small">{{ translate('messages.Type') }}</label>
+                                        <select class="form-control form-control-sm" id="filterType" name="type">
+                                            <option value="">{{ translate('messages.All Types') }}</option>
+                                            <option value="Wholesale Market" {{ request('type') == 'Wholesale Market' ? 'selected' : '' }}>{{ translate('messages.Wholesale Market') }}</option>
+                                            <option value="Retail Market" {{ request('type') == 'Retail Market' ? 'selected' : '' }}>{{ translate('messages.Retail Market') }}</option>
+                                            <option value="Supermarket" {{ request('type') == 'Supermarket' ? 'selected' : '' }}>{{ translate('messages.Supermarket') }}</option>
+                                            <option value="Local Shop" {{ request('type') == 'Local Shop' ? 'selected' : '' }}>{{ translate('messages.Local Shop') }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
+                                        <select class="form-control form-control-sm" id="filterStatus" name="is_active">
+                                            <option value="">{{ translate('messages.All Status') }}</option>
+                                            <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                            <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="filterSort" class="form-label small">{{ translate('messages.Sort By') }}</label>
+                                        <select class="form-control form-control-sm" id="filterSort" name="sort">
+                                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
+                                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
+                                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
+                                            <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
+                                            <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="mb-2">
-                                <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
-                                <select class="form-control form-control-sm" id="filterStatus" name="is_active">
-                                    <option value="">{{ translate('messages.All Status') }}</option>
-                                    <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
-                                    <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="filterSort" class="form-label small">{{ translate('messages.Sort By') }}</label>
-                                <select class="form-control form-control-sm" id="filterSort" name="sort">
-                                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
-                                    <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
-                                    <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
-                                </select>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
-                                    <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
-                                </button>
-                                <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
-                                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
-                                </button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
