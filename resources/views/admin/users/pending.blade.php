@@ -47,19 +47,21 @@
                                     <span class="badge badge-warning">{{ translate('messages.pending') }}</span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info" title="{{ translate('messages.view_profile') }}">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" title="{{ translate('messages.delete') }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                        <a href="{{ route('admin.users.approve', $user->id) }}" class="btn btn-sm btn-success" title="{{ translate('messages.verify') }}">
-                                        <i class="fas fa-check"></i>
-                                    </a>
+                                    <div class="d-flex flex-nowrap align-items-center">
+                                        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-info btn-circle btn-sm mr-1" title="{{ translate('messages.view_profile') }}">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="mr-1">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-circle btn-sm" title="{{ translate('messages.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        <a href="{{ route('admin.users.approve', $user->id) }}" class="btn btn-success btn-circle btn-sm" title="{{ translate('messages.verify') }}">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

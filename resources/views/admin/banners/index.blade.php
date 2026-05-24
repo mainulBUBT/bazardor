@@ -164,15 +164,19 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-sm btn-primary"><i
-                                            class="fas fa-edit"></i></a>
-                                    <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></button>
-                                    </form>
+                                    <div class="d-flex flex-nowrap align-items-center">
+                                        <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-primary btn-circle btn-sm mr-1" title="{{ translate('messages.edit') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-circle btn-sm"
+                                                onclick="return confirm('Are you sure?')" title="{{ translate('messages.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

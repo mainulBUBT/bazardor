@@ -56,16 +56,6 @@
             #page-top {
                 min-height: 100vh;
             }
-            
-            /* Additional sidebar fixes */
-            .sidebar {
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .sidebar .nav-item:last-child {
-                margin-top: auto;
-            }
         </style>
         <link href="{{ asset('assets/admin/css/custom.css') }}" rel="stylesheet">
         <!-- Toastr CSS -->
@@ -123,11 +113,7 @@
 
         <!-- Bootstrap core JavaScript-->
         <script src="{{ asset('assets/admin/vendor/jquery/jquery.min.js') }}"></script>
-        <!-- Page level custom scripts -->
-    <script src="{{ asset('assets/admin/js/demo/chart-area-demo.js') }}"></script>
-    <script src="{{ asset('assets/admin/js/demo/chart-pie-demo.js') }}"></script>
-
-    <!-- Leaflet JS -->
+        <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.umd.js"></script>
         <!-- Select2 JS -->
@@ -250,56 +236,71 @@
 
         <script>
         $(document).ready(function() {
-            // Mobile sidebar toggle functionality
-            function handleSidebarToggle() {
-                if ($(window).width() <= 768) {
-                    // Mobile behavior
-                    $('#sidebarToggleTop').on('click', function(e) {
-                        e.preventDefault();
-                        $('.sidebar').toggleClass('toggled');
-                        $('body').toggleClass('sidebar-toggled');
-                        
-                        // Add overlay
-                        if ($('.sidebar').hasClass('toggled')) {
-                            if (!$('.sidebar-overlay').length) {
-                                $('body').append('<div class="sidebar-overlay"></div>');
-                            }
-                            $('.sidebar-overlay').addClass('show');
-                        } else {
-                            $('.sidebar-overlay').removeClass('show');
-                        }
-                    });
-                    
-                    // Close sidebar when clicking overlay
-                    $(document).on('click', '.sidebar-overlay', function() {
-                        $('.sidebar').removeClass('toggled');
-                        $('body').removeClass('sidebar-toggled');
-                        $(this).removeClass('show');
-                    });
-                    
-                    // Close sidebar when clicking outside on mobile
-                    $(document).on('click', function(e) {
-                        if ($(window).width() <= 768 && 
-                            !$(e.target).closest('.sidebar').length && 
-                            !$(e.target).closest('#sidebarToggleTop').length &&
-                            $('.sidebar').hasClass('toggled')) {
-                            $('.sidebar').removeClass('toggled');
-                            $('body').removeClass('sidebar-toggled');
-                            $('.sidebar-overlay').removeClass('show');
-                        }
-                    });
+            // Unbind SB Admin 2's built-in toggle and resize handlers
+            $('#sidebarToggleTop, #sidebarToggle').off('click');
+            // Remove SB Admin 2's resize handler that collapses menus on mobile
+            $(window).off('resize');
+
+            function isMobile() {
+                return $(window).width() < 768;
+            }
+
+            function openSidebar() {
+                $('.sidebar').removeClass('sidebar-closed').addClass('sidebar-open');
+                $('body').addClass('sidebar-toggled');
+                $('#content-wrapper').removeClass('no-sidebar');
+                if (isMobile()) {
+                    if (!$('.sidebar-overlay').length) {
+                        $('body').append('<div class="sidebar-overlay"></div>');
+                    }
+                    $('.sidebar-overlay').addClass('show');
                 }
             }
-            
-            // Initialize
-            handleSidebarToggle();
-            
-            // Re-initialize on window resize
+
+            function closeSidebar() {
+                $('.sidebar').removeClass('sidebar-open').addClass('sidebar-closed');
+                $('body').removeClass('sidebar-toggled');
+                $('#content-wrapper').addClass('no-sidebar');
+                $('.sidebar-overlay').removeClass('show');
+            }
+
+            // Hamburger button
+            $(document).on('click', '#sidebarToggleTop', function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if ($('.sidebar').hasClass('sidebar-open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+
+            // Close button inside sidebar
+            $(document).on('click', '#sidebarClose', function(e) {
+                e.preventDefault();
+                closeSidebar();
+            });
+
+            // Bottom toggle button — toggle sidebar on all screens
+            $(document).on('click', '#sidebarToggle', function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if ($('.sidebar').hasClass('sidebar-open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+
+            // Close on overlay click
+            $(document).on('click', '.sidebar-overlay', function() {
+                closeSidebar();
+            });
+
+            // Clean up on resize
             $(window).on('resize', function() {
-                if ($(window).width() > 768) {
-                    $('.sidebar').removeClass('toggled');
-                    $('body').removeClass('sidebar-toggled');
-                    $('.sidebar-overlay').removeClass('show');
+                if (!isMobile()) {
+                    closeSidebar();
                 }
             });
         });

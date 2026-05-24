@@ -104,9 +104,11 @@
                                     @if(!$market->latitude || !$market->longitude) <span class="badge badge-warning">Location</span> @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.markets.edit', $market->id) }}" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-edit"></i> {{ translate('messages.Edit') }}
-                                    </a>
+                                    <div class="d-flex flex-nowrap align-items-center">
+                                        <a href="{{ route('admin.markets.edit', $market->id) }}" class="btn btn-primary btn-circle btn-sm" title="{{ translate('messages.edit') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -152,9 +154,11 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-sm btn-info">
-                                        <i class="fas fa-eye"></i> {{ translate('messages.View') }}
-                                    </a>
+                                    <div class="d-flex flex-nowrap align-items-center">
+                                        <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-info btn-circle btn-sm" title="{{ translate('messages.view_details') }}">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

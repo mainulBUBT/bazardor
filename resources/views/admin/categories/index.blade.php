@@ -10,79 +10,83 @@
 
 <!-- Categories DataTable -->
 <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Categories') }}</h6>
-        <div class="d-flex align-items-center">
-            <div class="mr-2" style="min-width: 250px;">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+    <div class="card-header py-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.All Categories') }}</h6>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <div class="w-auto" style="min-width: 180px;">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name...') }}" value="{{ request('search') }}">
                     </div>
-                    <input type="text" class="form-control" id="searchInput" placeholder="{{ translate('messages.Search by name...') }}" value="{{ request('search') }}">
                 </div>
-            </div>
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-primary mr-2">
-                <i class="fas fa-plus fa-sm"></i> {{ translate('messages.Add New Category') }}
-            </a>          
-            <div class="dropdown mr-2">
-                <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-file-export fa-sm"></i> {{ translate('messages.Export') }}
-                </button>
-                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
-                    <a class="dropdown-item" href="{{ route('admin.categories.export', ['format' => 'csv']) }}">
-                        <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
+                <div class="d-flex flex-nowrap align-items-center gap-1">
+                    <a href="{{ route('admin.categories.create') }}" class="btn btn-sm btn-primary" title="{{ translate('messages.Add New Category') }}">
+                        <i class="fas fa-plus"></i>
                     </a>
-                    <a class="dropdown-item" href="{{ route('admin.categories.export', ['format' => 'xlsx']) }}">
-                        <i class="fas fa-file-excel fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Excel') }}
-                    </a>
-                    <a class="dropdown-item" href="{{ route('admin.categories.export', ['format' => 'pdf']) }}">
-                        <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
-                    </a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Filter') }}
-                </button>
-                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 280px;">
-                    <form id="filterForm">
-                        <div class="mb-2">
-                            <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
-                            <select class="form-control form-control-sm" id="filterStatus" name="is_active">
-                                <option value="">{{ translate('messages.All Status') }}</option>
-                                <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
-                                <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
-                            </select>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.Export') }}">
+                            <i class="fas fa-file-export"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="exportDropdown">
+                            <a class="dropdown-item" href="{{ route('admin.categories.export', ['format' => 'csv']) }}">
+                                <i class="fas fa-file-csv fa-sm fa-fw text-gray-400"></i> {{ translate('messages.CSV') }}
+                            </a>
+                            <a class="dropdown-item" href="{{ route('admin.categories.export', ['format' => 'xlsx']) }}">
+                                <i class="fas fa-file-excel fa-sm fa-fw text-gray-400"></i> {{ translate('messages.Excel') }}
+                            </a>
+                            <a class="dropdown-item" href="{{ route('admin.categories.export', ['format' => 'pdf']) }}">
+                                <i class="fas fa-file-pdf fa-sm fa-fw text-gray-400"></i> {{ translate('messages.PDF') }}
+                            </a>
                         </div>
-                        <div class="mb-2">
-                            <label for="filterParent" class="form-label small">{{ translate('messages.Parent Category') }}</label>
-                            <select class="form-control form-control-sm" id="filterParent" name="parent_id">
-                                <option value="">{{ translate('messages.All Categories') }}</option>
-                                <option value="root" {{ request('parent_id') === 'root' ? 'selected' : '' }}>{{ translate('messages.Root Categories') }}</option>
-                                @foreach($parentCategories as $parent)
-                                    <option value="{{ $parent->id }}" {{ request('parent_id') == $parent->id ? 'selected' : '' }}>{{ $parent->name }}</option>
-                                @endforeach
-                            </select>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ translate('messages.Filter') }}">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in p-3" aria-labelledby="filterDropdown" style="min-width: 280px;">
+                            <form id="filterForm">
+                                <div class="mb-2">
+                                    <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
+                                    <select class="form-control form-control-sm" id="filterStatus" name="is_active">
+                                        <option value="">{{ translate('messages.All Status') }}</option>
+                                        <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
+                                        <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="filterParent" class="form-label small">{{ translate('messages.Parent Category') }}</label>
+                                    <select class="form-control form-control-sm" id="filterParent" name="parent_id">
+                                        <option value="">{{ translate('messages.All Categories') }}</option>
+                                        <option value="root" {{ request('parent_id') === 'root' ? 'selected' : '' }}>{{ translate('messages.Root Categories') }}</option>
+                                        @foreach($parentCategories as $parent)
+                                            <option value="{{ $parent->id }}" {{ request('parent_id') == $parent->id ? 'selected' : '' }}>{{ $parent->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="filterSort" class="form-label small">{{ translate('messages.Sort By') }}</label>
+                                    <select class="form-control form-control-sm" id="filterSort" name="sort">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
+                                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
+                                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
+                                        <option value="position_asc" {{ request('sort') == 'position_asc' ? 'selected' : '' }}>{{ translate('messages.Position: Low to High') }}</option>
+                                        <option value="position_desc" {{ request('sort') == 'position_desc' ? 'selected' : '' }}>{{ translate('messages.Position: High to Low') }}</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
+                                        <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
+                                        <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="mb-3">
-                            <label for="filterSort" class="form-label small">{{ translate('messages.Sort By') }}</label>
-                            <select class="form-control form-control-sm" id="filterSort" name="sort">
-                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
-                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
-                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
-                                <option value="position_asc" {{ request('sort') == 'position_asc' ? 'selected' : '' }}>{{ translate('messages.Position: Low to High') }}</option>
-                                <option value="position_desc" {{ request('sort') == 'position_desc' ? 'selected' : '' }}>{{ translate('messages.Position: High to Low') }}</option>
-                            </select>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-sm btn-secondary mr-2" id="resetFiltersBtn">
-                                <i class="fas fa-undo fa-sm"></i> {{ translate('messages.Reset') }}
-                            </button>
-                            <button type="button" class="btn btn-sm btn-primary" id="applyFiltersBtn">
-                                <i class="fas fa-filter fa-sm"></i> {{ translate('messages.Apply') }}
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,16 +131,18 @@
                             </td>
                             <td>{{ $category->created_at->format('Y-m-d') }}</td>
                             <td>
-                                <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-primary btn-circle btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form id="delete-category-{{ $category->id }}" action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="formAlert('delete-category-{{ $category->id }}', '{{ translate('messages.Want to delete this category?') }}')" class="btn btn-danger btn-circle btn-sm delete-category">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <div class="d-flex flex-nowrap align-items-center">
+                                    <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-primary btn-circle btn-sm mr-1" title="{{ translate('messages.edit') }}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form id="delete-category-{{ $category->id }}" action="{{ route('admin.categories.destroy', $category->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="formAlert('delete-category-{{ $category->id }}', '{{ translate('messages.Want to delete this category?') }}')" class="btn btn-danger btn-circle btn-sm delete-category" title="{{ translate('messages.delete') }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
