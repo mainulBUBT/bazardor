@@ -60,6 +60,59 @@
         </div>
     </div>
 
+    <!-- Price Settings Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Price Settings') }}</h6>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.settings.update', ['tab' => BUSINESS_RULES]) }}" method="POST">
+                @csrf
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="priceTolerance">{{ translate('messages.Price Tolerance') }}</label>
+                        @php($priceTolerance = $settings['price_tolerance']['value'] ?? 0.50)
+                        <input type="number" class="form-control" id="priceTolerance" name="price_tolerance" value="{{ $priceTolerance }}" step="0.05" min="0.05" max="1.00">
+                        <small class="form-text text-muted">{{ translate('messages.Allowed deviation from reference price (0.50 = ±50%). Higher values accept wider price variation.') }}</small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="rateLimitMinutes">{{ translate('messages.Rate Limit (minutes)') }}</label>
+                        @php($rateLimitMinutes = $settings['rate_limit_minutes']['value'] ?? 60)
+                        <input type="number" class="form-control" id="rateLimitMinutes" name="rate_limit_minutes" value="{{ $rateLimitMinutes }}" min="5" max="1440">
+                        <small class="form-text text-muted">{{ translate('messages.Minimum wait between submissions for the same product and market per user') }}</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="contributionWindowHours">{{ translate('messages.Contribution Window (hours)') }}</label>
+                        @php($contributionWindow = $settings['contribution_window_hours']['value'] ?? 24)
+                        <input type="number" class="form-control" id="contributionWindowHours" name="contribution_window_hours" value="{{ $contributionWindow }}" min="1" max="168">
+                        <small class="form-text text-muted">{{ translate('messages.How many hours of recent contributions to consider when calculating the median price') }}</small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="stalePriceDays">{{ translate('messages.Outdated Price Threshold (days)') }}</label>
+                        @php($outdatedPriceDays = $settings['outdated_price_days']['value'] ?? 30)
+                        <input type="number" class="form-control" id="outdatedPriceDays" name="outdated_price_days" value="{{ $outdatedPriceDays }}" min="1" max="365">
+                        <small class="form-text text-muted">{{ translate('messages.Prices older than this many days are flagged as outdated') }}</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="minSubmissionsForMedian">{{ translate('messages.Min Submissions for Median') }}</label>
+                        @php($minSubmissions = $settings['min_submissions_for_median']['value'] ?? 1)
+                        <input type="number" class="form-control" id="minSubmissionsForMedian" name="min_submissions_for_median" value="{{ $minSubmissions }}" min="1" max="10">
+                        <small class="form-text text-muted">{{ translate('messages.Minimum number of contributions needed before a price is published') }}</small>
+                    </div>
+                </div>
+                <div class="col-12 text-right">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-1"></i>{{ translate('messages.Save Price Settings') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- System Settings Card -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">

@@ -7,68 +7,61 @@ use Illuminate\Support\Facades\DB;
 
 class SettingService
 {
-    public function __construct(private Setting $setting)
-    {
-
-    }
+    public function __construct(private Setting $setting) {}
 
     /**
      * Summary of getSettings
-     * @param mixed $group
+     *
+     * @param  mixed  $group
      * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Setting>
      */
     public function getSettings(?string $group = null, array $keys = [])
     {
         return $this->setting
-            ->when(!is_null($group), function ($query) use ($group) {
+            ->when(! is_null($group), function ($query) use ($group) {
                 $query->where('settings_type', $group);
             })
-            ->when(!empty($keys), function ($query) use ($keys) {
+            ->when(! empty($keys), function ($query) use ($keys) {
                 $query->whereIn('key_name', $keys);
             })
             ->get();
     }
 
-
     /**
      * Summary of getSetting
-     * @param string $key
-     * @param string $group
      */
     public function getSetting(string $key, ?string $group = null): mixed
     {
         return $this->setting
-            ->when(!is_null($group), function ($query) use ($group) {
+            ->when(! is_null($group), function ($query) use ($group) {
                 return $query->where('settings_type', $group);
             })
             ->where('key_name', $key)
             ->value('value');
     }
-    
+
     /**
      * Get a single setting value by key with default fallback
      *
-     * @param string $key The setting key
-     * @param string $group The settings group/type
+     * @param  string  $key  The setting key
+     * @param  string  $group  The settings group/type
      * @return mixed The setting value or default value if not found
      */
     public function getSettingWithDefault(string $key, string $group)
     {
         $value = $this->getSetting($key, $group);
-        
+
         if ($value !== null) {
             return $value;
         }
-        
+
         $defaults = $this->getDefaultSettings();
+
         return $defaults[$group][$key] ?? null;
     }
-    
+
     /**
      * Summary of updateSettings
-     * @param array $data
-     * @param string $group
-     * @return bool
      */
     public function updateSettings(array $data, string $group): bool
     {
@@ -76,17 +69,17 @@ class SettingService
         if (isset($data['company_logo']) && $data['company_logo']->isValid()) {
             $oldLogo = $this->getSetting('company_logo', $group);
             $data['company_logo'] = handle_file_upload(
-                'company/', 
+                'company/',
                 $data['company_logo']->getClientOriginalExtension(),
                 $data['company_logo'],
                 $oldLogo
             );
-        }   
-        
+        }
+
         if (isset($data['company_favicon']) && $data['company_favicon']->isValid()) {
             $oldFavicon = $this->getSetting('company_favicon', $group);
             $data['company_favicon'] = handle_file_upload(
-                'company/', 
+                'company/',
                 $data['company_favicon']->getClientOriginalExtension(),
                 $data['company_favicon'],
                 $oldFavicon
@@ -99,36 +92,38 @@ class SettingService
 
         try {
             DB::transaction(function () use ($data, $group) {
-                    $existing = $this->setting->where('settings_type', $group)->pluck('value', 'key_name');
-                    foreach ($data as $key => $value) {
-                        if (!$existing->has($key) || $existing[$key] != $value) {
-                            $this->setting->updateOrCreate(
-                                ['settings_type' => $group, 'key_name' => $key],
-                                ['value' => $value]
-                            );
-                        }
+                $existing = $this->setting->where('settings_type', $group)->pluck('value', 'key_name');
+                foreach ($data as $key => $value) {
+                    if (! $existing->has($key) || $existing[$key] != $value) {
+                        $this->setting->updateOrCreate(
+                            ['settings_type' => $group, 'key_name' => $key],
+                            ['value' => $value]
+                        );
                     }
+                }
             });
 
             return true;
         } catch (\Exception $e) {
-            info("Settings update failed: " . $e->getMessage());
+            info('Settings update failed: '.$e->getMessage());
+
             return false;
-        }   
+        }
     }
 
     /**
      * Summary of updateStatus
-     * @param mixed $id
-     * @param mixed $status
-     * @param mixed $group
+     *
+     * @param  mixed  $id
+     * @param  mixed  $status
+     * @param  mixed  $group
      * @return bool
      */
     public function updateStatus($id, $status, $group)
     {
         $setting = $this->setting->where('settings_type', $group)
-                                ->where('key_name', $id)
-                                ->first();
+            ->where('key_name', $id)
+            ->first();
 
         if ($setting) {
             $setting->update(['value' => $status]);
@@ -136,10 +131,10 @@ class SettingService
             $this->setting->create([
                 'settings_type' => $group,
                 'key_name' => $id,
-                'value' => $status
+                'value' => $status,
             ]);
         }
-        
+
         return true;
     }
 
@@ -147,7 +142,7 @@ class SettingService
     {
         return [
             'mail_config' => [
-                'status' => array_key_exists('status', $data) ? (bool)$data['status'] : true,
+                'status' => array_key_exists('status', $data) ? (bool) $data['status'] : true,
                 'driver' => $data['driver'] ?? 'smtp',
                 'host' => $data['host'] ?? '',
                 'port' => $data['port'] ?? '587',
@@ -162,8 +157,6 @@ class SettingService
 
     /**
      * Get default settings
-     *
-     * @return array
      */
     public function getDefaultSettings(): array
     {
@@ -202,6 +195,11 @@ class SettingService
                 'decimal_places' => 2,
                 'copyright_text' => '© 2025 Bazar-dor. All rights reserved.',
                 'cookies_text' => 'We use cookies to enhance your experience.',
+                'price_tolerance' => 0.50,
+                'rate_limit_minutes' => 60,
+                'contribution_window_hours' => 24,
+                'outdated_price_days' => 30,
+                'min_submissions_for_median' => 1,
             ],
             'notifications' => [
                 'enable_email_notifications' => true,

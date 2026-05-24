@@ -291,7 +291,6 @@ class MarketService
         $paginator = \App\Models\Product::with([
             'category:id,name,slug,description,image_path,is_active,position',
             'unit:id,name,symbol,unit_type,is_active',
-            'priceThreshold',
             'marketPrices' => function ($query) use ($marketId) {
                 $query->where('market_id', $marketId)->latest('price_date');
             }

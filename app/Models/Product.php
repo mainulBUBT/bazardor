@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Traits\HasUuid;
-use App\Models\PriceThreshold;
 
 class Product extends Model
 {
@@ -88,11 +87,6 @@ class Product extends Model
         return $this->hasMany(ProductMarketPrice::class);
     }
 
-    public function priceThreshold(): HasOne
-    {
-        return $this->hasOne(PriceThreshold::class);
-    }
-
     /**
      * Scope a query to only include active products.
      */
@@ -155,42 +149,4 @@ class Product extends Model
         return get_image_url($this->image_path, 'products');
     }
 
-    protected static function booted(): void
-    {
-        static::created(function (Product $product) {
-            $product->ensureDefaultPriceThreshold();
-        });
-
-        static::updated(function (Product $product) {
-            if ($product->isDirty('base_price')) {
-                $product->ensureDefaultPriceThreshold();
-            }
-        });
-    }
-
-    public function ensureDefaultPriceThreshold(): void
-    {
-        if ($this->base_price === null) {
-            return;
-        }
-
-        $basePrice = (float) $this->base_price;
-
-        if ($basePrice <= 0) {
-            return;
-        }
-
-        $tolerance = config('pricing.threshold_tolerance', 0.2); // 20% either side by default
-
-        $minPrice = max(0.01, round($basePrice * (1 - $tolerance), 2));
-        $maxPrice = round($basePrice * (1 + $tolerance), 2);
-
-        PriceThreshold::query()->updateOrCreate(
-            ['product_id' => $this->id],
-            [
-                'min_price' => $minPrice,
-                'max_price' => $maxPrice,
-            ]
-        );
-    }
 }

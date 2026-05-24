@@ -7,9 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductMarketPriceResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     */
     public function toArray(Request $request): array
     {
         $priceDate = $this->price_date ? \Carbon\Carbon::parse($this->price_date) : null;
@@ -18,7 +15,7 @@ class ProductMarketPriceResource extends JsonResource
         return [
             'id' => $this->id,
             'price' => (float) $this->price,
-            'discount_price' => $this->discount_price !== null ? (float) $this->discount_price : null,
+            'is_outdated' => $priceDate ? $priceDate->lt(now()->subDays(30)) : true,
             'price_trend' => $this->price_trend,
             'previous_price' => $this->previous_price !== null ? (float) $this->previous_price : null,
             'change_amount' => $this->change_amount !== null ? (float) $this->change_amount : null,

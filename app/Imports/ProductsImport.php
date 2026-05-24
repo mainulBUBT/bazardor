@@ -84,14 +84,6 @@ class ProductsImport implements ToCollection, WithHeadingRow
             }
         }
 
-        // Handle Price Threshold
-        if (isset($row['min_price']) || isset($row['max_price'])) {
-            $product->priceThreshold()->updateOrCreate([], [
-                'min_price' => $row['min_price'] ?? null,
-                'max_price' => $row['max_price'] ?? null,
-            ]);
-        }
-
         // Handle Market Prices
         // Format: "Market Name: Price; Market Name 2: Price2"
         if (isset($row['market_prices']) && !empty($row['market_prices'])) {

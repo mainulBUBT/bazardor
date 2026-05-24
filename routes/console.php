@@ -8,7 +8,8 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('price-contributions:process')
-    ->everyThirtyMinutes()
+// Daily housekeeping — price updates are now immediate (in ContributionService)
+Schedule::command('prices:housekeeping')
+    ->daily()
     ->withoutOverlapping()
     ->runInBackground();

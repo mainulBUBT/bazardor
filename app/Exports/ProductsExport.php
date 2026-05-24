@@ -16,7 +16,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping, WithS
     */
     public function collection()
     {
-        return Product::with(['category', 'unit', 'tags', 'marketPrices.market', 'priceThreshold'])->get();
+        return Product::with(['category', 'unit', 'tags', 'marketPrices.market'])->get();
     }
 
     public function headings(): array
@@ -67,8 +67,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping, WithS
             $product->is_featured ? 'Yes' : 'No',
             $product->brand,
             $product->country_of_origin,
-            $product->priceThreshold ? $product->priceThreshold->min_price : '',
-            $product->priceThreshold ? $product->priceThreshold->max_price : '',
+            $product->base_price,
             $marketPrices,
         ];
     }

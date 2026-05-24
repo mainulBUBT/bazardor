@@ -12,7 +12,7 @@ class UpdateSettingsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     /**
@@ -26,8 +26,8 @@ class UpdateSettingsRequest extends FormRequest
         $rules = [
             'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'social', 'security', 'backup', 'app'])],
         ];
-        
-        $rules = array_merge($rules, match($tab) {
+
+        $rules = array_merge($rules, match ($tab) {
             'general' => [
                 'company_name' => 'required|string|max:255',
                 'company_email' => 'required|email|max:255',
@@ -40,8 +40,8 @@ class UpdateSettingsRequest extends FormRequest
                 'enable_price_trend_indicators' => 'boolean',
                 'enable_market_ratings' => 'boolean',
                 'enable_volunteer_points_system' => 'boolean',
-                'company_logo'=> 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'company_favicon'=> 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'company_favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'facebook_url' => 'nullable|url|max:500',
                 'twitter_url' => 'nullable|url|max:500',
                 'instagram_url' => 'nullable|url|max:500',
@@ -58,6 +58,11 @@ class UpdateSettingsRequest extends FormRequest
                 'decimal_places' => 'required|integer|min:0|max:10',
                 'copyright_text' => 'nullable|string|max:500',
                 'cookies_text' => 'nullable|string|max:500',
+                'price_tolerance' => 'required|numeric|min:0.05|max:1.00',
+                'rate_limit_minutes' => 'required|integer|min:5|max:1440',
+                'contribution_window_hours' => 'required|integer|min:1|max:168',
+                'outdated_price_days' => 'required|integer|min:1|max:365',
+                'min_submissions_for_median' => 'required|integer|min:1|max:10',
             ],
             'notifications' => [
                 'enable_email_notifications' => 'boolean',
@@ -99,10 +104,10 @@ class UpdateSettingsRequest extends FormRequest
             ],
             default => [],
         });
-  
+
         return $rules;
     }
-    
+
     /**
      * Get custom messages for validator errors.
      *

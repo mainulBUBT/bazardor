@@ -92,14 +92,6 @@ class ProductService
                 'device_id' => $data['device_id'] ?? null,
             ]);
 
-            // Create price threshold if provided
-            if (isset($data['min_price']) || isset($data['max_price'])) {
-                $product->priceThreshold()->create([
-                    'min_price' => $data['min_price'] ?? null,
-                    'max_price' => $data['max_price'] ?? null,
-                ]);
-            }
-
             // Save tags if provided
             if (!empty($data['tags']) && is_array($data['tags'])) {
                 foreach ($data['tags'] as $tagText) {
@@ -172,14 +164,6 @@ class ProductService
                 'country_of_origin' => $data['country_of_origin'] ?? $product->country_of_origin,
             ]);
             $product->save();
-
-            // Update price threshold if provided
-            if (isset($data['min_price']) || isset($data['max_price'])) {
-                $product->priceThreshold()->updateOrCreate([], [
-                    'min_price' => $data['min_price'] ?? null,
-                    'max_price' => $data['max_price'] ?? null,
-                ]);
-            }
 
             // Update tags (simple replace strategy)
             if (isset($data['tags']) && is_array($data['tags'])) {
@@ -256,7 +240,6 @@ class ProductService
             ->with([
                 'category:id,name,slug,description,image_path,is_active,position',
                 'unit:id,name,symbol,unit_type,is_active',
-                'priceThreshold',
                 'marketPrices' => function ($query) use ($zoneId) {
                     $query
                         ->select('id', 'product_id', 'market_id', 'price', 'discount_price', 'price_date')
