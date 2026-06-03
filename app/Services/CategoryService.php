@@ -73,9 +73,13 @@ class CategoryService
         $this->category->slug = $data['slug'];
         $this->category->parent_id = $data['parent_id'] ?? 0;
         $this->category->position = $data['position'] ?? 0;
-        $this->category->image_path = $data['image_path'];
+        $this->category->image_path = $data['image_path'] ?? null;
         $this->category->is_active = $data['is_active'] ?? 1;
         $this->category->save();
+
+        // Save translations for non-default locales
+        $this->saveTranslations($this->category, $data);
+
         return $this->category;
     }
 

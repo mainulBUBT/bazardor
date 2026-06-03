@@ -68,6 +68,27 @@
 
         <div class="topbar-divider d-none d-sm-block"></div>
 
+        <!-- Language Switcher -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="localeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-globe fa-fw"></i>
+                <span class="d-none d-lg-inline ml-1">{{ strtoupper(app()->getLocale()) }}</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="localeDropdown">
+                @foreach(get_enabled_languages() as $lang)
+                    <a class="dropdown-item {{ app()->getLocale() === $lang['code'] ? 'active font-weight-bold' : '' }}"
+                       href="{{ route('admin.locale.switch', $lang['code']) }}">
+                        {{ $lang['name'] }}
+                        @if($lang['code'] === get_default_locale())
+                            <span class="badge badge-primary ml-1">{{ translate('messages.Default') }}</span>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+        </li>
+
+        <div class="topbar-divider d-none d-sm-block"></div>
+
         <!-- Nav Item - User Information -->
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

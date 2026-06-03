@@ -11,6 +11,11 @@
 <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
+    @php
+        $locales = get_enabled_locales();
+        $languages = get_enabled_languages();
+        $defaultLocale = get_default_locale();
+    @endphp
     <div class="row">
         <div class="col-lg-8">
             <div class="card shadow mb-4">
@@ -18,10 +23,67 @@
                     <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Product Information') }}</h6>
                 </div>
                 <div class="card-body">
+                    @if(count($locales) > 1)
+                    <!-- Language Tabs -->
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        @foreach($languages as $lang)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                               data-toggle="tab" href="#lang-{{ $lang['code'] }}" role="tab">
+                                {{ strtoupper($lang['code']) }}
+                                <small class="text-muted">{{ $lang['code'] === $defaultLocale ? '(Default)' : $lang['name'] }}</small>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <div class="tab-content">
+                        @foreach($languages as $lang)
+                            @php
+                                $locale = $lang['code'];
+                                $isDefault = $locale === $defaultLocale;
+                                $isActive = $loop->first;
+                                $fieldName = $isDefault ? 'name' : "name_{$locale}";
+                                $fieldDesc = $isDefault ? 'description' : "description_{$locale}";
+                                $fieldBrand = $isDefault ? 'brand' : "brand_{$locale}";
+                                $nameValue = old($fieldName, $isDefault ? $product->name : ($product->getTranslation($locale, false)?->name ?? ''));
+                                $descValue = old($fieldDesc, $isDefault ? $product->description : ($product->getTranslation($locale, false)?->description ?? ''));
+                                $brandValue = old($fieldBrand, $isDefault ? $product->brand : ($product->getTranslation($locale, false)?->brand ?? ''));
+                            @endphp
+                            <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Product Name') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
+                                    <input type="text" name="{{ $fieldName }}" class="form-control"
+                                           {{ $isDefault ? 'required' : '' }}
+                                           value="{{ $nameValue }}">
+                                </div>
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Description') }} ({{ $lang['name'] }})</label>
+                                    <textarea name="{{ $fieldDesc }}" class="form-control" rows="4">{{ $descValue }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Brand') }} ({{ $lang['name'] }})</label>
+                                    <input type="text" name="{{ $fieldBrand }}" class="form-control"
+                                           placeholder="{{ $isDefault ? 'Brand name' : 'Brand name ('.$lang['name'].')' }}"
+                                           value="{{ $brandValue }}">
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @else
                     <div class="form-group">
                         <label for="productName">{{ translate('messages.Product Name') }} <span class="text-danger">*</span></label>
                         <input type="text" name="name" id="productName" class="form-control" required value="{{ old('name', $product->name) }}">
                     </div>
+                    <div class="form-group">
+                        <label for="productDescription">{{ translate('messages.Description') }}</label>
+                        <textarea name="description" id="productDescription" class="form-control" rows="4">{{ old('description', $product->description) }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productBrand">{{ translate('messages.Brand') }}</label>
+                        <input type="text" name="brand" id="productBrand" class="form-control" placeholder="Brand name" value="{{ old('brand', $product->brand) }}">
+                    </div>
+                    @endif
+
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="productCategory">{{ translate('messages.Category') }} <span class="text-danger">*</span></label>
@@ -41,10 +103,6 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="productDescription">{{ translate('messages.Description') }}</label>
-                        <textarea name="description" id="productDescription" class="form-control" rows="4">{{ old('description', $product->description) }}</textarea>
                     </div>
                     <!-- TAGS -->
                     <div class="form-group">
@@ -160,10 +218,6 @@
                         <input type="text" class="form-control" id="productBarcode" name="barcode" placeholder="Optional barcode" value="{{ old('barcode', $product->barcode) }}">
                     </div>
                     <div class="form-group">
-                        <label for="productBrand">{{ translate('messages.Brand') }}</label>
-                        <input type="text" class="form-control" id="productBrand" name="brand" placeholder="Brand name" value="{{ old('brand', $product->brand) }}">
-                    </div>
-                    <div class="form-group mb-0">
                         <label for="productCountry">{{ translate('messages.Country of Origin') }}</label>
                         <select class="form-control select2" id="productCountry" name="country_of_origin">
                             <option value="">{{ translate('messages.Select Country') }}</option>

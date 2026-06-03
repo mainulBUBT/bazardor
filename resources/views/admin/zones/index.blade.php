@@ -3,6 +3,11 @@
 @section('title', translate('messages.zones'))
 
 @section('content')
+@php
+    $locales = get_enabled_locales();
+    $languages = get_enabled_languages();
+    $defaultLocale = get_default_locale();
+@endphp
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-2">
         <h1 class="h3 mb-0 text-gray-800">{{translate('messages.zones')}}</h1>
@@ -17,10 +22,43 @@
             <form action="{{ route('admin.zones.store') }}" class="row" method="POST">
                 @csrf
                 <div class="col-lg-4 col-12 mb-3">
-                    <div class="form-group">
-                        <label for="zoneName">{{ translate('messages.name') }}</label>
-                        <input type="text" class="form-control" name="name" id="zoneName" placeholder="{{ translate('messages.enter_zone_name') }}">
+                    @if(count($locales) > 1)
+                    <!-- Language Tabs -->
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        @foreach($languages as $lang)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                               data-toggle="tab" href="#lang-{{ $lang['code'] }}" role="tab">
+                                {{ strtoupper($lang['code']) }}
+                                <small class="text-muted">{{ $lang['code'] === $defaultLocale ? '(Default)' : $lang['name'] }}</small>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <div class="tab-content">
+                        @foreach($languages as $lang)
+                            @php
+                                $locale = $lang['code'];
+                                $isDefault = $locale === $defaultLocale;
+                                $isActive = $loop->first;
+                                $fieldName = $isDefault ? 'name' : "name_{$locale}";
+                            @endphp
+                            <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
+                                <div class="form-group">
+                                    <label>{{ translate('messages.name') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
+                                    <input type="text" class="form-control" name="{{ $fieldName }}"
+                                           {{ $isDefault ? 'required' : '' }}
+                                           value="{{ old($fieldName) }}" placeholder="{{ translate('messages.enter_zone_name') }}">
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
+                    @else
+                    <div class="form-group">
+                        <label for="zoneName">{{ translate('messages.name') }} <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" id="zoneName" value="{{ old('name') }}" placeholder="{{ translate('messages.enter_zone_name') }}" required>
+                    </div>
+                    @endif
                     <div class="form-group mb-4">
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" checked>
@@ -155,7 +193,7 @@
                                         <a href="{{ route('admin.zones.edit', $zone->id) }}" class="btn btn-primary btn-circle btn-sm mr-1" title="{{ translate('messages.edit') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form id="delete-zone-{{ $zone->id }}" action="" method="POST">
+                                        <form id="delete-zone-{{ $zone->id }}" action="{{ route('admin.zones.destroy', $zone->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" onclick="formAlert('delete-zone-{{ $zone->id }}', '{{ translate('messages.Want to delete this zone?') }}')" class="btn btn-danger btn-circle btn-sm delete-zone" title="{{ translate('messages.delete') }}">

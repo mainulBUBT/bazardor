@@ -31,7 +31,15 @@ Route::prefix('admin')->as('admin.')->group(function () {
     Route::middleware(['web', 'admin'])->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        
+
+        // Locale switch
+        Route::get('switch-locale/{locale}', function ($locale) {
+            if (in_array($locale, get_enabled_locales())) {
+                session(['admin_locale' => $locale]);
+            }
+            return redirect()->back();
+        })->name('locale.switch');
+
         // Resource Routes
         Route::get('units/import-export', [UnitController::class, 'importExport'])->name('units.import-export');
         Route::post('units/import', [UnitController::class, 'import'])->name('units.import');

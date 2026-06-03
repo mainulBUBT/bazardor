@@ -108,6 +108,12 @@ if (!function_exists('formated_response')) {
     function formated_response($constant, $content = null, $limit =null, $offset = null ,$errors = []): array
     {
         $constant = (array)$constant;
+
+        // Translate the response message to current locale
+        if (isset($constant['message'])) {
+            $constant['message'] = translate('messages.'.$constant['message']);
+        }
+
         $constant['total_size'] = isset($limit)?$content->total():null;
         $constant['limit'] = $limit;
         $constant['offset'] = $offset;
@@ -176,5 +182,44 @@ if (!function_exists('get_image_url')) {
         };
 
         return asset('storage/' . $dir . $path);
+    }
+}
+
+if (!function_exists('get_enabled_locales')) {
+    function get_enabled_locales(): array
+    {
+        return \Illuminate\Support\Facades\Cache::remember('enabled_locales', 3600, function () {
+            $langs = Setting::where('settings_type', LANGUAGE_SETTINGS)
+                ->where('key_name', 'enabled_languages')
+                ->value('value');
+
+            if ($langs) {
+                return collect($langs)->pluck('code')->toArray();
+            }
+
+            return ['en'];
+        });
+    }
+}
+
+if (!function_exists('get_default_locale')) {
+    function get_default_locale(): string
+    {
+        $default = Setting::where('settings_type', LANGUAGE_SETTINGS)
+            ->where('key_name', 'default_language')
+            ->value('value');
+
+        return $default ?: 'en';
+    }
+}
+
+if (!function_exists('get_enabled_languages')) {
+    function get_enabled_languages(): array
+    {
+        $langs = Setting::where('settings_type', LANGUAGE_SETTINGS)
+            ->where('key_name', 'enabled_languages')
+            ->value('value');
+
+        return $langs ?: [['code' => 'en', 'name' => 'English', 'direction' => 'ltr']];
     }
 }

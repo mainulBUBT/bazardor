@@ -151,6 +151,43 @@ auth()->user()->hasPermissionTo(Permission::CREATE_PRODUCTS->value)
 
 All app configuration lives in the `settings` table as JSON rows (`key_name`, `value`, `settings_type`). **Always read via `SettingService::getSetting($key)` or `SettingService::getSettingWithDefault($key, $default)`.** Never query the `settings` table directly.
 
+### Translations (multi-language)
+
+The app uses **`astrotomic/laravel-translatable`** for multi-language support. Seven models are translatable — each has a `*_translations` table.
+
+**Translatable models and fields:**
+
+| Model | Translatable fields |
+|-------|-------------------|
+| `Product` | `name`, `description`, `brand` |
+| `Market` | `name`, `description`, `address` |
+| `Category` | `name`, `description` |
+| `Banner` | `title` |
+| `Zone` | `name`, `description` |
+| `Unit` | `name`, `symbol` |
+| `ProductTag` | `tag` |
+
+**Key points:**
+
+- Accessing `$model->name` returns the value for the current locale, falling back to the default locale.
+- Locale is detected by `SetLocale` middleware: API uses `X-localization` header, web uses session or browser preference.
+- Admin locale switch: `GET /admin/switch-locale/{locale}`.
+- Helper functions: `get_enabled_locales()`, `get_default_locale()`, `get_enabled_languages()` (all cached).
+- Runtime config: `AppServiceProvider::configureTranslatable()` reads from `settings` table.
+
+**Admin forms:**
+
+- Use `<x-translatable-input>` Blade component for per-locale inputs.
+- Use `<x-language-switcher>` to toggle active locale in forms.
+- Use `PreparesTranslations` trait in controllers to convert form input (`name_bn`) to astrotomic format.
+
+**Adding a new translatable field:**
+
+1. Add column to the `*_translations` migration.
+2. Add to `$translatedAttributes` array on the model.
+3. Add to `$fillable` on the `*Translation` model.
+4. Update the data migration to copy existing values.
+
 ### Price contribution flow
 
 **Path A — automated processor (primary):**

@@ -7,10 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Traits\HasUuid;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 
-class Market extends Model
+class Market extends Model implements TranslatableContract
 {
-    use HasFactory, SoftDeletes, HasUuid;
+    use HasFactory, SoftDeletes, HasUuid, Translatable;
+
+    public $translatedAttributes = [
+        'name',
+        'description',
+        'address',
+    ];
 
     /**
      * The attributes that are mass assignable.

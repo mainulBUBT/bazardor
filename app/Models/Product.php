@@ -11,10 +11,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Traits\HasUuid;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 
-class Product extends Model
+class Product extends Model implements TranslatableContract
 {
-    use HasFactory, SoftDeletes, HasUuid;
+    use HasFactory, SoftDeletes, HasUuid, Translatable;
+
+    public $translatedAttributes = [];
 
     /**
      * The attributes that are mass assignable.

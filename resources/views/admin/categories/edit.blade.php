@@ -1,6 +1,11 @@
 @extends('layouts.admin.app')
 @section('title', translate('messages.Edit Category'))
 @section('content')
+@php
+    $locales = get_enabled_locales();
+    $languages = get_enabled_languages();
+    $defaultLocale = get_default_locale();
+@endphp
 
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -22,10 +27,55 @@
                     <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Category Information') }}</h6>
                 </div>
                 <div class="card-body">
+                    @if(count($locales) > 1)
+                    <!-- Language Tabs -->
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        @foreach($languages as $lang)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                               data-toggle="tab" href="#lang-{{ $lang['code'] }}" role="tab">
+                                {{ strtoupper($lang['code']) }}
+                                <small class="text-muted">{{ $lang['code'] === $defaultLocale ? '(Default)' : $lang['name'] }}</small>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <div class="tab-content">
+                        @foreach($languages as $lang)
+                            @php
+                                $locale = $lang['code'];
+                                $isDefault = $locale === $defaultLocale;
+                                $isActive = $loop->first;
+                                $fieldName = $isDefault ? 'name' : "name_{$locale}";
+                                $fieldDesc = $isDefault ? 'description' : "description_{$locale}";
+                                $nameValue = old($fieldName, $isDefault ? $category->name : ($category->getTranslation($locale, false)?->name ?? ''));
+                                $descValue = old($fieldDesc, $isDefault ? $category->description : ($category->getTranslation($locale, false)?->description ?? ''));
+                            @endphp
+                            <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Name') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
+                                    <input type="text" class="form-control" name="{{ $fieldName }}"
+                                           {{ $isDefault ? 'required' : '' }}
+                                           value="{{ $nameValue }}" placeholder="{{ translate('messages.Enter category name') }}">
+                                </div>
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Description') }} ({{ $lang['name'] }})</label>
+                                    <textarea name="{{ $fieldDesc }}" class="form-control" rows="3">{{ $descValue }}</textarea>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @else
                     <div class="form-group">
                         <label for="categoryName">{{ translate('messages.Name') }} <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="categoryName" name="name" placeholder="{{ translate('messages.Enter category name') }}" value="{{ old('name', $category->name) }}" required>
                     </div>
+                    <div class="form-group">
+                        <label>{{ translate('messages.Description') }}</label>
+                        <textarea name="description" class="form-control" rows="3">{{ old('description', $category->description) }}</textarea>
+                    </div>
+                    @endif
+
                     <div class="form-group">
                         <label for="categorySlug">{{ translate('messages.Slug') }}</label>
                         <input type="text" class="form-control" id="categorySlug" name="slug" placeholder="{{ translate('messages.auto-generated-from-name') }}" value="{{ old('slug', $category->slug) }}">

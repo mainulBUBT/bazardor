@@ -12,3 +12,4 @@ const TEMP_BLOCK_DURATION = 30;
 const MAX_OTP_HIT = 5;
 const MAIL_SETTINGS = "mail";
 const OTHER_SETTINGS = "others";
+const LANGUAGE_SETTINGS = 'languages';

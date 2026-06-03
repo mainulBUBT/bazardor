@@ -53,7 +53,13 @@ class UnitService
      */
     public function storeUnit(array $validated)
     {
-        return $this->unit->create($validated);
+        $unitData = $this->stripTranslationFields($validated);
+        $unit = $this->unit->create($unitData);
+
+        // Save translations for non-default locales
+        $this->saveTranslations($unit, $validated);
+
+        return $unit;
     }
 
     /**
@@ -65,8 +71,72 @@ class UnitService
     public function updateUnit(array $validated, int|string $id)
     {
         $unit = $this->findById($id);
-        $unit->update($validated);
+        $unitData = $this->stripTranslationFields($validated);
+        $unit->update($unitData);
+
+        // Save translations for non-default locales
+        $this->saveTranslations($unit, $validated);
+
         return $unit;
+    }
+
+    /**
+     * Remove translation-prefixed fields (e.g. name_bn, symbol_bn) from the data array
+     * so they are not passed to Eloquent's create/update (which targets the base table).
+     */
+    protected function stripTranslationFields(array $data): array
+    {
+        $defaultLocale = get_default_locale();
+        $translatableFields = ['name', 'symbol'];
+
+        foreach ($translatableFields as $field) {
+            foreach (array_keys($data) as $key) {
+                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                    unset($data[$key]);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Save translations for all non-default locales detected from submitted data.
+     */
+    protected function saveTranslations(Unit $unit, array $data): void
+    {
+        $defaultLocale = get_default_locale();
+        $translatableFields = ['name', 'symbol'];
+        $localeSuffixes = [];
+
+        foreach ($translatableFields as $field) {
+            foreach (array_keys($data) as $key) {
+                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                    $localeSuffixes[$matches[1]] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($localeSuffixes) as $locale) {
+            if ($locale === $defaultLocale) {
+                continue;
+            }
+
+            $hasData = false;
+            $translation = $unit->translateOrNew($locale);
+            foreach ($translatableFields as $field) {
+                $key = "{$field}_{$locale}";
+                if (isset($data[$key])) {
+                    $translation->setAttribute($field, $data[$key]);
+                    $hasData = true;
+                }
+            }
+            if (!$hasData && $translation->exists) {
+                $translation->delete();
+            } elseif ($hasData) {
+                $translation->save();
+            }
+        }
     }
 
     /**

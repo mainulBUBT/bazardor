@@ -5,10 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasUuid;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 
-class ProductTag extends Model
+class ProductTag extends Model implements TranslatableContract
 {
-    use HasUuid;
+    use HasUuid, Translatable;
+
+    public $translatedAttributes = [
+        'tag',
+    ];
 
     /**
      * The attributes that are mass assignable.

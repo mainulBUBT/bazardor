@@ -63,7 +63,7 @@ class UnitController extends Controller
      */
     public function edit(string $id)
     {
-        $unit = $this->unitService->findById($id);
+        $unit = $this->unitService->findById($id, ['translations']);
         return view("admin.units.edit", compact('unit'));
     }
 

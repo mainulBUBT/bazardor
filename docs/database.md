@@ -2,13 +2,14 @@
 
 ## Overview
 
-The database contains **30 tables** across three categories:
+The database contains **37 tables** across four categories:
 
 | Category | Tables |
 |----------|--------|
 | Laravel infrastructure | `users`, `password_reset_tokens`, `sessions`, `cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs`, `personal_access_tokens` |
 | Spatie permissions | `roles`, `permissions`, `model_has_roles`, `model_has_permissions`, `role_has_permissions` |
 | Domain (Bazardor) | `admins`, `settings`, `zones`, `units`, `categories`, `markets`, `market_information`, `market_operating_hours`, `products`, `product_tags`, `product_market_prices`, `price_thresholds`, `price_contributions`, `price_contribution_votes`, `price_contributions_history`, `banners`, `push_notifications`, `favorites`, `entity_creators`, `user_statistics` |
+| Translations | `product_translations`, `market_translations`, `category_translations`, `banner_translations`, `zone_translations`, `unit_translations`, `product_tag_translations` |
 
 > Note: `users` is a Laravel core table but is extended by two migrations (`add_extra_fields_to_users_table`, `add_social_login_fields_to_users_table`).
 
@@ -42,6 +43,15 @@ admins
 
 banners → zones (zone_id, nullable)
 push_notifications → zones (zone_id, nullable)
+
+Translation tables (1:N per locale):
+products → product_translations (product_id)
+markets → market_translations (market_id)
+categories → category_translations (category_id)
+banners → banner_translations (banner_id)
+zones → zone_translations (zone_id)
+units → unit_translations (unit_id)
+product_tags → product_tag_translations (product_tag_id)
 ```
 
 ---
@@ -426,6 +436,104 @@ Tracks who created a market or product (User or Admin).
 ### `personal_access_tokens`
 
 Standard Sanctum table. `tokenable_id` was migrated to `uuid` type.
+
+---
+
+## Translation Tables
+
+All translation tables follow the same pattern: companion to a translatable model, one row per entity per locale. Managed by the `astrotomic/laravel-translatable` package.
+
+### Common schema pattern
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| {entity}_id | uuid | FK → parent table, cascade delete |
+| locale | string(10) | Indexed (e.g. `en`, `bn`) |
+| + translatable columns | varies | Model-specific (see below) |
+| Unique | ({entity}_id, locale) | One translation per entity per locale |
+
+No timestamps on translation rows.
+
+### `product_translations`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| product_id | uuid | FK → `products.id` (cascade) |
+| locale | string(10) | Indexed |
+| name | string | |
+| description | text | Nullable |
+| brand | string | Nullable |
+| Unique | (product_id, locale) | |
+| Index | (locale, name) | |
+
+### `market_translations`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| market_id | uuid | FK → `markets.id` (cascade) |
+| locale | string(10) | Indexed |
+| name | string | |
+| description | text | Nullable |
+| address | string | Nullable |
+| Unique | (market_id, locale) | |
+| Index | (locale, name) | |
+
+### `category_translations`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| category_id | uuid | FK → `categories.id` (cascade) |
+| locale | string(10) | Indexed |
+| name | string | |
+| description | text | Nullable |
+| Unique | (category_id, locale) | |
+| Index | (locale, name) | |
+
+### `banner_translations`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| banner_id | uuid | FK → `banners.id` (cascade) |
+| locale | string(10) | Indexed |
+| title | string | |
+| Unique | (banner_id, locale) | |
+
+### `zone_translations`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| zone_id | uuid | FK → `zones.id` (cascade) |
+| locale | string(10) | Indexed |
+| name | string | |
+| description | text | Nullable |
+| Unique | (zone_id, locale) | |
+
+### `unit_translations`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| unit_id | uuid | FK → `units.id` (cascade) |
+| locale | string(10) | Indexed |
+| name | string | |
+| symbol | string | Nullable |
+| Unique | (unit_id, locale) | |
+
+### `product_tag_translations`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | bigIncrements | PK |
+| product_tag_id | foreignId | FK → `product_tags.id` (cascade) |
+| locale | string(10) | Indexed |
+| tag | string | |
+| Unique | (product_tag_id, locale) | |
 
 ---
 

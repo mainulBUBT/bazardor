@@ -1,6 +1,11 @@
 @extends('layouts.admin.app')
 @section('title', translate('messages.Units Management'))
 @section('content')
+@php
+    $locales = get_enabled_locales();
+    $languages = get_enabled_languages();
+    $defaultLocale = get_default_locale();
+@endphp
 
  <!-- Page Heading -->
  <h1 class="h3 mb-2 text-gray-800">{{ translate('messages.Units') }}</h1>
@@ -12,28 +17,77 @@
             <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Add Unit') }}</h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.units.store') }}" class="row" method="POST">
+            <form action="{{ route('admin.units.store') }}" method="POST">
                 @csrf
-                <div class="col-md-4 mb-3">
-                    <label for="unitName">{{ translate('messages.Unit Name') }}</label>
-                    <input type="text" class="form-control" name="name" id="unitName" placeholder="{{ translate('messages.Enter unit name') }}">
+
+                @if(count($locales) > 1)
+                <!-- Language Tabs -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    @foreach($languages as $lang)
+                    <li class="nav-item">
+                        <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                           data-toggle="tab" href="#lang-{{ $lang['code'] }}" role="tab">
+                            {{ strtoupper($lang['code']) }}
+                            <small class="text-muted">{{ $lang['code'] === $defaultLocale ? '(Default)' : $lang['name'] }}</small>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+                <div class="tab-content">
+                    @foreach($languages as $lang)
+                        @php
+                            $locale = $lang['code'];
+                            $isDefault = $locale === $defaultLocale;
+                            $isActive = $loop->first;
+                            $fieldName = $isDefault ? 'name' : "name_{$locale}";
+                            $fieldSymbol = $isDefault ? 'symbol' : "symbol_{$locale}";
+                        @endphp
+                        <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label>{{ translate('messages.Unit Name') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
+                                    <input type="text" class="form-control" name="{{ $fieldName }}"
+                                           {{ $isDefault ? 'required' : '' }}
+                                           value="{{ old($fieldName) }}" placeholder="{{ translate('messages.Enter unit name') }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>{{ translate('messages.Symbol') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
+                                    <input type="text" class="form-control" name="{{ $fieldSymbol }}"
+                                           {{ $isDefault ? 'required' : '' }}
+                                           value="{{ old($fieldSymbol) }}" placeholder="{{ translate('messages.e.g. kg') }}">
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="unitSymbol">{{ translate('messages.Symbol') }}</label>
-                    <input type="text" class="form-control" name="symbol" id="unitSymbol" placeholder="{{ translate('messages.e.g. kg') }}">
+                @else
+                <div class="form-row">
+                    <div class="col-md-4 mb-3">
+                        <label for="unitName">{{ translate('messages.Unit Name') }} <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="name" id="unitName" value="{{ old('name') }}" placeholder="{{ translate('messages.Enter unit name') }}" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="unitSymbol">{{ translate('messages.Symbol') }} <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="symbol" id="unitSymbol" value="{{ old('symbol') }}" placeholder="{{ translate('messages.e.g. kg') }}" required>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="unitType">{{ translate('messages.Type') }}</label>
-                    <select class="form-control" name="unit_type" id="unitType">
-                        <option selected value="">{{ translate('messages.Select unit type') }}</option>
-                        <option value="weight">{{ translate('messages.Weight') }}</option>
-                        <option value="volume">{{ translate('messages.Volume') }}</option>
-                        <option value="length">{{ translate('messages.Length') }}</option>
-                        <option value="count">{{ translate('messages.Count') }}</option>
-                        <option value="other">{{ translate('messages.Other') }}</option>
-                    </select>
+                @endif
+
+                <div class="form-row">
+                    <div class="col-md-4 mb-3">
+                        <label for="unitType">{{ translate('messages.Type') }}</label>
+                        <select class="form-control" name="unit_type" id="unitType">
+                            <option selected value="">{{ translate('messages.Select unit type') }}</option>
+                            <option value="weight">{{ translate('messages.Weight') }}</option>
+                            <option value="volume">{{ translate('messages.Volume') }}</option>
+                            <option value="length">{{ translate('messages.Length') }}</option>
+                            <option value="count">{{ translate('messages.Count') }}</option>
+                            <option value="other">{{ translate('messages.Other') }}</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-12 text-right">
+
+                <div class="text-right">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-plus-circle mr-1"></i>{{ translate('messages.Add Unit') }}
                     </button>

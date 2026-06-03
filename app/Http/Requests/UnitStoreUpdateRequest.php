@@ -22,11 +22,32 @@ class UnitStoreUpdateRequest extends FormRequest
     public function rules(): array
     {
         $unitId = $this->route('unit');
-        return [
+        $rules = [
             "name"=> ["required","string",Rule::unique('units','name')->ignore($unitId)],
             "symbol"=> ["required","string",Rule::unique('units','symbol')->ignore($unitId)],
             "unit_type"=> "required|string",
         ];
+
+        // Dynamically add validation for any locale suffix in submitted data
+        $translatableFields = ['name', 'symbol'];
+        $defaultLocale = get_default_locale();
+        $detectedLocales = [];
+
+        foreach ($translatableFields as $field) {
+            foreach (array_keys($this->input()) as $key) {
+                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                    $detectedLocales[$matches[1]] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($detectedLocales) as $locale) {
+            if ($locale === $defaultLocale) continue;
+            $rules["name_{$locale}"] = 'nullable|string|max:255';
+            $rules["symbol_{$locale}"] = 'nullable|string|max:50';
+        }
+
+        return $rules;
     }
 
     public function messages(): array

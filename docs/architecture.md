@@ -96,7 +96,8 @@ app/
 │   │   ├── AdminMiddleware.php
 │   │   ├── PermissionMiddleware.php
 │   │   ├── RoleMiddleware.php
-│   │   └── ResolveGuestIdentifier.php
+│   │   ├── ResolveGuestIdentifier.php
+│   │   └── SetLocale.php            # Detects & sets locale (API header / web session)
 │   │
 │   ├── Requests/
 │   │   ├── Admin/LoginRequest.php
@@ -162,7 +163,8 @@ app/
 │   └── ZoneService.php
 │
 └── Traits/
-    └── HasUuid.php            # Overrides PK to UUID
+    ├── HasUuid.php                 # Overrides PK to UUID
+    └── PreparesTranslations.php    # Converts form input to astrotomic format
 ```
 
 ---
@@ -220,6 +222,43 @@ Admin visits `/admin/contributions` and clicks Approve or Reject.
 
 ### Soft Deletes
 `Product`, `Category`, `Banner`, `Unit`, and `PriceContribution` use `SoftDeletes`. Records are never hard-deleted from these tables by normal CRUD operations.
+
+### Translations (Multi-language)
+
+The app uses **`astrotomic/laravel-translatable`** to support multiple languages. Seven domain models are translatable — each has a companion `*_translations` table.
+
+**Translatable models and fields:**
+
+| Model | Translatable fields |
+|-------|-------------------|
+| `Product` | `name`, `description`, `brand` |
+| `Market` | `name`, `description`, `address` |
+| `Category` | `name`, `description` |
+| `Banner` | `title` |
+| `Zone` | `name`, `description` |
+| `Unit` | `name`, `symbol` |
+| `ProductTag` | `tag` |
+
+**How it works:**
+- Each model implements `TranslatableContract` and uses the `Translatable` trait.
+- Accessing `$model->name` returns the value for the **current locale**, falling back to the default locale if no translation exists.
+- Translation data is stored in separate `*_translations` tables (one row per entity + locale).
+- The main table columns (e.g. `products.name`) hold the default locale value as fallback.
+
+**Locale detection:**
+- **API**: `SetLocale` middleware reads the `X-localization` header.
+- **Web (admin)**: Session preference (`session('locale')`) or browser `Accept-Language` header.
+- Locale switch route: `GET /admin/switch-locale/{locale}`.
+
+**Configuration:**
+- `config/translatable.php` — default settings.
+- `AppServiceProvider::configureTranslatable()` — overrides at runtime from the `settings` table (enabled locales, default locale, fallback behavior).
+- Helper functions: `get_enabled_locales()`, `get_default_locale()`, `get_enabled_languages()` (all cached).
+
+**Admin forms:**
+- `<x-translatable-input>` Blade component renders per-locale inputs.
+- `<x-language-switcher>` component toggles visible locale in forms.
+- `PreparesTranslations` trait converts form input (`name_bn`, `description_bn`) to the format astrotomic expects.
 
 ---
 

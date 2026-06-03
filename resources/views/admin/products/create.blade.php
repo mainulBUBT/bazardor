@@ -10,6 +10,11 @@
 
 <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
+    @php
+        $locales = get_enabled_locales();
+        $languages = get_enabled_languages();
+        $defaultLocale = get_default_locale();
+    @endphp
     <div class="row">
         <div class="col-lg-8">
             <div class="card shadow mb-4">
@@ -17,10 +22,64 @@
                     <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Product Information') }}</h6>
                 </div>
                 <div class="card-body">
+                    @if(count($locales) > 1)
+                    <!-- Language Tabs -->
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        @foreach($languages as $lang)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                               data-toggle="tab" href="#lang-{{ $lang['code'] }}" role="tab">
+                                {{ strtoupper($lang['code']) }}
+                                <small class="text-muted">{{ $lang['code'] === $defaultLocale ? '(Default)' : $lang['name'] }}</small>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <div class="tab-content">
+                        @foreach($languages as $lang)
+                            @php
+                                $locale = $lang['code'];
+                                $isDefault = $locale === $defaultLocale;
+                                $isActive = $loop->first;
+                                $fieldName = $isDefault ? 'name' : "name_{$locale}";
+                                $fieldDesc = $isDefault ? 'description' : "description_{$locale}";
+                            @endphp
+                            <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Product Name') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
+                                    <input type="text" name="{{ $fieldName }}" class="form-control"
+                                           {{ $isDefault ? 'required' : '' }}
+                                           value="{{ old($fieldName) }}">
+                                </div>
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Description') }} ({{ $lang['name'] }})</label>
+                                    <textarea name="{{ $fieldDesc }}" class="form-control" rows="4">{{ old($fieldDesc) }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>{{ translate('messages.Brand') }} ({{ $lang['name'] }})</label>
+                                    @php $fieldBrand = $isDefault ? 'brand' : "brand_{$locale}"; @endphp
+                                    <input type="text" name="{{ $fieldBrand }}" class="form-control"
+                                           placeholder="{{ $isDefault ? 'Brand name' : 'Brand name ('.$lang['name'].')' }}"
+                                           value="{{ old($fieldBrand) }}">
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @else
                     <div class="form-group">
                         <label for="productName">{{ translate('messages.Product Name') }} <span class="text-danger">*</span></label>
                         <input type="text" name="name" id="productName" class="form-control" required value="{{ old('name') }}">
                     </div>
+                    <div class="form-group">
+                        <label for="productDescription">{{ translate('messages.Description') }}</label>
+                        <textarea name="description" id="productDescription" class="form-control" rows="4">{{ old('description') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productBrand">{{ translate('messages.Brand') }}</label>
+                        <input type="text" name="brand" id="productBrand" class="form-control" placeholder="Brand name" value="{{ old('brand') }}">
+                    </div>
+                    @endif
+
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="productCategory">{{ translate('messages.Category') }} <span class="text-danger">*</span></label>
@@ -39,26 +98,6 @@
                                     <option value="{{ $u->id }}" {{ old('unit_id') == $u->id ? 'selected' : '' }}>{{ $u->name }} ({{ $u->symbol }})</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="productDescription">{{ translate('messages.Description') }}</label>
-                        <textarea name="description" id="productDescription" class="form-control" rows="4">{{ old('description') }}</textarea>
-                    </div>
-                    <!-- PRICE THRESHOLDS -->
-                    <div class="form-group">
-                        <label>{{ translate('messages.Price Thresholds') }}</label>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="minPrice">{{ translate('messages.Minimum Price') }} ($)</label>
-                                <input type="number" name="min_price" id="minPrice" class="form-control" step="0.01" min="0" placeholder="0.00" value="{{ old('min_price') }}">
-                                <small class="form-text text-muted">{{ translate('messages.Lowest acceptable price for this product') }}</small>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="maxPrice">{{ translate('messages.Maximum Price') }} ($)</label>
-                                <input type="number" name="max_price" id="maxPrice" class="form-control" step="0.01" min="0" placeholder="999.99" value="{{ old('max_price') }}">
-                                <small class="form-text text-muted">{{ translate('messages.Highest acceptable price for this product') }}</small>
-                            </div>
                         </div>
                     </div>
                     <!-- TAGS -->
@@ -170,10 +209,6 @@
                         <input type="text" class="form-control" id="productBarcode" name="barcode" placeholder="Optional barcode" value="{{ old('barcode') }}">
                     </div>
                     <div class="form-group">
-                        <label for="productBrand">{{ translate('messages.Brand') }}</label>
-                        <input type="text" class="form-control" id="productBrand" name="brand" placeholder="Brand name" value="{{ old('brand') }}">
-                    </div>
-                    <div class="form-group mb-0">
                         <label for="productCountry">{{ translate('messages.Country of Origin') }}</label>
                         <select class="form-control select2" id="productCountry" name="country_of_origin">
                             <option value="">{{ translate('messages.Select Country') }}</option>

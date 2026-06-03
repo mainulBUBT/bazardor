@@ -74,7 +74,7 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = $this->productService->findById($id, ['tags', 'category', 'unit']);
+        $product = $this->productService->findById($id, ['tags', 'category', 'unit', 'translations']);
         $categories = $this->categoryService->getCategories(filters: ['is_active' => 1])->getCollection();
         $units = $this->unitService->getUnits()->getCollection();
         return view('admin.products.edit', compact('product', 'categories', 'units'));

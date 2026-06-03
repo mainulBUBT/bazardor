@@ -75,20 +75,14 @@ class ZoneService
             $zone->name = $data['name'];
             $zone->is_active = $data['is_active'] ?? true;
 
-            $value = $data['coordinates'];
-            foreach(explode('),(',trim($value,'()')) as $index=>$single_array){
-                if($index == 0)
-                {
-                    $lastcord = explode(',',$single_array);
-                }
-                $coords = explode(',',$single_array);
-                $polygon[] = new Point($coords[0], $coords[1]);
+            if (! empty($data['coordinates'])) {
+                $zone->coordinates = $this->parseCoordinatesToPolygon($data['coordinates']);
             }
-
-            $polygon[] = new Point($lastcord[0], $lastcord[1]);
-            $zone->coordinates = new Polygon([new LineString($polygon)]);
             $zone->save();
-            
+
+            // Save translations for non-default locales
+            $this->saveTranslations($zone, $data);
+
             DB::commit();
             return $zone;
         } catch (\Exception $e) {
@@ -107,9 +101,9 @@ class ZoneService
     public function update(int|string $id, array $data): Zone
     {
         $zone = $this->findById($id);
-        
+
         DB::beginTransaction();
-        
+
         try {
             $zone->update([
                 'name' => $data['name'],
@@ -117,22 +111,13 @@ class ZoneService
             ]);
 
             if (! empty($data['coordinates'])) {
-                $value = $data['coordinates'];
-                foreach(explode('),(',trim($value,'()')) as $index=>$single_array){
-                    if($index == 0)
-                    {
-                        $lastcord = explode(',',$single_array);
-                    }
-                    $coords = explode(',',$single_array);
-                    $polygon[] = new Point($coords[0], $coords[1]);
-                }
-
-                $polygon[] = new Point($lastcord[0], $lastcord[1]);
-
-                $zone->coordinates = new Polygon([new LineString($polygon)]);
+                $zone->coordinates = $this->parseCoordinatesToPolygon($data['coordinates']);
                 $zone->save();
             }
-            
+
+            // Save translations for non-default locales
+            $this->saveTranslations($zone, $data);
+
             DB::commit();
             return $zone;
         } catch (\Exception $e) {
@@ -201,4 +186,93 @@ class ZoneService
             ->first();
     }
 
+    /**
+     * Parse coordinate input into a spatial Polygon.
+     * Supports two formats:
+     *   - JSON: [{"lat":23.81,"lng":90.41}, ...]  (from JS parseCoordinateInput or edit hidden input)
+     *   - String: (lat, lng),(lat, lng), ...       (from JS stringifyLatLngs)
+     *
+     * @param string $value
+     * @return Polygon
+     * @throws \InvalidArgumentException if fewer than 3 distinct points
+     */
+    protected function parseCoordinatesToPolygon(string $value): Polygon
+    {
+        $points = [];
+
+        // Try JSON first
+        $decoded = json_decode($value, true);
+        if (is_array($decoded) && !empty($decoded)) {
+            foreach ($decoded as $pair) {
+                if (isset($pair['lat'], $pair['lng'])) {
+                    $points[] = new Point((float) $pair['lat'], (float) $pair['lng']);
+                }
+            }
+        } else {
+            // Fallback: "(lat, lng),(lat, lng), ..." format
+            $segments = explode('),(', trim($value, '()'));
+            foreach ($segments as $segment) {
+                $coords = explode(',', $segment);
+                if (count($coords) >= 2) {
+                    $lat = (float) trim($coords[0]);
+                    $lng = (float) trim($coords[1]);
+                    if ($lat !== 0.0 || $lng !== 0.0) {
+                        $points[] = new Point($lat, $lng);
+                    }
+                }
+            }
+        }
+
+        if (count($points) < 3) {
+            throw new \InvalidArgumentException('A polygon requires at least 3 distinct coordinate points.');
+        }
+
+        // Close the polygon if first and last points differ
+        $first = $points[0];
+        $last = $points[count($points) - 1];
+        if ($first->latitude !== $last->latitude || $first->longitude !== $last->longitude) {
+            $points[] = new Point($first->latitude, $first->longitude);
+        }
+
+        return new Polygon([new LineString($points)]);
+    }
+
+    /**
+     * Save translations for all non-default locales detected from submitted data.
+     */
+    protected function saveTranslations(Zone $zone, array $data): void
+    {
+        $defaultLocale = get_default_locale();
+        $translatableFields = ['name', 'description'];
+        $localeSuffixes = [];
+
+        foreach ($translatableFields as $field) {
+            foreach (array_keys($data) as $key) {
+                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                    $localeSuffixes[$matches[1]] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($localeSuffixes) as $locale) {
+            if ($locale === $defaultLocale) {
+                continue;
+            }
+
+            $hasData = false;
+            $translation = $zone->translateOrNew($locale);
+            foreach ($translatableFields as $field) {
+                $key = "{$field}_{$locale}";
+                if (isset($data[$key])) {
+                    $translation->setAttribute($field, $data[$key]);
+                    $hasData = true;
+                }
+            }
+            if (!$hasData && $translation->exists) {
+                $translation->delete();
+            } elseif ($hasData) {
+                $translation->save();
+            }
+        }
+    }
 } 

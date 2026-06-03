@@ -40,6 +40,16 @@ X-Device-ID: <uuid-or-any-unique-string>
 
 The `ResolveGuestIdentifier` middleware reads this header and stores it on the request for downstream use.
 
+### Localization
+
+All translatable fields (product names, descriptions, market names, category names, etc.) are returned in the requested locale. Send the preferred locale in:
+
+```
+X-localization: <locale-code>
+```
+
+For example, `X-localization: bn` returns Bengali translations where available, falling back to the default locale (English) for any missing translations. The `SetLocale` middleware validates the locale against enabled languages.
+
 ---
 
 ## Auth Endpoints — `/api/auth`

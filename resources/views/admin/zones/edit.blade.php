@@ -3,6 +3,11 @@
 @section('title', translate('messages.edit_zone'))
 
 @section('content')
+@php
+    $locales = get_enabled_locales();
+    $languages = get_enabled_languages();
+    $defaultLocale = get_default_locale();
+@endphp
     <!-- Page Heading -->
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
         <h1 class="h3 mb-0 text-gray-800">{{translate('messages.edit_zone')}}</h1>
@@ -23,13 +28,47 @@
                         @csrf
                         @method('PUT')
                         <div class="col-lg-4 col-12 mb-3">
-                            <div class="form-group">
-                                <label for="name">{{ translate('messages.name') }}</label>
-                                <input type="text" name="name" class="form-control" id="name" placeholder="{{ translate('messages.enter_zone_name') }}" value="{{ old('name', $zone->name) }}" required>
-                                @error('name')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
+                            @if(count($locales) > 1)
+                            <!-- Language Tabs -->
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                @foreach($languages as $lang)
+                                <li class="nav-item">
+                                    <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                                       data-toggle="tab" href="#lang-{{ $lang['code'] }}" role="tab">
+                                        {{ strtoupper($lang['code']) }}
+                                        <small class="text-muted">{{ $lang['code'] === $defaultLocale ? '(Default)' : $lang['name'] }}</small>
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                            <div class="tab-content">
+                                @foreach($languages as $lang)
+                                    @php
+                                        $locale = $lang['code'];
+                                        $isDefault = $locale === $defaultLocale;
+                                        $isActive = $loop->first;
+                                        $fieldName = $isDefault ? 'name' : "name_{$locale}";
+                                        $nameValue = old($fieldName, $isDefault ? $zone->name : ($zone->getTranslation($locale, false)?->name ?? ''));
+                                    @endphp
+                                    <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
+                                        <div class="form-group">
+                                            <label>{{ translate('messages.name') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
+                                            <input type="text" name="{{ $fieldName }}" class="form-control"
+                                                   {{ $isDefault ? 'required' : '' }}
+                                                   value="{{ $nameValue }}" placeholder="{{ translate('messages.enter_zone_name') }}">
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
+                            @else
+                            <div class="form-group">
+                                <label for="name">{{ translate('messages.name') }} <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" id="name" placeholder="{{ translate('messages.enter_zone_name') }}" value="{{ old('name', $zone->name) }}" required>
+                            </div>
+                            @endif
+                            @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                             <div class="form-group mb-4">
                                 <div class="custom-control custom-switch">
                                     <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" {{ old('is_active', $zone->is_active) ? 'checked' : '' }}>
@@ -72,7 +111,7 @@
                                     <span class="ml-3"><span style="display:inline-block;width:12px;height:12px;background:#f97316;border-radius:2px;margin-right:6px;"></span>Other zones</span>
                                 </div>
                             </div>
-                            <input type="hidden" name="coordinates" id="coordinates" value="{{ old('coordinates', $zone->coordinates) }}">
+                            <input type="hidden" name="coordinates" id="coordinates" value="{{ old('coordinates', json_encode($currentZoneCoords ?? [])) }}">
                         </div>
                     </form>
                 </div>
@@ -151,11 +190,11 @@ class ZoneMapEdit {
 
     getUiElements() {
         return {
-            coordinates: $('#editCoordinates'),
-            clearBtn: $('#editClearPolygon'),
-            searchInput: $('#editSearchBox'),
-            searchResults: $('#editSearchResults'),
-            startPolygon: $('#editStartPolygon')
+            coordinates: $('#coordinates'),
+            clearBtn: $('#clearPolygon'),
+            searchInput: $('#searchBox'),
+            searchResults: $('#searchResults'),
+            startPolygon: $('#editPolygon')
         };
     }
 

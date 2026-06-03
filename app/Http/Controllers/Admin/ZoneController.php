@@ -63,12 +63,9 @@ class ZoneController extends Controller
      */
     public function store(ZoneStoreUpdateRequest $request)
     {
-        $data = [
-            'name' => $request->name,
-            'is_active' => $request->has('is_active'),
-            'coordinates' => $request->coordinates,
-        ];
-        
+        $data = $request->validated();
+        $data['is_active'] = $request->has('is_active');
+
         $this->zoneService->store($data);
         
         Toastr::success(translate('messages.zone_created_successfully'));

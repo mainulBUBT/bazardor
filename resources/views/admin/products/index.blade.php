@@ -75,8 +75,6 @@
                                             <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>{{ translate('messages.Latest') }}</option>
                                             <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>{{ translate('messages.Name: A to Z') }}</option>
                                             <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>{{ translate('messages.Name: Z to A') }}</option>
-                                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>{{ translate('messages.Price: Low to High') }}</option>
-                                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>{{ translate('messages.Price: High to Low') }}</option>
                                         </select>
                                     </div>
                                     <div class="d-flex justify-content-end">
@@ -103,7 +101,6 @@
                             <th>{{ translate('messages.Image') }}</th>
                             <th>{{ translate('messages.Product Name') }}</th>
                             <th>{{ translate('messages.Category') }}</th>
-                            <th>{{ translate('messages.Price') }}</th>
                             <th>{{ translate('messages.Status') }}</th>
                             <th>{{ translate('messages.Actions') }}</th>
                         </tr>
@@ -121,7 +118,6 @@
                                 </td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ optional($product->category)->name }}</td>
-                                <td>{{ $product->base_price !== null ? number_format($product->base_price, 2) : '-' }}</td>
                                 <td>
                                     @if($product->status === 'active')
                                         <span class="badge badge-success">{{ translate('messages.Active') }}</span>

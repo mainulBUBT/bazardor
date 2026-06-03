@@ -35,6 +35,25 @@ class ZoneStoreUpdateRequest extends FormRequest
             $rules['name'] = 'required|string|max:255|unique:zones,name';
         }
 
+        // Dynamically add validation for any locale suffix in submitted data
+        $translatableFields = ['name', 'description'];
+        $defaultLocale = get_default_locale();
+        $detectedLocales = [];
+
+        foreach ($translatableFields as $field) {
+            foreach (array_keys($this->input()) as $key) {
+                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                    $detectedLocales[$matches[1]] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($detectedLocales) as $locale) {
+            if ($locale === $defaultLocale) continue;
+            $rules["name_{$locale}"] = 'nullable|string|max:255';
+            $rules["description_{$locale}"] = 'nullable|string';
+        }
+
         return $rules;
     }
 

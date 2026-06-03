@@ -43,8 +43,6 @@ class ProductService
                 match ($filters['sort']) {
                     'name_asc' => $query->orderBy('name', 'asc'),
                     'name_desc' => $query->orderBy('name', 'desc'),
-                    'price_asc' => $query->orderBy('base_price', 'asc'),
-                    'price_desc' => $query->orderBy('base_price', 'desc'),
                     default => $query->latest(),
                 };
             }, function ($query) {
@@ -85,12 +83,40 @@ class ProductService
                 'sku' => $data['sku'] ?? null,
                 'barcode' => $data['barcode'] ?? null,
                 'brand' => $data['brand'] ?? null,
-                'base_price' => $data['base_price'] ?? 0,
                 'country_of_origin' => $data['country_of_origin'] ?? null,
                 'added_by' => $data['added_by'] ?? 'admin',
                 'added_by_id' => $data['added_by_id'] ?? null,
                 'device_id' => $data['device_id'] ?? null,
             ]);
+
+            // Save translations for non-default locales
+            // Detect locales from actual submitted data (e.g. name_bn, description_bn)
+            $defaultLocale = get_default_locale();
+            $translatableFields = ['name', 'description', 'brand'];
+            $localeSuffixes = [];
+
+            foreach ($translatableFields as $field) {
+                foreach (array_keys($data) as $key) {
+                    if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                        $localeSuffixes[$matches[1]] = true;
+                    }
+                }
+            }
+
+            foreach (array_keys($localeSuffixes) as $locale) {
+                if ($locale === $defaultLocale) {
+                    continue;
+                }
+
+                $translation = $product->translateOrNew($locale);
+                foreach ($translatableFields as $field) {
+                    $key = "{$field}_{$locale}";
+                    if (isset($data[$key])) {
+                        $translation->setAttribute($field, $data[$key]);
+                    }
+                }
+                $translation->save();
+            }
 
             // Save tags if provided
             if (!empty($data['tags']) && is_array($data['tags'])) {
@@ -160,10 +186,43 @@ class ProductService
                 'sku' => $data['sku'] ?? $product->sku,
                 'barcode' => $data['barcode'] ?? $product->barcode,
                 'brand' => $data['brand'] ?? $product->brand,
-                'base_price' => $data['base_price'] ?? $product->base_price,
                 'country_of_origin' => $data['country_of_origin'] ?? $product->country_of_origin,
             ]);
-            $product->save();
+
+            // Save translations for non-default locales
+            // Detect locales from actual submitted data (e.g. name_bn, description_bn)
+            $defaultLocale = get_default_locale();
+            $translatableFields = ['name', 'description', 'brand'];
+            $localeSuffixes = [];
+
+            foreach ($translatableFields as $field) {
+                foreach (array_keys($data) as $key) {
+                    if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                        $localeSuffixes[$matches[1]] = true;
+                    }
+                }
+            }
+
+            foreach (array_keys($localeSuffixes) as $locale) {
+                if ($locale === $defaultLocale) {
+                    continue;
+                }
+
+                $hasData = false;
+                $translation = $product->translateOrNew($locale);
+                foreach ($translatableFields as $field) {
+                    $key = "{$field}_{$locale}";
+                    if (isset($data[$key])) {
+                        $translation->setAttribute($field, $data[$key]);
+                        $hasData = true;
+                    }
+                }
+                if (!$hasData && $translation->exists) {
+                    $translation->delete();
+                } elseif ($hasData) {
+                    $translation->save();
+                }
+            }
 
             // Update tags (simple replace strategy)
             if (isset($data['tags']) && is_array($data['tags'])) {

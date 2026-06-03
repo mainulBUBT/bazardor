@@ -198,6 +198,7 @@ Settings are stored in the `settings` table as key-value JSON rows. The settings
 | Social | `GET /admin/settings?tab=social` | Google/Facebook OAuth keys |
 | Backup | `GET /admin/settings?tab=backup` | Create database backup |
 | Business Rules | `GET /admin/settings?tab=business-rules` | Price threshold rules |
+| Languages | `GET /admin/settings?tab=languages` | Enabled locales, default language, RTL support |
 | Others | `GET /admin/settings?tab=others` | Misc toggles |
 
 **Special actions:**
@@ -211,6 +212,27 @@ Settings are stored in the `settings` table as key-value JSON rows. The settings
 | Toggle maintenance | `POST /admin/settings/maintenance` |
 | Update social config | `POST /admin/settings/social` |
 | Send test mail | `POST /admin/settings/test-mail` |
+| Switch admin locale | `GET /admin/switch-locale/{locale}` | Sets session locale and redirects back |
+
+---
+
+### Languages (`/admin/settings?tab=languages`)
+
+Manages the multi-language configuration stored in the `settings` table under the `languages` key.
+
+- **Add/remove languages** from a predefined list of 64 locales.
+- **Set default language** — used as fallback when a translation is missing.
+- **RTL support** — each language has a `direction` field (`ltr` or `rtl`).
+- The admin topbar shows a language dropdown for switching the admin panel locale.
+
+**Blade components for translatable forms:**
+
+| Component | Purpose |
+|-----------|---------|
+| `<x-translatable-input>` | Renders per-locale text inputs or textareas for a given field |
+| `<x-language-switcher>` | Toggle button group to switch active locale in forms |
+
+**`PreparesTranslations` trait** — used in controllers to convert form input (`name_bn`, `description_bn`) into the format astrotomic expects before saving.
 
 ---
 

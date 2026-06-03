@@ -7,10 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\HasUuid;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 
-class Category extends Model
+class Category extends Model implements TranslatableContract
 {
-    use HasFactory, SoftDeletes, HasUuid;
+    use HasFactory, SoftDeletes, HasUuid, Translatable;
+
+    public $translatedAttributes = [
+        'name',
+        'description',
+    ];
 
     /**
      * The attributes that are mass assignable.

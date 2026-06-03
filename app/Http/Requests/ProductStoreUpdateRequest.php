@@ -16,7 +16,7 @@ class ProductStoreUpdateRequest extends FormRequest
         $productParam = $this->route('product');
         $productId = $productParam ? (is_object($productParam) ? $productParam->id : $productParam) : '';
 
-        return [
+        $rules = [
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'unit_id' => 'required|exists:units,id',
@@ -28,9 +28,6 @@ class ProductStoreUpdateRequest extends FormRequest
             'sku' => 'nullable|string|max:100|unique:products,sku,' . $productId,
             'barcode' => 'nullable|string|max:100|unique:products,barcode,' . $productId,
             'brand' => 'nullable|string|max:255',
-            'base_price' => 'nullable|numeric|min:0',
-            'min_price' => 'nullable|numeric|min:0',
-            'max_price' => 'nullable|numeric|min:0|gte:min_price',
             'country_of_origin' => 'nullable|string|max:100',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
@@ -41,6 +38,31 @@ class ProductStoreUpdateRequest extends FormRequest
             'market_prices.*.price' => 'required_with:market_prices.*.market_id|numeric|min:0',
             'market_prices.*.price_date' => 'nullable|date',
         ];
+
+        // Dynamically add validation for any locale suffix in submitted data
+        // This handles all current and future locales without relying on cached settings
+        $translatableFields = ['name', 'description', 'brand'];
+        $defaultLocale = get_default_locale();
+        $detectedLocales = [];
+
+        foreach ($translatableFields as $field) {
+            foreach (array_keys($this->input()) as $key) {
+                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
+                    $detectedLocales[$matches[1]] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($detectedLocales) as $locale) {
+            if ($locale === $defaultLocale) {
+                continue;
+            }
+            $rules["name_{$locale}"] = 'nullable|string|max:255';
+            $rules["description_{$locale}"] = 'nullable|string';
+            $rules["brand_{$locale}"] = 'nullable|string|max:255';
+        }
+
+        return $rules;
     }
 
     public function messages()
