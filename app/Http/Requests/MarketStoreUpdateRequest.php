@@ -28,7 +28,7 @@ class MarketStoreUpdateRequest extends FormRequest
         $marketParam = $this->route('market');
         $marketId = $marketParam ? (is_object($marketParam) ? $marketParam->id : $marketParam) : '';
 
-        return [
+        $rules = [
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:markets,slug,' . $marketId,
             'type' => ['required', new Enum(MarketType::class)],
@@ -48,6 +48,16 @@ class MarketStoreUpdateRequest extends FormRequest
             'opening_hours.*.opening_time' => 'nullable|date_format:H:i|required_with:opening_hours.*.closing_time',
             'opening_hours.*.closing_time' => 'nullable|date_format:H:i|after_or_equal:opening_hours.*.opening_time|required_with:opening_hours.*.opening_time',
         ];
+
+        $default = get_default_locale();
+        foreach (array_keys($this->input()) as $key) {
+            if (preg_match('/^(name|description|address)_(.+)$/', $key, $m) && $m[2] !== $default) {
+                $maxLen = $m[1] === 'name' ? '255' : '65535';
+                $rules["{$m[1]}_{$m[2]}"] = "nullable|string|max:{$maxLen}";
+            }
+        }
+
+        return $rules;
     }
 
     public function messages()

@@ -3,12 +3,15 @@
 namespace App\Services;
 
 use App\Models\Market;
+use App\Traits\SavesTranslations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Str;
 
 class MarketService
 {
+    use SavesTranslations;
+
     public function __construct(private Market $market) {
     }
 
@@ -68,22 +71,23 @@ class MarketService
         DB::beginTransaction();
         try {
             $market = new Market();
-            $market->name = $data['name'];
             $market->slug = $data['slug'] ?? null;
             $market->type = $data['type'];
-            $market->description = $data['description'] ?? null;
-            $market->address = $data['address'];
             $market->latitude = $data['latitude'] ?? null;
             $market->longitude = $data['longitude'] ?? null;
             $market->is_active = $data['status'] === 'active';
             $market->is_featured = isset($data['featured']) ? $data['featured'] : 0;
-            $market->division = $data['division'] ?? null;      
+            $market->division = $data['division'] ?? null;
             $market->district = $data['district'] ?? null;
             $market->upazila_or_thana = $data['upazila'] ?? null;
             $market->visibility = $data['visibility'] === 'public' ? 1 : 0;
             $market->zone_id = $data['zone_id'] ?? null;
 
             $market->save();
+
+            $this->saveTranslations($market, $data, ['name', 'description', 'address']);
+            DB::table('markets')->where('id', $market->id)
+                ->update(['name' => $data['name'] ?? '', 'address' => $data['address'] ?? '']);
 
             // Record creator information
             // if (auth()->check()) {
@@ -146,11 +150,8 @@ class MarketService
         try {
             $market = $this->findById($id);
 
-            $market->name = $data['name'];
             $market->slug = $data['slug'] ?? null;
             $market->type = $data['type'];
-            $market->description = $data['description'] ?? null;
-            $market->address = $data['address'];
             $market->latitude = $data['latitude'] ?? null;
             $market->longitude = $data['longitude'] ?? null;
             $market->is_active = $data['status'] === 'active';
@@ -162,6 +163,10 @@ class MarketService
             $market->zone_id = $data['zone_id'] ?? null;
 
             $market->save();
+
+            $this->saveTranslations($market, $data, ['name', 'description', 'address']);
+            DB::table('markets')->where('id', $market->id)
+                ->update(['name' => $data['name'] ?? '', 'address' => $data['address'] ?? '']);
 
             // Handle market image update if present
             if (isset($data['image']) && $data['image']->isValid()) {
