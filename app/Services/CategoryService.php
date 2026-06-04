@@ -4,9 +4,12 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\ProductMarketPrice;
+use App\Traits\SavesTranslations;
+use Illuminate\Support\Facades\DB;
 
 class CategoryService
 {
+    use SavesTranslations;
     public function __construct(private Category $category)
     {
     }
@@ -69,7 +72,8 @@ class CategoryService
         }
         unset($data['image']);
 
-        $this->category->name = $data['name'];
+        // Do NOT assign name here — astrotomic intercepts setAttribute for translated
+        // attributes and routes to the current locale's translation, not the main column.
         $this->category->slug = $data['slug'];
         $this->category->parent_id = $data['parent_id'] ?? 0;
         $this->category->position = $data['position'] ?? 0;
@@ -77,8 +81,10 @@ class CategoryService
         $this->category->is_active = $data['is_active'] ?? 1;
         $this->category->save();
 
-        // Save translations for non-default locales
-        $this->saveTranslations($this->category, $data);
+        $this->saveTranslations($this->category, $data, ['name', 'description']);
+
+        // Keep main column in sync with default-locale value for search/sort queries.
+        DB::table('categories')->where('id', $this->category->id)->update(['name' => $data['name'] ?? '']);
 
         return $this->category;
     }
@@ -105,14 +111,20 @@ class CategoryService
             }
         }
         unset($data['image']);
-        $category->name = $data['name'] ?? $category->name;
         $category->slug = $data['slug'] ?? $category->slug;
         $category->parent_id = $data['parent_id'] ?? $category->parent_id;
         $category->position = $data['position'] ?? $category->position;
         $category->image_path = $data['image_path'] ?? $category->image_path;
         $category->is_active = $data['is_active'] ?? $category->is_active;
         $category->save();
-       
+
+        $this->saveTranslations($category, $data, ['name', 'description']);
+
+        // Keep main column in sync with default-locale value for search/sort queries.
+        if (isset($data['name'])) {
+            DB::table('categories')->where('id', $category->id)->update(['name' => $data['name']]);
+        }
+
         return $category;
     }
 
@@ -240,5 +252,6 @@ class CategoryService
             ->orderBy('categories.position')
             ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
     }
+
 }
 

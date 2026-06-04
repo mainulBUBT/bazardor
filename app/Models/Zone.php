@@ -15,7 +15,7 @@ class Zone extends Model implements TranslatableContract
 {
     use HasFactory, HasSpatial, HasUuid, Translatable;
 
-    public $translatedAttributes = [];
+    public $translatedAttributes = ['name'];
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +24,6 @@ class Zone extends Model implements TranslatableContract
      */
     protected $fillable = [
         'name',
-        'description',
         'is_active',
         'coordinates',
     ];

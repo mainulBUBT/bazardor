@@ -24,7 +24,7 @@ class UpdateSettingsRequest extends FormRequest
     {
         $tab = $this->query('tab', 'general');
         $rules = [
-            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'social', 'security', 'backup', 'app'])],
+            'tab' => ['required', 'string', Rule::in(['general', 'business', 'notifications', 'mail', 'social', 'security', 'backup', 'app', 'languages'])],
         ];
 
         $rules = array_merge($rules, match ($tab) {
@@ -101,6 +101,14 @@ class UpdateSettingsRequest extends FormRequest
                 'android_download_url' => 'required|url|max:500',
                 'ios_min_version' => 'required|string|max:20',
                 'ios_download_url' => 'required|url|max:500',
+            ],
+            'languages' => [
+                'enabled_languages'             => 'required|array|min:1',
+                'enabled_languages.*.code'      => 'required|string|max:10',
+                'enabled_languages.*.name'      => 'required|string|max:100',
+                'enabled_languages.*.direction' => ['required', Rule::in(['ltr', 'rtl'])],
+                'enabled_languages.*.native'    => 'nullable|string|max:100',
+                'default_language'              => 'required|string|max:10',
             ],
             default => [],
         });

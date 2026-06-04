@@ -45,9 +45,9 @@
                                 $fieldName = $isDefault ? 'name' : "name_{$locale}";
                                 $fieldDesc = $isDefault ? 'description' : "description_{$locale}";
                                 $fieldBrand = $isDefault ? 'brand' : "brand_{$locale}";
-                                $nameValue = old($fieldName, $isDefault ? $product->name : ($product->getTranslation($locale, false)?->name ?? ''));
-                                $descValue = old($fieldDesc, $isDefault ? $product->description : ($product->getTranslation($locale, false)?->description ?? ''));
-                                $brandValue = old($fieldBrand, $isDefault ? $product->brand : ($product->getTranslation($locale, false)?->brand ?? ''));
+                                $nameValue = old($fieldName, $product->getTranslation($locale, false)?->name ?? ($isDefault ? ($product->getRawOriginal('name') ?? '') : ''));
+                                $descValue = old($fieldDesc, $product->getTranslation($locale, false)?->description ?? ($isDefault ? ($product->getRawOriginal('description') ?? '') : ''));
+                                $brandValue = old($fieldBrand, $product->getTranslation($locale, false)?->brand ?? ($isDefault ? ($product->getRawOriginal('brand') ?? '') : ''));
                             @endphp
                             <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
                                 <div class="form-group">

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Zone;
+use App\Traits\SavesTranslations;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Brian2694\Toastr\Facades\Toastr;
@@ -13,6 +14,7 @@ use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 class ZoneService
 {
+    use SavesTranslations;
 
     public function __construct(private Zone $zone)
     {
@@ -80,8 +82,7 @@ class ZoneService
             }
             $zone->save();
 
-            // Save translations for non-default locales
-            $this->saveTranslations($zone, $data);
+            $this->saveTranslations($zone, $data, ['name']);
 
             DB::commit();
             return $zone;
@@ -115,8 +116,7 @@ class ZoneService
                 $zone->save();
             }
 
-            // Save translations for non-default locales
-            $this->saveTranslations($zone, $data);
+            $this->saveTranslations($zone, $data, ['name']);
 
             DB::commit();
             return $zone;
@@ -237,42 +237,4 @@ class ZoneService
         return new Polygon([new LineString($points)]);
     }
 
-    /**
-     * Save translations for all non-default locales detected from submitted data.
-     */
-    protected function saveTranslations(Zone $zone, array $data): void
-    {
-        $defaultLocale = get_default_locale();
-        $translatableFields = ['name', 'description'];
-        $localeSuffixes = [];
-
-        foreach ($translatableFields as $field) {
-            foreach (array_keys($data) as $key) {
-                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
-                    $localeSuffixes[$matches[1]] = true;
-                }
-            }
-        }
-
-        foreach (array_keys($localeSuffixes) as $locale) {
-            if ($locale === $defaultLocale) {
-                continue;
-            }
-
-            $hasData = false;
-            $translation = $zone->translateOrNew($locale);
-            foreach ($translatableFields as $field) {
-                $key = "{$field}_{$locale}";
-                if (isset($data[$key])) {
-                    $translation->setAttribute($field, $data[$key]);
-                    $hasData = true;
-                }
-            }
-            if (!$hasData && $translation->exists) {
-                $translation->delete();
-            } elseif ($hasData) {
-                $translation->save();
-            }
-        }
-    }
 } 

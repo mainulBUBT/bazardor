@@ -14,7 +14,7 @@ class Unit extends Model implements TranslatableContract
 {
     use HasFactory, SoftDeletes, HasUuid, Translatable;
 
-    public $translatedAttributes = [];
+    public $translatedAttributes = ['name', 'symbol'];
 
     /**
      * The attributes that are mass assignable.

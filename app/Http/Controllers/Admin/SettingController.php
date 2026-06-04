@@ -93,7 +93,11 @@ class SettingController extends Controller
             if ($tab === OTHER_SETTINGS) {
                 app(\App\Services\RecaptchaService::class)->clearCache();
             }
-            
+
+            if ($tab === LANGUAGE_SETTINGS) {
+                \Illuminate\Support\Facades\Cache::forget('enabled_locales');
+            }
+
             Toastr::success(translate('messages.Settings updated successfully'));
             return redirect()->back()->withInput(['tab' => $tab]);
         }

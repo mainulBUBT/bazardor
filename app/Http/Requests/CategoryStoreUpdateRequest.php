@@ -16,7 +16,8 @@ class CategoryStoreUpdateRequest extends FormRequest
     {
         $imageRule = ($this->isMethod('post')) ? 'required' : 'nullable';
         $categoryId = $this->route('category');
-        return [
+
+        $rules = [
             'name' => [
                 'required',
                 'string',
@@ -35,9 +36,18 @@ class CategoryStoreUpdateRequest extends FormRequest
                 $imageRule,
                 'image',
                 'mimes:jpeg,png,jpg',
-                'max:2048', // 2MB max size
+                'max:2048',
             ],
         ];
+
+        $default = get_default_locale();
+        foreach (array_keys($this->input()) as $key) {
+            if (preg_match('/^(name|description)_(.+)$/', $key, $m) && $m[2] !== $default) {
+                $rules["{$m[1]}_{$m[2]}"] = 'nullable|string|max:' . ($m[1] === 'name' ? '255' : '65535');
+            }
+        }
+
+        return $rules;
     }
 
     public function messages(): array

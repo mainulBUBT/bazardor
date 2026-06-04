@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Traits\HasUuid;
@@ -18,7 +17,7 @@ class Product extends Model implements TranslatableContract
 {
     use HasFactory, SoftDeletes, HasUuid, Translatable;
 
-    public $translatedAttributes = [];
+    public $translatedAttributes = ['name', 'description', 'brand'];
 
     /**
      * The attributes that are mass assignable.

@@ -36,22 +36,18 @@ class ZoneStoreUpdateRequest extends FormRequest
         }
 
         // Dynamically add validation for any locale suffix in submitted data
-        $translatableFields = ['name', 'description'];
         $defaultLocale = get_default_locale();
         $detectedLocales = [];
 
-        foreach ($translatableFields as $field) {
-            foreach (array_keys($this->input()) as $key) {
-                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
-                    $detectedLocales[$matches[1]] = true;
-                }
+        foreach (array_keys($this->input()) as $key) {
+            if (preg_match('/^name_(.+)$/', $key, $matches)) {
+                $detectedLocales[$matches[1]] = true;
             }
         }
 
         foreach (array_keys($detectedLocales) as $locale) {
             if ($locale === $defaultLocale) continue;
             $rules["name_{$locale}"] = 'nullable|string|max:255';
-            $rules["description_{$locale}"] = 'nullable|string';
         }
 
         return $rules;
@@ -66,7 +62,7 @@ class ZoneStoreUpdateRequest extends FormRequest
     {
         return [
             'name' => translate('messages.zone_name'),
-            'description' => translate('messages.zone_description'),
+
             'is_active' => translate('messages.active_status'),
             'markets' => translate('messages.markets'),
             'markets.*' => translate('messages.market'),

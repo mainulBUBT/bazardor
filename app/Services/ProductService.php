@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Models\ProductTag;
-use App\Models\EntityCreator;
+use App\Traits\SavesTranslations;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductService
 {
+    use SavesTranslations;
     public function __construct(private Product $product)
     {
     }
@@ -71,52 +71,29 @@ class ProductService
             $slug = Str::slug($data['name']) . '-' . Str::uuid();
 
             $product = $this->product->create([
-                'name' => $data['name'],
                 'slug' => $slug,
                 'category_id' => $data['category_id'],
                 'unit_id' => $data['unit_id'],
-                'description' => $data['description'] ?? null,
                 'status' => $data['status'] ?? 'active',
                 'is_visible' => $data['is_visible'] ?? true,
                 'is_featured' => $data['is_featured'] ?? false,
                 'image_path' => $data['image_path'] ?? null,
                 'sku' => $data['sku'] ?? null,
                 'barcode' => $data['barcode'] ?? null,
-                'brand' => $data['brand'] ?? null,
                 'country_of_origin' => $data['country_of_origin'] ?? null,
                 'added_by' => $data['added_by'] ?? 'admin',
                 'added_by_id' => $data['added_by_id'] ?? null,
                 'device_id' => $data['device_id'] ?? null,
             ]);
 
-            // Save translations for non-default locales
-            // Detect locales from actual submitted data (e.g. name_bn, description_bn)
-            $defaultLocale = get_default_locale();
-            $translatableFields = ['name', 'description', 'brand'];
-            $localeSuffixes = [];
+            $this->saveTranslations($product, $data, ['name', 'description', 'brand']);
 
-            foreach ($translatableFields as $field) {
-                foreach (array_keys($data) as $key) {
-                    if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
-                        $localeSuffixes[$matches[1]] = true;
-                    }
-                }
-            }
-
-            foreach (array_keys($localeSuffixes) as $locale) {
-                if ($locale === $defaultLocale) {
-                    continue;
-                }
-
-                $translation = $product->translateOrNew($locale);
-                foreach ($translatableFields as $field) {
-                    $key = "{$field}_{$locale}";
-                    if (isset($data[$key])) {
-                        $translation->setAttribute($field, $data[$key]);
-                    }
-                }
-                $translation->save();
-            }
+            // Keep main column in sync with default-locale value for search/sort queries.
+            DB::table('products')->where('id', $product->id)->update([
+                'name' => $data['name'] ?? '',
+                'description' => $data['description'] ?? null,
+                'brand' => $data['brand'] ?? null,
+            ]);
 
             // Save tags if provided
             if (!empty($data['tags']) && is_array($data['tags'])) {
@@ -166,63 +143,38 @@ class ProductService
             }
             unset($data['image']);
 
-            // Regenerate slug if name changed
-            if (isset($data['name']) && $data['name'] !== $product->name) {
+            // Compare against raw column value so locale doesn't affect slug logic.
+            $rawName = $product->getRawOriginal('name');
+            if (isset($data['name']) && $data['name'] !== $rawName) {
                 $slug = Str::slug($data['name']) . '-' . Str::uuid();
             } else {
                 $slug = $product->slug;
             }
 
+            // Exclude translated attributes (name, description, brand) from update() —
+            // astrotomic intercepts setAttribute for them and writes to the current locale's
+            // translation instead of the main column. saveTranslations() handles them below.
             $product->update([
-                'name' => $data['name'] ?? $product->name,
                 'slug' => $slug,
                 'category_id' => $data['category_id'] ?? $product->category_id,
                 'unit_id' => $data['unit_id'] ?? $product->unit_id,
-                'description' => $data['description'] ?? $product->description,
                 'status' => $data['status'] ?? $product->status,
                 'is_visible' => $data['is_visible'] ?? $product->is_visible,
                 'is_featured' => $data['is_featured'] ?? $product->is_featured,
                 'image_path' => $data['image_path'] ?? $product->image_path,
                 'sku' => $data['sku'] ?? $product->sku,
                 'barcode' => $data['barcode'] ?? $product->barcode,
-                'brand' => $data['brand'] ?? $product->brand,
                 'country_of_origin' => $data['country_of_origin'] ?? $product->country_of_origin,
             ]);
 
-            // Save translations for non-default locales
-            // Detect locales from actual submitted data (e.g. name_bn, description_bn)
-            $defaultLocale = get_default_locale();
-            $translatableFields = ['name', 'description', 'brand'];
-            $localeSuffixes = [];
+            $this->saveTranslations($product, $data, ['name', 'description', 'brand']);
 
-            foreach ($translatableFields as $field) {
-                foreach (array_keys($data) as $key) {
-                    if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
-                        $localeSuffixes[$matches[1]] = true;
-                    }
-                }
-            }
-
-            foreach (array_keys($localeSuffixes) as $locale) {
-                if ($locale === $defaultLocale) {
-                    continue;
-                }
-
-                $hasData = false;
-                $translation = $product->translateOrNew($locale);
-                foreach ($translatableFields as $field) {
-                    $key = "{$field}_{$locale}";
-                    if (isset($data[$key])) {
-                        $translation->setAttribute($field, $data[$key]);
-                        $hasData = true;
-                    }
-                }
-                if (!$hasData && $translation->exists) {
-                    $translation->delete();
-                } elseif ($hasData) {
-                    $translation->save();
-                }
-            }
+            // Keep main column in sync with default-locale value for search/sort queries.
+            DB::table('products')->where('id', $product->id)->update([
+                'name' => $data['name'] ?? $rawName,
+                'description' => $data['description'] ?? $product->getRawOriginal('description'),
+                'brand' => $data['brand'] ?? $product->getRawOriginal('brand'),
+            ]);
 
             // Update tags (simple replace strategy)
             if (isset($data['tags']) && is_array($data['tags'])) {

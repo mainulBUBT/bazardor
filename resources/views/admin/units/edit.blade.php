@@ -38,8 +38,8 @@
                             $isActive = $loop->first;
                             $fieldName = $isDefault ? 'name' : "name_{$locale}";
                             $fieldSymbol = $isDefault ? 'symbol' : "symbol_{$locale}";
-                            $nameValue = old($fieldName, $isDefault ? $unit->name : ($unit->getTranslation($locale, false)?->name ?? ''));
-                            $symbolValue = old($fieldSymbol, $isDefault ? $unit->symbol : ($unit->getTranslation($locale, false)?->symbol ?? ''));
+                            $nameValue = old($fieldName, $unit->getTranslation($locale, false)?->name ?? ($isDefault ? ($unit->getRawOriginal('name') ?? '') : ''));
+                            $symbolValue = old($fieldSymbol, $unit->getTranslation($locale, false)?->symbol ?? ($isDefault ? ($unit->getRawOriginal('symbol') ?? '') : ''));
                         @endphp
                         <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
                             <div class="form-row">

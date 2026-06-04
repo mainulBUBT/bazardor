@@ -48,7 +48,7 @@
                                         $isDefault = $locale === $defaultLocale;
                                         $isActive = $loop->first;
                                         $fieldName = $isDefault ? 'name' : "name_{$locale}";
-                                        $nameValue = old($fieldName, $isDefault ? $zone->name : ($zone->getTranslation($locale, false)?->name ?? ''));
+                                        $nameValue = old($fieldName, $zone->getTranslation($locale, false)?->name ?? ($isDefault ? ($zone->getRawOriginal('name') ?? '') : ''));
                                     @endphp
                                     <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
                                         <div class="form-group">

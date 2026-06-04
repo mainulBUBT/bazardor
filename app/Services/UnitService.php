@@ -2,8 +2,11 @@
 
 namespace App\Services;
 use App\Models\Unit;
+use App\Traits\SavesTranslations;
+
 class UnitService
 {
+    use SavesTranslations;
     public function __construct(private Unit $unit)  
     {
         
@@ -56,8 +59,7 @@ class UnitService
         $unitData = $this->stripTranslationFields($validated);
         $unit = $this->unit->create($unitData);
 
-        // Save translations for non-default locales
-        $this->saveTranslations($unit, $validated);
+        $this->saveTranslations($unit, $validated, ['name', 'symbol']);
 
         return $unit;
     }
@@ -74,8 +76,7 @@ class UnitService
         $unitData = $this->stripTranslationFields($validated);
         $unit->update($unitData);
 
-        // Save translations for non-default locales
-        $this->saveTranslations($unit, $validated);
+        $this->saveTranslations($unit, $validated, ['name', 'symbol']);
 
         return $unit;
     }
@@ -98,45 +99,6 @@ class UnitService
         }
 
         return $data;
-    }
-
-    /**
-     * Save translations for all non-default locales detected from submitted data.
-     */
-    protected function saveTranslations(Unit $unit, array $data): void
-    {
-        $defaultLocale = get_default_locale();
-        $translatableFields = ['name', 'symbol'];
-        $localeSuffixes = [];
-
-        foreach ($translatableFields as $field) {
-            foreach (array_keys($data) as $key) {
-                if (preg_match('/^' . $field . '_(.+)$/', $key, $matches)) {
-                    $localeSuffixes[$matches[1]] = true;
-                }
-            }
-        }
-
-        foreach (array_keys($localeSuffixes) as $locale) {
-            if ($locale === $defaultLocale) {
-                continue;
-            }
-
-            $hasData = false;
-            $translation = $unit->translateOrNew($locale);
-            foreach ($translatableFields as $field) {
-                $key = "{$field}_{$locale}";
-                if (isset($data[$key])) {
-                    $translation->setAttribute($field, $data[$key]);
-                    $hasData = true;
-                }
-            }
-            if (!$hasData && $translation->exists) {
-                $translation->delete();
-            } elseif ($hasData) {
-                $translation->save();
-            }
-        }
     }
 
     /**

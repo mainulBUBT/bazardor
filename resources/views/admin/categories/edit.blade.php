@@ -48,8 +48,8 @@
                                 $isActive = $loop->first;
                                 $fieldName = $isDefault ? 'name' : "name_{$locale}";
                                 $fieldDesc = $isDefault ? 'description' : "description_{$locale}";
-                                $nameValue = old($fieldName, $isDefault ? $category->name : ($category->getTranslation($locale, false)?->name ?? ''));
-                                $descValue = old($fieldDesc, $isDefault ? $category->description : ($category->getTranslation($locale, false)?->description ?? ''));
+                                $nameValue = old($fieldName, $category->getTranslation($locale, false)?->name ?? ($isDefault ? ($category->getRawOriginal('name') ?? '') : ''));
+                                $descValue = old($fieldDesc, $category->getTranslation($locale, false)?->description ?? ($isDefault ? ($category->getRawOriginal('description') ?? '') : ''));
                             @endphp
                             <div class="tab-pane fade {{ $isActive ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
                                 <div class="form-group">
