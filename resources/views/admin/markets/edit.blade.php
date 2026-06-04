@@ -49,17 +49,18 @@
                                 $isDefault = $locale === $defaultLocale;
                                 $fieldName = $isDefault ? 'name' : "name_{$locale}";
                                 $fieldDesc = $isDefault ? 'description' : "description_{$locale}";
+                                $translation = $market->getTranslation($locale, false);
                             @endphp
                             <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="lang-{{ $locale }}" role="tabpanel">
                                 <div class="form-group">
                                     <label>{{ translate('messages.Market Name') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
                                     <input type="text" class="form-control" name="{{ $fieldName }}"
                                            {{ $isDefault ? 'required' : '' }}
-                                           value="{{ old($fieldName, $market->getTranslation('name', $locale, false)) }}">
+                                           value="{{ old($fieldName, $translation?->name) }}">
                                 </div>
                                 <div class="form-group">
                                     <label>{{ translate('messages.Short Description') }} ({{ $lang['name'] }})</label>
-                                    <textarea name="{{ $fieldDesc }}" class="form-control" rows="3">{{ old($fieldDesc, $market->getTranslation('description', $locale, false)) }}</textarea>
+                                    <textarea name="{{ $fieldDesc }}" class="form-control" rows="3">{{ old($fieldDesc, $translation?->description) }}</textarea>
                                 </div>
                             </div>
                             @endforeach
@@ -114,40 +115,10 @@
                         <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Location Details') }}</h6>
                     </div>
                     <div class="card-body">
-                        @if(count($locales) > 1)
-                        <ul class="nav nav-tabs mb-3" role="tablist">
-                            @foreach($languages as $lang)
-                            <li class="nav-item">
-                                <a class="nav-link {{ $loop->first ? 'active' : '' }}"
-                                   data-toggle="tab" href="#addr-lang-{{ $lang['code'] }}" role="tab">
-                                    {{ strtoupper($lang['code']) }}
-                                    <small class="text-muted">{{ $lang['code'] === $defaultLocale ? '(Default)' : $lang['name'] }}</small>
-                                </a>
-                            </li>
-                            @endforeach
-                        </ul>
-                        <div class="tab-content mb-3">
-                            @foreach($languages as $lang)
-                            @php
-                                $locale = $lang['code'];
-                                $isDefault = $locale === $defaultLocale;
-                                $fieldAddr = $isDefault ? 'address' : "address_{$locale}";
-                            @endphp
-                            <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="addr-lang-{{ $locale }}" role="tabpanel">
-                                <div class="form-group">
-                                    <label>{{ translate('messages.Full Address') }} ({{ $lang['name'] }}) @if($isDefault) <span class="text-danger">*</span> @endif</label>
-                                    <textarea name="{{ $fieldAddr }}" class="form-control" rows="2"
-                                              {{ $isDefault ? 'required id="marketAddress"' : '' }}>{{ old($fieldAddr, $market->getTranslation('address', $locale, false)) }}</textarea>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                        @else
                         <div class="mb-3">
                             <label for="marketAddress" class="form-label">{{ translate('messages.Full Address') }} <span class="text-danger">*</span></label>
                             <textarea name="address" class="form-control" id="marketAddress" rows="2" required>{{ old('address', $market->address) }}</textarea>
                         </div>
-                        @endif
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="marketDivision" class="form-label">{{ translate('messages.Division') }} <span class="text-danger">*</span></label>

@@ -17,7 +17,6 @@ class Market extends Model implements TranslatableContract
     public $translatedAttributes = [
         'name',
         'description',
-        'address',
     ];
 
     /**

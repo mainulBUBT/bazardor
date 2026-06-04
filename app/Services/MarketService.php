@@ -85,7 +85,7 @@ class MarketService
 
             $market->save();
 
-            $this->saveTranslations($market, $data, ['name', 'description', 'address']);
+            $this->saveTranslations($market, $data, ['name', 'description']);
             DB::table('markets')->where('id', $market->id)
                 ->update(['name' => $data['name'] ?? '', 'address' => $data['address'] ?? '']);
 
@@ -164,7 +164,7 @@ class MarketService
 
             $market->save();
 
-            $this->saveTranslations($market, $data, ['name', 'description', 'address']);
+            $this->saveTranslations($market, $data, ['name', 'description']);
             DB::table('markets')->where('id', $market->id)
                 ->update(['name' => $data['name'] ?? '', 'address' => $data['address'] ?? '']);
 

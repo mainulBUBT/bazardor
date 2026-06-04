@@ -1369,4 +1369,5 @@
   'Available locales retrieved successfully' => 'Available locales retrieved successfully',
   'zone_deleted_successfully' => 'Zone deleted successfully',
   'Unit updated successfully' => 'Unit updated successfully',
+  'Banner updated successfully!' => 'Banner updated successfully!',
 );

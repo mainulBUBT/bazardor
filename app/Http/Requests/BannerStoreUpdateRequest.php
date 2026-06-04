@@ -33,7 +33,7 @@ class BannerStoreUpdateRequest extends FormRequest
         $bannerId = $this->route('banner');
         $isUpdate = $this->isMethod('put') || $this->isMethod('patch');
         $imageRule = $isUpdate ? 'nullable' : 'required';
-        return [
+        $rules = [
             'title' => 'required|string|max:255',
             'image' => [$imageRule, 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'type' => 'required|in:general,featured',
@@ -54,6 +54,16 @@ class BannerStoreUpdateRequest extends FormRequest
             'badge_icon' => 'nullable|string|max:100',
             'button_text' => 'required_if:type,featured|nullable|string|max:100',
         ];
+
+        // Dynamic locale-suffixed title validation (e.g. title_bn)
+        $default = get_default_locale();
+        foreach (array_keys($this->input()) as $key) {
+            if (preg_match('/^title_(.+)$/', $key, $m) && $m[1] !== $default) {
+                $rules["title_{$m[1]}"] = 'nullable|string|max:255';
+            }
+        }
+
+        return $rules;
     }
 
     public function messages(): array
@@ -78,7 +88,7 @@ class BannerStoreUpdateRequest extends FormRequest
             'badge_background_color.string' => translate('messages.Badge background color must be a string'),
             'badge_background_color.max' => translate('messages.Badge background color is too long'),
             'badge_icon.string' => translate('messages.Badge icon must be a string'),
-            'badge_icon.max' => translate('messages.Badge icon is too long'),   
+            'badge_icon.max' => translate('messages.Badge icon is too long'),
             'button_text.string' => translate('messages.Button text must be a string'),
             'button_text.max' => translate('messages.Button text is too long'),
             'is_active.boolean' => translate('messages.Status must be true or false'),

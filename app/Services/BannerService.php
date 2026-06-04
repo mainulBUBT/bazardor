@@ -3,25 +3,19 @@
 namespace App\Services;
 
 use App\Models\Banner;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use App\CentralLogics\Helpers;
+use App\Traits\SavesTranslations;
+use Illuminate\Support\Facades\DB;
 
 class BannerService
 {
-    public function __construct(private Banner $banner)
-    {
+    use SavesTranslations;
 
-    }
+    public function __construct(private Banner $banner) {}
 
     /**
      * Get paginated list of banners with optional filters.
-     * 
-     * @param bool $isFeatured
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param mixed $zoneId
-     * @param array $filters
+     *
+     * @param  mixed  $zoneId
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function getBanners(bool $isFeatured = false, ?int $limit = null, ?int $offset = null, $zoneId = null, array $filters = [])
@@ -31,16 +25,16 @@ class BannerService
             ->when($isFeatured, function ($query) {
                 $query->featured();
             })
-            ->when(!is_null($zoneId), function ($query) use ($zoneId) {
+            ->when(! is_null($zoneId), function ($query) use ($zoneId) {
                 $query->where('zone_id', $zoneId);
             })
-            ->when(!empty($filters['type']), function ($query) use ($filters) {
+            ->when(! empty($filters['type']), function ($query) use ($filters) {
                 $query->where('type', $filters['type']);
             })
             ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function ($query) use ($filters) {
                 $query->where('is_active', $filters['is_active']);
             })
-            ->when(!empty($filters['sort']), function ($query) use ($filters) {
+            ->when(! empty($filters['sort']), function ($query) use ($filters) {
                 match ($filters['sort']) {
                     'title_asc' => $query->orderBy('title', 'asc'),
                     'title_desc' => $query->orderBy('title', 'desc'),
@@ -89,6 +83,11 @@ class BannerService
             $this->banner->button_text = null;
         }
         $this->banner->save();
+
+        $this->saveTranslations($this->banner, $data, ['title']);
+        DB::table('banners')->where('id', $this->banner->id)
+            ->update(['title' => $data['title'] ?? '']);
+
         return $this->banner;
     }
 
@@ -127,6 +126,11 @@ class BannerService
             $banner->button_text = null;
         }
         $banner->save();
+
+        $this->saveTranslations($banner, $data, ['title']);
+        DB::table('banners')->where('id', $banner->id)
+            ->update(['title' => $data['title'] ?? '']);
+
         return $banner;
     }
 
@@ -144,8 +148,8 @@ class BannerService
 
     /**
      * Summary of status
-     * @param \App\Models\Banner $banner
-     * @return void
+     *
+     * @param  \App\Models\Banner  $banner
      */
     public function status(int|string $bannerId, $status): void
     {
@@ -156,8 +160,6 @@ class BannerService
 
     /**
      * Summary of findById
-     * @param int|string $bannerId
-     * @return Banner
      */
     public function findById(int|string $bannerId): Banner
     {
