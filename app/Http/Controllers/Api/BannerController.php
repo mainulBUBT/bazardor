@@ -3,26 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\BannerService;
 use App\Http\Resources\BannerResource;
+use App\Services\BannerService;
+use Illuminate\Http\Request;
 
 class BannerController extends Controller
 {
-    public function __construct(protected BannerService $bannerService)
-    {
+    public function __construct(protected BannerService $bannerService) {}
 
-    }
-    public function getBannersList(Request $request)
+    public function index(Request $request)
     {
-        if (!$request->hasHeader('zoneId')) {
-            return response()->json(
-                formated_response(constant: ZONE_ID_REQUIRED_403),
-                403
-            );
-        }
-
-        $zoneIdHeader = $request->header('zoneId');
+        $zoneIdHeader = $request->attributes->get('zoneId');
         $zoneId = $zoneIdHeader === '0' ? null : $zoneIdHeader;
         $isFeatured = $request->boolean('is_featured');
         $limit = $request->integer('limit');

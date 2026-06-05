@@ -1370,4 +1370,6 @@
   'zone_deleted_successfully' => 'Zone deleted successfully',
   'Unit updated successfully' => 'Unit updated successfully',
   'Banner updated successfully!' => 'Banner updated successfully!',
+  'Market pulse statistics retrieved successfully' => 'Market pulse statistics retrieved successfully',
+  'contribution_approved_successfully' => 'Contribution approved successfully',
 );

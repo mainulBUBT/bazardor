@@ -406,6 +406,34 @@ Remove an item from favorites.
 
 ## Products — `/api/products`
 
+### `GET /api/products/random`
+
+Get products available in zone markets. Supports sorting and category filtering.
+
+**Headers:**
+
+| Header | Required | Description |
+|--------|----------|-------------|
+| `zoneId` | Yes | Zone UUID |
+
+**Query params:**
+
+| Param | Default | Values | Description |
+|-------|---------|--------|-------------|
+| `sort` | `random` | `random`, `latest`, `trending` | Ordering mode |
+| `category_id` | null | UUID | Filter by category |
+| `limit` | 25 | int | Items per page |
+| `offset` | 1 | int | Page number |
+
+**Sort modes:**
+- `random` — shuffled order (default)
+- `latest` — newest products first (`created_at DESC`)
+- `trending` — products with most approved price contributions in the last 7 days
+
+**Response:** `200` with `ProductResource` collection (paginated)
+
+---
+
 ### `POST /api/products/submit-price`
 
 Submit a price contribution. Works for both authenticated users and anonymous guests (with `X-Device-ID`).
@@ -439,6 +467,52 @@ Submit a new product for review. The product is created with `status = draft` pe
 | image | file | No |
 
 **Response:** `201` with `ProductResource`
+
+---
+
+## Stats — `/api/stats`
+
+### `GET /api/stats/pulse`
+
+Get market pulse statistics for the current zone. Shows community activity at a glance.
+
+**Headers:**
+
+| Header | Required | Description |
+|--------|----------|-------------|
+| `zoneId` | Yes | Zone UUID (validated by `zone` middleware) |
+
+**Query params:**
+
+| Param | Default | Description |
+|-------|---------|-------------|
+| `window` | `24h` | Time window for activity counts. Accepted values: `24h`, `7d`, `30d` |
+
+**Response:** `200` with pulse data
+
+```json
+{
+  "response_code": "stats_pulse_200",
+  "message": "Market pulse statistics retrieved successfully",
+  "data": {
+    "recent_prices": 47,
+    "markets_total": 12,
+    "items_total": 156,
+    "contributors": 9,
+    "window": "24h"
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `recent_prices` | int | Approved price submissions in the zone within the window |
+| `markets_total` | int | Distinct markets with ≥1 price in the zone |
+| `items_total` | int | Distinct products with ≥1 price in the zone |
+| `contributors` | int | Distinct users who submitted an approved price in the window |
+| `window` | string | Time window used for activity counts |
+
+**Edge cases:** New zone with no submissions → all counts are `0`. Stale zone → `recent_prices: 0` but `markets_total`/`items_total` may still be > 0.
 
 ---
 

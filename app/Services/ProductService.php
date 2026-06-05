@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PriceContribution;
 use App\Models\Product;
 use App\Traits\SavesTranslations;
 use Illuminate\Support\Facades\DB;
@@ -10,36 +11,33 @@ use Illuminate\Support\Str;
 class ProductService
 {
     use SavesTranslations;
-    public function __construct(private Product $product)
-    {
-    }
+
+    public function __construct(private Product $product) {}
 
     /**
      * Get paginated list of products.
      *
-     * @param string|null $search
-     * @param array $with
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param array $filters
+     * @param  string|null  $search
+     * @param  int|null  $limit
+     * @param  int|null  $offset
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function getProducts($search = null, array $with = [], $limit = null, $offset = null, array $filters = [])
     {
         return $this->product
-            ->when(!empty($with), function ($query) use ($with) {
+            ->when(! empty($with), function ($query) use ($with) {
                 $query->with($with);
             })
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
             })
-            ->when(!empty($filters['category_id']), function ($query) use ($filters) {
+            ->when(! empty($filters['category_id']), function ($query) use ($filters) {
                 $query->where('category_id', $filters['category_id']);
             })
             ->when(isset($filters['status']) && $filters['status'] !== '', function ($query) use ($filters) {
                 $query->where('status', $filters['status']);
             })
-            ->when(!empty($filters['sort']), function ($query) use ($filters) {
+            ->when(! empty($filters['sort']), function ($query) use ($filters) {
                 match ($filters['sort']) {
                     'name_asc' => $query->orderBy('name', 'asc'),
                     'name_desc' => $query->orderBy('name', 'desc'),
@@ -54,8 +52,6 @@ class ProductService
     /**
      * Store a newly created product.
      *
-     * @param array $data
-     * @return Product
      * @throws \Throwable
      */
     public function store(array $data): Product
@@ -68,9 +64,15 @@ class ProductService
             unset($data['image']);
 
             // Generate unique slug from name
-            $slug = Str::slug($data['name']) . '-' . Str::uuid();
+            $slug = Str::slug($data['name']).'-'.Str::uuid();
 
-            $product = $this->product->create([
+            // Use DB::table to insert directly — bypasses astrotomic translation
+            // interception so translatable columns (name, description, brand) are
+            // written to the main table alongside the rest of the attributes.
+            $productId = (string) Str::uuid();
+            DB::table('products')->insert([
+                'id' => $productId,
+                'name' => $data['name'] ?? '',
                 'slug' => $slug,
                 'category_id' => $data['category_id'],
                 'unit_id' => $data['unit_id'],
@@ -84,29 +86,30 @@ class ProductService
                 'added_by' => $data['added_by'] ?? 'admin',
                 'added_by_id' => $data['added_by_id'] ?? null,
                 'device_id' => $data['device_id'] ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
+
+            $product = $this->product->findOrFail($productId);
 
             $this->saveTranslations($product, $data, ['name', 'description', 'brand']);
 
-            // Keep main column in sync with default-locale value for search/sort queries.
-            DB::table('products')->where('id', $product->id)->update([
-                'name' => $data['name'] ?? '',
-                'description' => $data['description'] ?? null,
-                'brand' => $data['brand'] ?? null,
-            ]);
-
             // Save tags if provided
-            if (!empty($data['tags']) && is_array($data['tags'])) {
+            if (! empty($data['tags']) && is_array($data['tags'])) {
                 foreach ($data['tags'] as $tagText) {
-                    if (!$tagText) continue;
+                    if (! $tagText) {
+                        continue;
+                    }
                     $product->tags()->create(['tag' => $tagText]);
                 }
             }
 
             // Save market prices if provided
-            if (!empty($data['market_prices']) && is_array($data['market_prices'])) {
+            if (! empty($data['market_prices']) && is_array($data['market_prices'])) {
                 foreach ($data['market_prices'] as $mp) {
-                    if (empty($mp['market_id']) || empty($mp['price'])) continue;
+                    if (empty($mp['market_id']) || empty($mp['price'])) {
+                        continue;
+                    }
                     $product->marketPrices()->create([
                         'market_id' => $mp['market_id'],
                         'price' => $mp['price'],
@@ -146,7 +149,7 @@ class ProductService
             // Compare against raw column value so locale doesn't affect slug logic.
             $rawName = $product->getRawOriginal('name');
             if (isset($data['name']) && $data['name'] !== $rawName) {
-                $slug = Str::slug($data['name']) . '-' . Str::uuid();
+                $slug = Str::slug($data['name']).'-'.Str::uuid();
             } else {
                 $slug = $product->slug;
             }
@@ -180,7 +183,9 @@ class ProductService
             if (isset($data['tags']) && is_array($data['tags'])) {
                 $product->tags()->delete();
                 foreach ($data['tags'] as $tagText) {
-                    if (!$tagText) continue;
+                    if (! $tagText) {
+                        continue;
+                    }
                     $product->tags()->create(['tag' => $tagText]);
                 }
             }
@@ -189,7 +194,9 @@ class ProductService
             if (isset($data['market_prices']) && is_array($data['market_prices'])) {
                 $keepIds = [];
                 foreach ($data['market_prices'] as $mp) {
-                    if (empty($mp['market_id']) || empty($mp['price'])) continue;
+                    if (empty($mp['market_id']) || empty($mp['price'])) {
+                        continue;
+                    }
                     $priceDate = $mp['price_date'] ?? now();
                     $marketPrice = $product->marketPrices()
                         ->firstOrCreate([
@@ -229,29 +236,35 @@ class ProductService
     /**
      * Find product by id
      */
-    public function findById(string $id, array $with = []) : Product
+    public function findById(string $id, array $with = []): Product
     {
-        return $this->product->when(!empty($with), function($query) use ($with){
+        return $this->product->when(! empty($with), function ($query) use ($with) {
             $query->with($with);
         })->findOrFail($id);
     }
 
-
     /**
-     * Get random products with lowest price from zone markets
+     * Get products available in zone markets with sorting and filtering.
      *
-     * @param string $zoneId
-     * @param int|null $limit
-     * @param int|null $offset
+     * @param  int|null  $limit
+     * @param  int|null  $offset
+     * @param  string  $sort  'random', 'latest', or 'trending'
+     * @param  string|null  $categoryId  Optional category filter
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getRandomProductsByZone(string $zoneId, $limit = null, $offset = null)
-    {
+    public function getRandomProductsByZone(
+        string $zoneId,
+        $limit = null,
+        $offset = null,
+        string $sort = 'random',
+        ?string $categoryId = null,
+        ?string $marketId = null
+    ) {
         $paginator = $this->product
             ->with([
                 'category:id,name,slug,description,image_path,is_active,position',
                 'unit:id,name,symbol,unit_type,is_active',
-                'marketPrices' => function ($query) use ($zoneId) {
+                'marketPrices' => function ($query) use ($zoneId, $marketId) {
                     $query
                         ->select('id', 'product_id', 'market_id', 'price', 'discount_price', 'price_date')
                         ->whereHas('market', function ($marketQuery) use ($zoneId) {
@@ -260,43 +273,56 @@ class ProductService
                                 ->where('is_active', 1)
                                 ->where('visibility', 1);
                         })
+                        ->when($marketId, fn ($q) => $q->where('market_id', $marketId))
                         ->with(['market:id,name'])
                         ->orderBy('price_date', 'desc');
                 },
             ])
-            ->whereHas('marketPrices', function ($query) use ($zoneId) {
+            ->when($categoryId, fn ($q) => $q->where('category_id', $categoryId))
+            ->whereHas('marketPrices', function ($query) use ($zoneId, $marketId) {
                 $query->whereHas('market', function ($marketQuery) use ($zoneId) {
                     $marketQuery
                         ->where('zone_id', $zoneId)
                         ->where('is_active', 1)
                         ->where('visibility', 1);
-                });
+                })
+                ->when($marketId, fn ($q) => $q->where('market_id', $marketId));
             })
             ->active()
             ->visible()
-            ->inRandomOrder()
+            ->when($sort === 'trending', function ($query) {
+                $query->selectSub(
+                    PriceContribution::selectRaw('COUNT(*)')
+                        ->whereColumn('product_id', 'products.id')
+                        ->where('status', 'approved')
+                        ->where('created_at', '>=', now()->subDays(7)),
+                    'contributions_count'
+                )->orderByDesc('contributions_count');
+            })
+            ->when($sort === 'latest', fn ($q) => $q->latest())
+            ->when($sort === 'random', fn ($q) => $q->inRandomOrder())
             ->paginate($limit ?? pagination_limit(), ['*'], 'page', $offset ?? 1);
 
         $paginator->getCollection()->transform(function ($product) {
             $byMarket = $product->marketPrices->groupBy('market_id');
 
             // Latest price per market (first entry = most recent due to price_date desc)
-            $latestPerMarket = $byMarket->map(fn($entries) => $entries->first());
+            $latestPerMarket = $byMarket->map(fn ($entries) => $entries->first());
 
             // Zone range — computed from in-memory data, zero extra queries
-            $allPrices = $latestPerMarket->map(fn($mp) => $mp->price);
+            $allPrices = $latestPerMarket->map(fn ($mp) => $mp->price);
             $product->setAttribute('zone_price_range', compute_zone_price_range($allPrices));
 
             // Pick a random market for this product
             $selected = $latestPerMarket->shuffle()->first();
 
             if ($selected) {
-                $history  = $byMarket->get($selected->market_id);
+                $history = $byMarket->get($selected->market_id);
                 $previous = $history?->get(1); // second entry = previous record for same market
 
                 if ($previous) {
-                    $curr  = (float) $selected->price;
-                    $prev  = (float) $previous->price;
+                    $curr = (float) $selected->price;
+                    $prev = (float) $previous->price;
                     $trend = $curr > $prev ? 'up' : ($curr < $prev ? 'down' : 'stable');
                     $selected->setAttribute('price_trend', $trend);
                     $selected->setAttribute('previous_price', $prev);
@@ -318,4 +344,3 @@ class ProductService
         return $paginator;
     }
 }
-

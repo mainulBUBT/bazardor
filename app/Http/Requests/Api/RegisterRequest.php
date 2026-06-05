@@ -32,7 +32,7 @@ class RegisterRequest extends FormRequest
             'city' => ['nullable', 'string', 'max:255'],
             'division' => ['nullable', 'string', 'max:255'],
             'gender' => ['nullable', 'string', 'in:male,female,other'],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:users'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users'],
             'referred_by' => ['nullable', 'string', 'exists:users,referral_code'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ];

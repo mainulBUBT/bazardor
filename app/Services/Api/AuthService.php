@@ -31,18 +31,15 @@ class AuthService
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'dob' => $data['dob'],
+            'phone' => $data['phone'],
+            'dob' => $data['dob'] ?? null,
             'password' => Hash::make($data['password']),
-            'city' => $data['city'],
-            'division' => $data['division'],
-            'gender' => $data['gender'],
+            'city' => $data['city'] ?? null,
+            'division' => $data['division'] ?? null,
+            'gender' => $data['gender'] ?? null,
             'is_active' => true,
             'zone_id' => $zoneId,
         ];
-
-        if (!empty($data['phone'])) {
-            $attributes['phone'] = $data['phone'];
-        }
 
         if (!empty($data['referred_by'])) {
             $attributes['referred_by'] = $data['referred_by'];
@@ -194,7 +191,7 @@ class AuthService
 
         return [
             'success' => true,
-            'message' => DEFAULT_200,
+            'message' => AUTH_RESET_PASSWORD_200,
         ];
     }
 

@@ -1368,4 +1368,5 @@
   'Market ID is required' => 'বাজার আইডি প্রয়োজন',
   'Available locales retrieved successfully' => 'উপলব্ধ লোকেল সফলভাবে পাওয়া গেছে',
   'Unit updated successfully' => 'Unit updated successfully',
+  'Market pulse statistics retrieved successfully' => 'বাজার পালস পরিসংখ্যান সফলভাবে পুনরুদ্ধার করা হয়েছে',
 );
