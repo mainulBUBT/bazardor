@@ -3,19 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Banner;
 use App\Http\Requests\BannerStoreUpdateRequest;
+use App\Models\Banner;
 use App\Services\BannerService;
 use App\Services\ZoneService;
-use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Http\Request;
 
 class BannerController extends Controller
 {
-    public function __construct(protected BannerService $bannerService, protected ZoneService $zoneService)
-    {
-
-    }
+    public function __construct(protected BannerService $bannerService, protected ZoneService $zoneService) {}
 
     /**
      * Display a listing of the banners.
@@ -23,12 +20,13 @@ class BannerController extends Controller
     public function index(Request $request)
     {
         $filters = [
-            'type' => $request->query('type'),
             'is_active' => $request->query('is_active'),
+            'is_featured' => $request->query('is_featured'),
             'sort' => $request->query('sort', 'latest'),
         ];
-        
+
         $banners = $this->bannerService->getBanners(false, null, null, null, $filters);
+
         return view('admin.banners.index', compact('banners'));
     }
 
@@ -50,8 +48,8 @@ class BannerController extends Controller
         }
 
         return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\BannersExport, 
-            'banners_' . date('Y-m-d_H-i-s') . '.' . $extension, 
+            new \App\Exports\BannersExport,
+            'banners_'.date('Y-m-d_H-i-s').'.'.$extension,
             $writerType
         );
     }
@@ -62,6 +60,7 @@ class BannerController extends Controller
     public function create()
     {
         $zones = $this->zoneService->getActiveZones();
+
         return view('admin.banners.create', compact('zones'));
     }
 
@@ -73,7 +72,8 @@ class BannerController extends Controller
         $validated = $request->validated();
         $this->bannerService->store($validated);
 
-        Toastr::success(translate("messages.Banner created successfully!"));
+        Toastr::success(translate('messages.Banner created successfully!'));
+
         return redirect()->route('admin.banners.index');
     }
 
@@ -82,8 +82,11 @@ class BannerController extends Controller
      */
     public function edit(Banner $banner)
     {
+        $banner->load('zones');
         $zones = $this->zoneService->getActiveZones();
-        return view('admin.banners.edit', compact('banner', 'zones'));
+        $selectedZoneIds = $banner->zones->pluck('id')->toArray();
+
+        return view('admin.banners.edit', compact('banner', 'zones', 'selectedZoneIds'));
     }
 
     /**
@@ -93,7 +96,8 @@ class BannerController extends Controller
     {
         $validated = $request->validated();
         $this->bannerService->update($banner, $validated + ['image' => $request->file('image')]);
-        Toastr::success(translate("messages.Banner updated successfully!"));
+        Toastr::success(translate('messages.Banner updated successfully!'));
+
         return redirect()->route('admin.banners.index');
     }
 
@@ -103,7 +107,8 @@ class BannerController extends Controller
     public function destroy($bannerId, Request $request)
     {
         $this->bannerService->delete($bannerId);
-        Toastr::success(translate("messages.Banner deleted successfully!"));
+        Toastr::success(translate('messages.Banner deleted successfully!'));
+
         return redirect()->route('admin.banners.index');
     }
 
@@ -111,7 +116,8 @@ class BannerController extends Controller
     {
         $this->bannerService->status($bannerId, $request->status);
 
-        Toastr::success(translate("messages.Banner status updated successfully!"));
+        Toastr::success(translate('messages.Banner status updated successfully!'));
+
         return redirect()->back();
     }
 }

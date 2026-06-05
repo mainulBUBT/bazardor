@@ -42,13 +42,13 @@
                         aria-labelledby="filterDropdown" style="min-width: 280px;">
                         <form id="filterForm">
                             <div class="mb-2">
-                                <label for="filterType" class="form-label small">{{ translate('messages.Type') }}</label>
-                                <select class="form-control form-control-sm" id="filterType" name="type">
-                                    <option value="">{{ translate('messages.All Types') }}</option>
-                                    <option value="featured" {{ request('type') === 'featured' ? 'selected' : '' }}>
+                                <label for="filterFeatured" class="form-label small">{{ translate('messages.Featured') }}</label>
+                                <select class="form-control form-control-sm" id="filterFeatured" name="is_featured">
+                                    <option value="">{{ translate('messages.All') }}</option>
+                                    <option value="1" {{ request('is_featured') === '1' ? 'selected' : '' }}>
                                         {{ translate('messages.Featured') }}</option>
-                                    <option value="general" {{ request('type') === 'general' ? 'selected' : '' }}>
-                                        {{ translate('messages.General') }}</option>
+                                    <option value="0" {{ request('is_featured') === '0' ? 'selected' : '' }}>
+                                        {{ translate('messages.Not Featured') }}</option>
                                 </select>
                             </div>
                             <div class="mb-2">
@@ -71,10 +71,6 @@
                                         {{ translate('messages.Title: A to Z') }}</option>
                                     <option value="title_desc" {{ request('sort') == 'title_desc' ? 'selected' : '' }}>
                                         {{ translate('messages.Title: Z to A') }}</option>
-                                    <option value="position_asc" {{ request('sort') == 'position_asc' ? 'selected' : '' }}>
-                                        {{ translate('messages.Position: Low to High') }}</option>
-                                    <option value="position_desc" {{ request('sort') == 'position_desc' ? 'selected' : '' }}>
-                                        {{ translate('messages.Position: High to Low') }}</option>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-end">
@@ -98,14 +94,11 @@
                             <th>{{ translate('messages.ID') }}</th>
                             <th>{{ translate('messages.Image') }}</th>
                             <th>{{ translate('messages.Title') }}</th>
-                            <th>{{ translate('messages.Type') }}</th>
-                            <th>{{ translate('messages.URL') }}</th>
+                            <th>{{ translate('messages.Link') }}</th>
                             <th>{{ translate('messages.Status') }}</th>
+                            <th>{{ translate('messages.Featured') }}</th>
                             <th>{{ translate('messages.Start Date') }}</th>
                             <th>{{ translate('messages.End Date') }}</th>
-                            <th>{{ translate('messages.Badge') }}</th>
-                            <th>{{ translate('messages.Background') }}</th>
-                            <th>{{ translate('messages.Button Text') }}</th>
                             <th>{{ translate('messages.Actions') }}</th>
                         </tr>
                     </thead>
@@ -116,13 +109,12 @@
                                 <td><img src="{{ $banner->image_full_url }}" alt="Banner" class="banner-image"></td>
                                 <td>{{ $banner->title }}</td>
                                 <td>
-                                    @if($banner->type === 'featured')
-                                        <span class="badge badge-warning">{{ translate('messages.Featured') }}</span>
+                                    @if($banner->link)
+                                        <a href="{{ $banner->link }}" target="_blank">{{ Str::limit($banner->link, 20) }}</a>
                                     @else
-                                        <span class="badge badge-info">{{ translate('messages.Banner') }}</span>
+                                        -
                                     @endif
                                 </td>
-                                <td><a href="{{ $banner->url }}" target="_blank">{{ Str::limit($banner->url, 15) }}</a></td>
                                 <td>
                                     <div class="custom-control custom-switch">
                                         <input type="checkbox" onclick='statusAlert(this)'
@@ -132,37 +124,15 @@
                                         <label class="custom-control-label" for="bannerStatus-{{ $banner->id }}"></label>
                                     </div>
                                 </td>
-                                <td>{{ $banner->start_date ? Carbon\Carbon::parse($banner->start_date)->format('d-m-Y') : '-' }}
-                                </td>
-                                <td>{{ $banner->end_date ? Carbon\Carbon::parse($banner->end_date)->format('d-m-Y') : '-' }}
-                                </td>
                                 <td>
-                                    @if($banner->type === 'featured')
-                                        @if($banner->badge_text)
-                                            <span
-                                                class="badge badge-{{ $banner->badge_color ?? 'primary' }}">{{ $banner->badge_text }}</span>
-                                        @endif
-                                        @if($banner->badge_icon)
-                                            <i class="{{ $banner->badge_icon }} ml-1"></i>
-                                        @endif
+                                    @if($banner->is_featured)
+                                        <span class="badge badge-warning">{{ translate('messages.Featured') }}</span>
                                     @else
-                                        -
+                                        <span class="badge badge-light text-dark">{{ translate('messages.General') }}</span>
                                     @endif
                                 </td>
-                                <td>
-                                    @if($banner->type === 'featured')
-                                        {{ $banner->badge_background_color ?? '-' }}
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($banner->type === 'featured')
-                                        {{ $banner->button_text ?? '-' }}
-                                    @else
-                                        -
-                                    @endif
-                                </td>
+                                <td>{{ $banner->start_date ? Carbon\Carbon::parse($banner->start_date)->format('d-m-Y') : '-' }}</td>
+                                <td>{{ $banner->end_date ? Carbon\Carbon::parse($banner->end_date)->format('d-m-Y') : '-' }}</td>
                                 <td>
                                     <div class="d-flex flex-nowrap align-items-center">
                                         <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-primary btn-circle btn-sm mr-1" title="{{ translate('messages.edit') }}">
@@ -181,7 +151,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="12" class="text-center">{{ translate('messages.No banners found') }}</td>
+                                <td colspan="9" class="text-center">{{ translate('messages.No banners found') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -197,14 +167,14 @@
         $(document).ready(function () {
             // Apply filters button
             $('#applyFiltersBtn').on('click', function () {
-                const type = $('#filterType').val();
+                const isFeatured = $('#filterFeatured').val();
                 const isActive = $('#filterStatus').val();
                 const sort = $('#filterSort').val();
 
                 const params = new URLSearchParams();
 
-                if (type) {
-                    params.set('type', type);
+                if (isFeatured !== '') {
+                    params.set('is_featured', isFeatured);
                 }
 
                 if (isActive !== '') {

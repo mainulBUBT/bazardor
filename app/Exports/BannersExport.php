@@ -14,45 +14,37 @@ class BannersExport implements FromCollection, WithHeadings, WithMapping
      */
     public function collection()
     {
-        return Banner::with('zone')->latest()->get();
+        return Banner::with('zones')->latest()->get();
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
             'ID',
             'Title',
-            'Type',
-            'URL',
+            'Link',
             'Status',
-            'Position',
+            'Featured',
             'Start Date',
             'End Date',
-            'Zone',
-            'Description',
+            'Zones',
         ];
     }
 
     /**
-     * @param Banner $banner
-     * @return array
+     * @param  Banner  $banner
      */
     public function map($banner): array
     {
         return [
             $banner->id,
             $banner->title,
-            $banner->type === 'featured' ? 'Featured' : 'General',
-            $banner->url ?? '-',
+            $banner->link ?? '-',
             $banner->is_active ? 'Active' : 'Inactive',
-            $banner->position,
+            $banner->is_featured ? 'Yes' : 'No',
             $banner->start_date ? \Carbon\Carbon::parse($banner->start_date)->format('Y-m-d') : '-',
             $banner->end_date ? \Carbon\Carbon::parse($banner->end_date)->format('Y-m-d') : '-',
-            $banner->zone?->name ?? '-',
-            $banner->description ?? '-',
+            $banner->zones->pluck('name')->join(', ') ?: 'All Zones',
         ];
     }
 }

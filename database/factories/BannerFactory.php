@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Zone;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,9 +18,8 @@ class BannerFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(3),
-            'type' => $this->faker->randomElement(['featured', 'general']),
             'is_active' => true,
-            'zone_id' => Zone::factory(),
+            'is_featured' => $this->faker->boolean(30),
             'image_path' => 'banners/demo-veg.png',
         ];
     }

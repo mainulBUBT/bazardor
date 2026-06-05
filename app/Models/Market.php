@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Traits\HasUuid;
+use App\Traits\SyncsTranslatedAttributes;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 
 class Market extends Model implements TranslatableContract
 {
-    use HasFactory, SoftDeletes, HasUuid, Translatable;
+    use HasFactory, SoftDeletes, HasUuid, Translatable, SyncsTranslatedAttributes {
+        SyncsTranslatedAttributes::setAttribute insteadof Translatable;
+    }
 
     public $translatedAttributes = [
         'name',

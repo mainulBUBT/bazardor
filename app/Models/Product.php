@@ -10,12 +10,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Traits\HasUuid;
+use App\Traits\SyncsTranslatedAttributes;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 
 class Product extends Model implements TranslatableContract
 {
-    use HasFactory, SoftDeletes, HasUuid, Translatable;
+    use HasFactory, SoftDeletes, HasUuid, Translatable, SyncsTranslatedAttributes {
+        SyncsTranslatedAttributes::setAttribute insteadof Translatable;
+    }
 
     public $translatedAttributes = ['name', 'description', 'brand'];
 

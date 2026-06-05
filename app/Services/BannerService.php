@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Banner;
+use App\Models\Zone;
 use App\Traits\SavesTranslations;
 use Illuminate\Support\Facades\DB;
 
@@ -21,25 +22,23 @@ class BannerService
     public function getBanners(bool $isFeatured = false, ?int $limit = null, ?int $offset = null, $zoneId = null, array $filters = [])
     {
         return $this->banner
-            ->with('zone')
+            ->with('zones')
             ->when($isFeatured, function ($query) {
                 $query->featured();
             })
             ->when(! is_null($zoneId), function ($query) use ($zoneId) {
-                $query->where('zone_id', $zoneId);
-            })
-            ->when(! empty($filters['type']), function ($query) use ($filters) {
-                $query->where('type', $filters['type']);
+                $query->whereHas('zones', fn ($q2) => $q2->where('zones.id', $zoneId));
             })
             ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function ($query) use ($filters) {
                 $query->where('is_active', $filters['is_active']);
+            })
+            ->when(isset($filters['is_featured']) && $filters['is_featured'] !== '', function ($query) use ($filters) {
+                $query->where('is_featured', $filters['is_featured']);
             })
             ->when(! empty($filters['sort']), function ($query) use ($filters) {
                 match ($filters['sort']) {
                     'title_asc' => $query->orderBy('title', 'asc'),
                     'title_desc' => $query->orderBy('title', 'desc'),
-                    'position_asc' => $query->orderBy('position', 'asc'),
-                    'position_desc' => $query->orderBy('position', 'desc'),
                     default => $query->latest(),
                 };
             }, function ($query) {
@@ -61,32 +60,18 @@ class BannerService
 
         $this->banner->title = $data['title'];
         $this->banner->image_path = $data['image_path'] ?? null;
-        $this->banner->url = $data['url'] ?? null;
-        $this->banner->type = $data['type'] ?? 'general';
-        $this->banner->description = $data['description'] ?? null;
+        $this->banner->link = $data['link'] ?? null;
         $this->banner->is_active = $data['is_active'];
-        $this->banner->position = $data['position'];
+        $this->banner->is_featured = $data['is_featured'] ?? false;
         $this->banner->start_date = $data['start_date'] ?? null;
         $this->banner->end_date = $data['end_date'] ?? null;
-        $this->banner->zone_id = $data['zone_id'] ?? null;
-        if (($data['type'] ?? 'general') === 'featured') {
-            $this->banner->badge_text = $data['badge_text'] ?? null;
-            $this->banner->badge_color = $data['badge_color'] ?? null;
-            $this->banner->badge_background_color = $data['badge_background_color'] ?? null;
-            $this->banner->badge_icon = $data['badge_icon'] ?? null;
-            $this->banner->button_text = $data['button_text'] ?? null;
-        } else {
-            $this->banner->badge_text = null;
-            $this->banner->badge_color = null;
-            $this->banner->badge_background_color = null;
-            $this->banner->badge_icon = null;
-            $this->banner->button_text = null;
-        }
         $this->banner->save();
 
+        // Sync zones — if "all zones", insert every zone ID
+        $zoneIds = $this->resolveZoneIds($data);
+        $this->banner->zones()->sync($zoneIds);
+
         $this->saveTranslations($this->banner, $data, ['title']);
-        DB::table('banners')->where('id', $this->banner->id)
-            ->update(['title' => $data['title'] ?? '']);
 
         return $this->banner;
     }
@@ -102,34 +87,21 @@ class BannerService
             $data['image_path'] = handle_file_upload('banners/', $data['image']->getClientOriginalExtension(), $data['image'], $oldImagePath);
         }
         unset($data['image']);
+
         $banner->title = $data['title'];
         $banner->image_path = $data['image_path'] ?? $banner->image_path;
-        $banner->url = $data['url'] ?? null;
-        $banner->type = $data['type'] ?? 'general';
-        $banner->description = $data['description'] ?? null;
+        $banner->link = $data['link'] ?? null;
         $banner->is_active = $data['is_active'];
-        $banner->position = $data['position'];
+        $banner->is_featured = $data['is_featured'] ?? false;
         $banner->start_date = $data['start_date'] ?? null;
         $banner->end_date = $data['end_date'] ?? null;
-        $banner->zone_id = $data['zone_id'] ?? null;
-        if (($data['type'] ?? 'general') === 'featured') {
-            $banner->badge_text = $data['badge_text'] ?? null;
-            $banner->badge_color = $data['badge_color'] ?? null;
-            $banner->badge_background_color = $data['badge_background_color'] ?? null;
-            $banner->badge_icon = $data['badge_icon'] ?? null;
-            $banner->button_text = $data['button_text'] ?? null;
-        } else {
-            $banner->badge_text = null;
-            $banner->badge_color = null;
-            $banner->badge_background_color = null;
-            $banner->badge_icon = null;
-            $banner->button_text = null;
-        }
         $banner->save();
 
+        // Sync zones — if "all zones", insert every zone ID
+        $zoneIds = $this->resolveZoneIds($data);
+        $banner->zones()->sync($zoneIds);
+
         $this->saveTranslations($banner, $data, ['title']);
-        DB::table('banners')->where('id', $banner->id)
-            ->update(['title' => $data['title'] ?? '']);
 
         return $banner;
     }
@@ -147,9 +119,7 @@ class BannerService
     }
 
     /**
-     * Summary of status
-     *
-     * @param  \App\Models\Banner  $banner
+     * Toggle banner status.
      */
     public function status(int|string $bannerId, $status): void
     {
@@ -159,10 +129,26 @@ class BannerService
     }
 
     /**
-     * Summary of findById
+     * Find a banner by ID.
      */
     public function findById(int|string $bannerId): Banner
     {
-        return $this->banner->findOrFail($bannerId);
+        return $this->banner->with('zones')->findOrFail($bannerId);
+    }
+
+    /**
+     * Resolve zone IDs from input data.
+     * If "all" is present in zone_ids, return every zone ID.
+     * Otherwise return the selected zone_ids.
+     */
+    protected function resolveZoneIds(array $data): array
+    {
+        $zoneIds = $data['zone_ids'] ?? [];
+
+        if (in_array('all', $zoneIds)) {
+            return Zone::pluck('id')->toArray();
+        }
+
+        return $zoneIds;
     }
 }

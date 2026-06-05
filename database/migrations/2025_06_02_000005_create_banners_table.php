@@ -15,27 +15,32 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('title');
             $table->string('image_path');
-            $table->string('url')->nullable();
-            $table->enum('type', ['general', 'featured'])->default('general');
-            $table->text('description')->nullable();
-            $table->string('badge_text')->nullable();
-            $table->string('badge_color')->nullable();
-            $table->string('badge_background_color')->nullable();
-            $table->string('badge_icon')->nullable();
-            $table->string('button_text')->nullable();
+            $table->string('link')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->integer('position')->default(0);
+            $table->boolean('is_featured')->default(false);
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
-            $table->foreignUuid('zone_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            // Indexes
-            $table->index('type');
             $table->index('is_active');
-            $table->index('position');
+            $table->index('is_featured');
             $table->index(['start_date', 'end_date']);
+        });
+
+        Schema::create('banner_translations', function (Blueprint $table) {
+            $table->id();
+            $table->uuid('banner_id');
+            $table->string('locale', 10)->index();
+            $table->string('title');
+
+            $table->unique(['banner_id', 'locale']);
+            $table->index(['locale', 'title']);
+
+            $table->foreign('banner_id')
+                ->references('id')
+                ->on('banners')
+                ->onDelete('cascade');
         });
     }
 
@@ -44,6 +49,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('banner_translations');
         Schema::dropIfExists('banners');
     }
 };

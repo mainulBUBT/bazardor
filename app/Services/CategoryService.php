@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Category;
 use App\Models\ProductMarketPrice;
 use App\Traits\SavesTranslations;
-use Illuminate\Support\Facades\DB;
 
 class CategoryService
 {
@@ -83,9 +82,6 @@ class CategoryService
 
         $this->saveTranslations($this->category, $data, ['name', 'description']);
 
-        // Keep main column in sync with default-locale value for search/sort queries.
-        DB::table('categories')->where('id', $this->category->id)->update(['name' => $data['name'] ?? '']);
-
         return $this->category;
     }
 
@@ -119,11 +115,6 @@ class CategoryService
         $category->save();
 
         $this->saveTranslations($category, $data, ['name', 'description']);
-
-        // Keep main column in sync with default-locale value for search/sort queries.
-        if (isset($data['name'])) {
-            DB::table('categories')->where('id', $category->id)->update(['name' => $data['name']]);
-        }
 
         return $category;
     }

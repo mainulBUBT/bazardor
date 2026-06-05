@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use App\Traits\HasUuid;
+use App\Traits\SyncsTranslatedAttributes;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 
 class Zone extends Model implements TranslatableContract
 {
-    use HasFactory, HasSpatial, HasUuid, Translatable;
+    use HasFactory, HasSpatial, HasUuid, Translatable, SyncsTranslatedAttributes {
+        SyncsTranslatedAttributes::setAttribute insteadof Translatable;
+    }
 
     public $translatedAttributes = ['name'];
 

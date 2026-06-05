@@ -2,21 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Models\Admin;
+use App\Models\Banner;
+use App\Models\Category;
+use App\Models\Market;
+use App\Models\Permission;
+use App\Models\Product;
+use App\Models\ProductMarketPrice;
+use App\Models\Role;
 use App\Models\Unit;
 use App\Models\Zone;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Market;
-use App\Models\Banner;
-use App\Models\ProductMarketPrice;
-use App\Models\Admin;
-use App\Models\Role;
-use App\Models\Permission;
-use MatanYadaev\EloquentSpatial\Objects\Polygon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
 use MatanYadaev\EloquentSpatial\Objects\Point;
-use Illuminate\Support\Facades\Hash;
+use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 class BangladeshDemoDataSeeder extends Seeder
 {
@@ -39,7 +39,7 @@ class BangladeshDemoDataSeeder extends Seeder
         foreach ($units as $unitData) {
             Unit::factory()->create($unitData);
         }
-        
+
         // Retrieve for later use
         $unitKg = Unit::where('symbol', 'kg')->first();
         $unitL = Unit::where('symbol', 'L')->first();
@@ -55,13 +55,13 @@ class BangladeshDemoDataSeeder extends Seeder
                 new Point(23.7000, 90.4500),
                 new Point(23.7000, 90.3800),
                 new Point(23.8859, 90.3800),
-            ])
+            ]),
         ]);
 
         $zone = Zone::factory()->create([
             'name' => 'Dhaka City',
             'is_active' => true,
-            'coordinates' => $dhakaPolygon
+            'coordinates' => $dhakaPolygon,
         ]);
 
         // 3. Create Categories using Factory
@@ -370,7 +370,7 @@ class BangladeshDemoDataSeeder extends Seeder
                 // Generate a price slightly different from base price
                 $variation = rand(-5, 10); // -5% to +10%
                 $price = $product->base_price * (1 + $variation / 100);
-                
+
                 ProductMarketPrice::factory()->create([
                     'product_id' => $product->id,
                     'market_id' => $market->id,
@@ -385,43 +385,41 @@ class BangladeshDemoDataSeeder extends Seeder
         $banners = [
             [
                 'title' => 'Fresh Vegetables',
-                'type' => 'featured',
+                'is_featured' => true,
                 'is_active' => true,
-                'zone_id' => $zone->id,
                 'image_path' => 'banners/demo-veg.png',
             ],
             [
                 'title' => 'Eid Special Discount',
-                'type' => 'general',
+                'is_featured' => false,
                 'is_active' => true,
-                'zone_id' => $zone->id,
                 'image_path' => 'banners/demo-eid.png',
             ],
             [
                 'title' => 'Winter Collection',
-                'type' => 'featured',
+                'is_featured' => true,
                 'is_active' => true,
-                'zone_id' => $zone->id,
                 'image_path' => 'banners/demo-winter.png',
             ],
         ];
 
         foreach ($banners as $bannerData) {
-            Banner::factory()->create($bannerData);
+            $banner = Banner::factory()->create($bannerData);
+            $banner->zones()->attach($zone->id);
         }
 
         // 8. Create Admin User with Spatie Roles
         // Ensure 'admin' guard role exists
         // $adminRole = Role::firstOrCreate(['name' => \App\Enums\UserType::SUPER_ADMIN->value, 'guard_name' => 'admin']);
-        
+
         // Give all permissions to Super Admin
         // $permissions = Permission::where('guard_name', 'admin')->get();
         // $adminRole->syncPermissions($permissions);
 
         // Check if admin exists first
         $admin = Admin::where('email', 'admin@bazardor.com')->first();
-        
-        if (!$admin) {
+
+        if (! $admin) {
             $admin = Admin::factory()->create([
                 'name' => 'Super Admin',
                 'email' => 'admin@bazardor.com',

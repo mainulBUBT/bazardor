@@ -1372,4 +1372,12 @@
   'Banner updated successfully!' => 'Banner updated successfully!',
   'Market pulse statistics retrieved successfully' => 'Market pulse statistics retrieved successfully',
   'contribution_approved_successfully' => 'Contribution approved successfully',
+  'Not Featured' => 'Not Featured',
+  'Link' => 'Link',
+  'Select zones or leave empty for all zones' => 'Select zones or leave empty for all zones',
+  'Mark as featured' => 'Mark as featured',
+  'Select zones' => 'Select zones',
+  'Select specific zones, or check All Zones above' => 'Select specific zones  or check All Zones above',
+  'Select "All Zones" or specific zones' => 'Select  All Zones  or specific zones',
+  'The link is too long' => 'The link is too long',
 );

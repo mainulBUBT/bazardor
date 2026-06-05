@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasUuid;
+use App\Traits\SyncsTranslatedAttributes;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Banner extends Model implements TranslatableContract
 {
-    use HasFactory, SoftDeletes, HasUuid, Translatable;
+    use HasFactory, HasUuid, SoftDeletes, Translatable, SyncsTranslatedAttributes {
+        SyncsTranslatedAttributes::setAttribute insteadof Translatable;
+    }
 
     public $translatedAttributes = [
         'title',
@@ -26,13 +29,11 @@ class Banner extends Model implements TranslatableContract
     protected $fillable = [
         'title',
         'image_path',
-        'url',
-        'type',
+        'link',
         'is_active',
-        'position',
+        'is_featured',
         'start_date',
         'end_date',
-        'zone_id'
     ];
 
     /**
@@ -42,9 +43,9 @@ class Banner extends Model implements TranslatableContract
      */
     protected $casts = [
         'is_active' => 'boolean',
-        'position' => 'integer',
+        'is_featured' => 'boolean',
         'start_date' => 'datetime',
-        'end_date' => 'datetime'
+        'end_date' => 'datetime',
     ];
 
     /**
@@ -53,14 +54,14 @@ class Banner extends Model implements TranslatableContract
     public function scopeActive($query)
     {
         return $query->where('is_active', true)
-                    ->where(function($q) {
-                        $q->whereNull('start_date')
-                          ->orWhere('start_date', '<=', now());
-                    })
-                    ->where(function($q) {
-                        $q->whereNull('end_date')
-                          ->orWhere('end_date', '>=', now());
-                    });
+            ->where(function ($q) {
+                $q->whereNull('start_date')
+                    ->orWhere('start_date', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_date')
+                    ->orWhere('end_date', '>=', now());
+            });
     }
 
     /**
@@ -68,31 +69,17 @@ class Banner extends Model implements TranslatableContract
      */
     public function scopeFeatured($query)
     {
-        return $query->where('type', 'featured');
+        return $query->where('is_featured', true);
     }
 
     /**
-     * Scope a query to only include general banners.
+     * The zones this banner belongs to.
+     * Empty relationship = all zones.
      */
-    public function scopeGeneral($query)
+    public function zones(): BelongsToMany
     {
-        return $query->where('type', 'general');
-    }
-
-    /**
-     * Scope a query to order by position.
-     */
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('position');
-    }
-
-    /**
-     * Get the zone associated with the banner.
-     */
-    public function zone(): BelongsTo
-    {
-        return $this->belongsTo(Zone::class);
+        return $this->belongsToMany(Zone::class, 'banner_zone', 'banner_id', 'zone_id')
+            ->withTimestamps();
     }
 
     /**
