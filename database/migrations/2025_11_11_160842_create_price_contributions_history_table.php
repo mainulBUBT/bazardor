@@ -15,7 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('product_id');
             $table->foreignUuid('market_id');
-            $table->foreignUuid('user_id');
+            $table->foreignUuid('user_id')->nullable();
+            $table->string('device_id', 255)->nullable();
             $table->decimal('submitted_price', 10, 2);
             $table->string('proof_image')->nullable();
             $table->string('status')->default('validated');
@@ -24,6 +25,7 @@ return new class extends Migration
 
             $table->index(['product_id', 'market_id']);
             $table->index(['user_id', 'validated_at']);
+            $table->index('device_id');
             $table->index('status');
         });
     }

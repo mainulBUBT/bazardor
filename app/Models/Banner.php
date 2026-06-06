@@ -15,6 +15,7 @@ class Banner extends Model implements TranslatableContract
 {
     use HasFactory, HasUuid, SoftDeletes, Translatable, SyncsTranslatedAttributes {
         SyncsTranslatedAttributes::setAttribute insteadof Translatable;
+        SyncsTranslatedAttributes::fill insteadof Translatable;
     }
 
     public $translatedAttributes = [

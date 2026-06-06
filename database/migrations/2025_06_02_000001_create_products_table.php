@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('country_of_origin')->nullable();
             $table->enum('added_by', ['admin', 'user'])->default('admin');
             $table->uuid('added_by_id')->nullable();
+            $table->string('device_id', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -43,6 +44,7 @@ return new class extends Migration
             $table->index('base_price');
             $table->index('added_by');
             $table->index('added_by_id');
+            $table->index('device_id');
         });
     }
 

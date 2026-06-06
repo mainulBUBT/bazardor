@@ -2,16 +2,14 @@
 
 ## Overview
 
-The database contains **37 tables** across four categories:
+The database contains **34 tables** across four categories:
 
 | Category | Tables |
 |----------|--------|
 | Laravel infrastructure | `users`, `password_reset_tokens`, `sessions`, `cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs`, `personal_access_tokens` |
 | Spatie permissions | `roles`, `permissions`, `model_has_roles`, `model_has_permissions`, `role_has_permissions` |
-| Domain (Bazardor) | `admins`, `settings`, `zones`, `units`, `categories`, `markets`, `market_information`, `market_operating_hours`, `products`, `product_tags`, `product_market_prices`, `price_thresholds`, `price_contributions`, `price_contribution_votes`, `price_contributions_history`, `banners`, `push_notifications`, `favorites`, `entity_creators`, `user_statistics` |
-| Translations | `product_translations`, `market_translations`, `category_translations`, `banner_translations`, `zone_translations`, `unit_translations`, `product_tag_translations` |
-
-> Note: `users` is a Laravel core table but is extended by two migrations (`add_extra_fields_to_users_table`, `add_social_login_fields_to_users_table`).
+| Domain (Bazardor) | `admins`, `settings`, `zones`, `units`, `categories`, `markets`, `market_information`, `market_operating_hours`, `products`, `product_tags`, `product_market_prices`, `price_contributions`, `price_contributions_history`, `banners`, `banner_zone`, `push_notifications`, `favorites`, `entity_creators`, `user_statistics` |
+| Translations | `product_translations`, `market_translations`, `category_translations`, `banner_translations`, `zone_translations`, `unit_translations` |
 
 ---
 
@@ -27,21 +25,18 @@ zones
                 ├── categories (category_id)
                 ├── units (unit_id)
                 ├── product_tags (product_id)
-                ├── price_thresholds (product_id, 1:1)
                 └── price_contributions (product_id + market_id)
-                     └── price_contribution_votes (price_contribution_id)
 
 users
  ├── favorites (user_id) → morphTo → Market | Product
  ├── price_contributions (user_id, nullable)
- ├── price_contribution_votes (user_id)
  ├── user_statistics (user_id, 1:1)
  └── entity_creators (user_id) → morphTo → Market | Product
 
 admins
  └── entity_creators (admin_id) → morphTo → Market | Product
 
-banners → zones (zone_id, nullable)
+banners ↔ zones (many-to-many via banner_zone pivot table)
 push_notifications → zones (zone_id, nullable)
 
 Translation tables (1:N per locale):
@@ -51,7 +46,6 @@ categories → category_translations (category_id)
 banners → banner_translations (banner_id)
 zones → zone_translations (zone_id)
 units → unit_translations (unit_id)
-product_tags → product_tag_translations (product_tag_id)
 ```
 
 ---
@@ -62,24 +56,33 @@ product_tags → product_tag_translations (product_tag_id)
 
 | Column | Type | Notes |
 |--------|------|-------|
-| id | bigIncrements | PK |
-| name | string | |
+| id | uuid | PK |
+| first_name | string | |
+| last_name | string | |
+| username | string | Unique, Nullable |
+| dob | date | Nullable |
+| image_path | string | Nullable |
+| phone | string | Nullable |
+| gender | string | Nullable |
 | email | string | Unique |
 | email_verified_at | timestamp | Nullable |
-| password | string | Hashed |
-| remember_token | string | Nullable |
-| phone | string | Nullable (extra fields migration) |
-| dob | date | Nullable |
-| username | string | Unique, Nullable |
-| referral_code | string | Unique, Nullable |
-| user_type | string | `super_admin`, `moderator`, `volunteer`, `user` |
-| image | string | Nullable |
-| is_active | boolean | Default true |
-| device_id | string | Nullable |
+| phone_verified_at | timestamp | Nullable |
+| password | string | Nullable (social login users may not have password) |
 | provider | string | Nullable (social login) |
 | provider_id | string | Nullable (social login) |
 | provider_token | string | Nullable |
-| role_id | foreignId | Nullable → Spatie `roles.id` |
+| address | text | Nullable |
+| city | string | Nullable |
+| division | string | Nullable |
+| is_active | boolean | Default true |
+| subscribed_to_newsletter | boolean | Default false |
+| referral_code | string | Nullable |
+| referred_by | string | Nullable |
+| status | string | Default `pending` |
+| user_type | string | `super_admin`, `moderator`, `volunteer`, `user` |
+| zone_id | foreignUuid | Nullable → `zones.id` |
+| last_login_at | timestamp | Nullable |
+| remember_token | string | Nullable |
 | created_at / updated_at | timestamps | |
 
 ---
@@ -270,21 +273,6 @@ Uses `HasRoles` (Spatie) with guard `admin`.
 
 ---
 
-### `price_thresholds`
-
-| Column | Type | Notes |
-|--------|------|-------|
-| id | bigIncrements | PK |
-| product_id | foreignId | → `products.id` |
-| min_price | decimal(10,2) | |
-| max_price | decimal(10,2) | |
-| Index | product_id | |
-| created_at / updated_at | timestamps | |
-
-One threshold per product (enforced at application level via `ensureDefaultPriceThreshold()`).
-
----
-
 ### `price_contributions`
 
 | Column | Type | Notes |
@@ -302,19 +290,6 @@ One threshold per product (enforced at application level via `ensureDefaultPrice
 | verified_at | timestamp | Nullable |
 | Index | (product_id, market_id, status), user_id, created_at | |
 | deleted_at | softDeletes | |
-| created_at / updated_at | timestamps | |
-
----
-
-### `price_contribution_votes`
-
-| Column | Type | Notes |
-|--------|------|-------|
-| id | bigIncrements | PK |
-| price_contribution_id | foreignId | → `price_contributions.id` (cascade delete) |
-| user_id | foreignId | → `users.id` |
-| is_upvote | boolean | |
-| Unique | (price_contribution_id, user_id) | One vote per user per contribution |
 | created_at / updated_at | timestamps | |
 
 ---
@@ -351,9 +326,20 @@ Archive table for processed contributions (approved or rejected).
 | position | integer | Default 0 |
 | start_date | date | Nullable |
 | end_date | date | Nullable |
-| zone_id | foreignId | Nullable → `zones.id` |
+| is_featured | boolean | Default false |
 | deleted_at | softDeletes | |
 | created_at / updated_at | timestamps | |
+
+Banners are linked to zones via a many-to-many relationship using the `banner_zone` pivot table.
+
+### `banner_zone` (pivot)
+
+| Column | Type | Notes |
+|--------|------|-------|
+| banner_id | uuid | FK → `banners.id` (cascade delete) |
+| zone_id | uuid | FK → `zones.id` (cascade delete) |
+| created_at / updated_at | timestamps | |
+| Primary Key | (banner_id, zone_id) | Composite |
 
 ---
 
@@ -525,16 +511,6 @@ No timestamps on translation rows.
 | symbol | string | Nullable |
 | Unique | (unit_id, locale) | |
 
-### `product_tag_translations`
-
-| Column | Type | Notes |
-|--------|------|-------|
-| id | bigIncrements | PK |
-| product_tag_id | foreignId | FK → `product_tags.id` (cascade) |
-| locale | string(10) | Indexed |
-| tag | string | |
-| Unique | (product_tag_id, locale) | |
-
 ---
 
 ### Laravel Infrastructure Tables
@@ -544,4 +520,4 @@ No timestamps on translation rows.
 | `sessions` | Database session storage |
 | `cache` / `cache_locks` | Database cache driver |
 | `jobs` / `job_batches` / `failed_jobs` | Database queue driver |
-| `password_reset_tokens` | Password reset OTP storage (extended with extra columns: `otp`, `otp_expires_at`) |
+| `password_reset_tokens` | Password reset OTP storage (with `otp_hit_count`, `is_temp_blocked`, `temp_blocked_at`, `expires_at`) |

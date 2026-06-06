@@ -165,7 +165,7 @@ The app uses **`astrotomic/laravel-translatable`** for multi-language support. S
 | `Banner` | `title` |
 | `Zone` | `name`, `description` |
 | `Unit` | `name`, `symbol` |
-| `ProductTag` | `tag` |
+| `ProductTag` | *(not translatable)* |
 
 **Key points:**
 
@@ -193,7 +193,7 @@ The app uses **`astrotomic/laravel-translatable`** for multi-language support. S
 **Path A — automated processor (primary):**
 1. `POST /api/products/submit-price` → `price_contributions` row (`status = pending`). Rate-limited to 1 submission/hour per user or device per product+market pair (`PRICE_SUBMISSION_RATE_LIMITED_429`).
 2. `php artisan price-contributions:process` groups all pending rows by `(product_id, market_id)` and, inside a DB transaction per group:
-   - Checks `price_thresholds.min_price / max_price` for the product. If no threshold exists, all positive prices pass.
+   - Validates contributions against the configured price tolerance (±% from reference price).
    - **Valid** contributions: `AVG(submitted_price)` → `updateOrCreate` on `product_market_prices`.
    - All contributions (valid + invalid) are bulk-inserted into `price_contributions_history` (`status = validated | invalid`) and then **hard-deleted** from `price_contributions`.
    - `user_statistics.reputation_score` is incremented (+1 valid / -1 invalid) for each authenticated contributor.

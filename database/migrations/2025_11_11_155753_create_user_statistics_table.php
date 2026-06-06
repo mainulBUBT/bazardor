@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_statistics', function (Blueprint $table) {
-            $table->id('user_id')->primary();
+            $table->uuid('user_id')->primary();
             $table->integer('price_updates_count')->default(0);
             $table->integer('reviews_count')->default(0);
             $table->integer('products_added_count')->default(0);

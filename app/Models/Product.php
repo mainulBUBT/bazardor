@@ -18,6 +18,7 @@ class Product extends Model implements TranslatableContract
 {
     use HasFactory, SoftDeletes, HasUuid, Translatable, SyncsTranslatedAttributes {
         SyncsTranslatedAttributes::setAttribute insteadof Translatable;
+        SyncsTranslatedAttributes::fill insteadof Translatable;
     }
 
     public $translatedAttributes = ['name', 'description', 'brand'];

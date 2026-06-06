@@ -30,4 +30,35 @@ trait SyncsTranslatedAttributes
 
         return parent::setAttribute($key, $value);
     }
+
+    /**
+     * Override astrotomic's fill() to also write translatable attributes
+     * to the main table for the default locale.
+     *
+     * Astrotomic's fill() removes translatable keys from the attributes
+     * array before calling parent::fill(), which means setAttribute() is
+     * never called for them. This override restores them for the default locale.
+     */
+    public function fill(array $attributes)
+    {
+        $defaultLocale = get_default_locale();
+        $mainTableAttributes = [];
+
+        foreach ($attributes as $key => $value) {
+            [$attribute, $locale] = $this->getAttributeAndLocale($key);
+
+            if ($this->isTranslationAttribute($attribute) && $locale === $defaultLocale) {
+                $mainTableAttributes[$attribute] = $value;
+            }
+        }
+
+        // Let astrotomic handle translations, then sync main table
+        $result = parent::fill($attributes);
+
+        foreach ($mainTableAttributes as $key => $value) {
+            parent::setAttribute($key, $value);
+        }
+
+        return $result;
+    }
 }

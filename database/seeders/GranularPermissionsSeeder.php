@@ -61,7 +61,7 @@ class GranularPermissionsSeeder extends Seeder
         ], [
             'id' => (string) Str::uuid(),
             'name' => 'Super Admin',
-            'password' => bcrypt('admin123456'),
+            'password' => bcrypt('12345678'),
         ]);
 
         // Assign super admin role to the user
