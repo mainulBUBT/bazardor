@@ -29,8 +29,20 @@ class SetLocale
                 ?: \get_default_locale();
         }
 
-        return session('admin_locale', '')
-            ?: $request->getPreferredLanguage(\get_enabled_locales())
+        // For admin: session → DB preference → browser → default
+        if ($request->is('admin/*')) {
+            $sessionLocale = session('admin_locale', '');
+            if ($sessionLocale) {
+                return $sessionLocale;
+            }
+
+            $admin = auth()->guard('admin')->user();
+            if ($admin && $admin->locale) {
+                return $admin->locale;
+            }
+        }
+
+        return $request->getPreferredLanguage(\get_enabled_locales())
             ?: \get_default_locale();
     }
 }

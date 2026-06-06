@@ -32,10 +32,13 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        // Locale switch
+        // Locale switch — saves to DB + session
         Route::get('switch-locale/{locale}', function ($locale) {
             if (in_array($locale, get_enabled_locales())) {
                 session(['admin_locale' => $locale]);
+                if ($admin = auth()->guard('admin')->user()) {
+                    $admin->update(['locale' => $locale]);
+                }
             }
             return redirect()->back();
         })->name('locale.switch');

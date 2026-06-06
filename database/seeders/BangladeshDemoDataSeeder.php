@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Market;
 use App\Models\Product;
 use App\Models\ProductMarketPrice;
+use App\Models\Setting;
 use App\Models\Unit;
 use App\Models\Zone;
 use Illuminate\Database\Seeder;
@@ -265,7 +266,20 @@ class BangladeshDemoDataSeeder extends Seeder
             $banner->zones()->attach($zone->id);
         }
 
-        // 8. Create Admin User with role
+        // 8. Seed language settings
+        Setting::updateOrCreate(
+            ['key_name' => 'default_language', 'settings_type' => 'languages'],
+            ['value' => 'en']
+        );
+        Setting::updateOrCreate(
+            ['key_name' => 'enabled_languages', 'settings_type' => 'languages'],
+            ['value' => [
+                ['code' => 'en', 'name' => 'English', 'direction' => 'ltr'],
+                ['code' => 'bn', 'name' => 'বাংলা (Bengali)', 'direction' => 'ltr'],
+            ]]
+        );
+
+        // 9. Create Admin User with role
         $admin = Admin::where('email', 'admin@bazardor.com')->first();
 
         if (! $admin) {

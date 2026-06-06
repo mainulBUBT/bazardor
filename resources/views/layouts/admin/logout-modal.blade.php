@@ -38,6 +38,13 @@
 </div>
 
 <style>
+    .modal-backdrop.show {
+        z-index: 1055 !important;
+    }
+    #logoutModal {
+        z-index: 1060 !important;
+    }
+
     .bg-gradient-danger {
         background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     }
