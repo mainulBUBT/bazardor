@@ -65,6 +65,11 @@ class DownloadMarketImages extends Command
 
         $filename = ltrim(str_replace('markets/', '', $market->image_path), '/');
 
+        // Re-download demo placeholders — they're not real market images
+        if (str_starts_with($filename, 'demo-')) {
+            return true;
+        }
+
         return ! Storage::disk('public')->exists("markets/{$filename}");
     }
 

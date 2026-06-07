@@ -80,6 +80,11 @@ class DownloadProductImages extends Command
         // Strip leading "products/" prefix if present for Storage check
         $filename = ltrim(str_replace('products/', '', $product->image_path), '/');
 
+        // Re-download demo placeholders — they're not real product images
+        if (str_starts_with($filename, 'demo-')) {
+            return true;
+        }
+
         return ! Storage::disk('public')->exists("products/{$filename}");
     }
 
