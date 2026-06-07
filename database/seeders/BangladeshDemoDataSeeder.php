@@ -12,6 +12,7 @@ use App\Models\Setting;
 use App\Models\Unit;
 use App\Models\Zone;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
 use MatanYadaev\EloquentSpatial\Objects\Point;
@@ -74,12 +75,12 @@ class BangladeshDemoDataSeeder extends Seeder
 
         // 3. Create Categories with bilingual translations
         $categoriesData = [
-            ['en' => ['name' => 'Vegetables', 'description' => 'Fresh vegetables directly from farmers'], 'bn' => ['name' => 'সবজি', 'description' => 'কৃষকদের কাছ থেকে সরাসরি তাজা সবজি'], 'slug' => 'vegetables', 'image_path' => 'categories/demo-veg.png'],
-            ['en' => ['name' => 'Fruits', 'description' => 'Seasonal and imported fruits'], 'bn' => ['name' => 'ফলমূল', 'description' => 'মৌসুমী এবং আমদানিকৃত ফল'], 'slug' => 'fruits', 'image_path' => 'categories/demo-fruit.png'],
-            ['en' => ['name' => 'Fish', 'description' => 'Freshwater and sea fish'], 'bn' => ['name' => 'মাছ', 'description' => 'মিঠা পানি ও সামুদ্রিক মাছ'], 'slug' => 'fish', 'image_path' => 'categories/demo-fish.png'],
-            ['en' => ['name' => 'Meat', 'description' => 'Beef, Chicken, Mutton and others'], 'bn' => ['name' => 'মাংস', 'description' => 'গরু, মুরগি, খাসি ও অন্যান্য মাংস'], 'slug' => 'meat', 'image_path' => 'categories/demo-meat.png'],
-            ['en' => ['name' => 'Grocery', 'description' => 'Daily essentials'], 'bn' => ['name' => 'মুদি দ্রব্য', 'description' => 'দৈনন্দিন প্রয়োজনীয় সামগ্রী'], 'slug' => 'grocery', 'image_path' => 'categories/demo-grocery.png'],
-            ['en' => ['name' => 'Spices', 'description' => 'Authentic spices'], 'bn' => ['name' => 'মশলা', 'description' => 'অরিজিনাল মশলা ও গুঁড়া'], 'slug' => 'spices', 'image_path' => 'categories/demo-spices.png'],
+            ['en' => ['name' => 'Vegetables', 'description' => 'Fresh vegetables directly from farmers'], 'bn' => ['name' => 'সবজি', 'description' => 'কৃষকদের কাছ থেকে সরাসরি তাজা সবজি'], 'slug' => 'vegetables', 'image_path' => null],
+            ['en' => ['name' => 'Fruits', 'description' => 'Seasonal and imported fruits'], 'bn' => ['name' => 'ফলমূল', 'description' => 'মৌসুমী এবং আমদানিকৃত ফল'], 'slug' => 'fruits', 'image_path' => null],
+            ['en' => ['name' => 'Fish', 'description' => 'Freshwater and sea fish'], 'bn' => ['name' => 'মাছ', 'description' => 'মিঠা পানি ও সামুদ্রিক মাছ'], 'slug' => 'fish', 'image_path' => null],
+            ['en' => ['name' => 'Meat', 'description' => 'Beef, Chicken, Mutton and others'], 'bn' => ['name' => 'মাংস', 'description' => 'গরু, মুরগি, খাসি ও অন্যান্য মাংস'], 'slug' => 'meat', 'image_path' => null],
+            ['en' => ['name' => 'Grocery', 'description' => 'Daily essentials'], 'bn' => ['name' => 'মুদি দ্রব্য', 'description' => 'দৈনন্দিন প্রয়োজনীয় সামগ্রী'], 'slug' => 'grocery', 'image_path' => null],
+            ['en' => ['name' => 'Spices', 'description' => 'Authentic spices'], 'bn' => ['name' => 'মশলা', 'description' => 'অরিজিনাল মশলা ও গুঁড়া'], 'slug' => 'spices', 'image_path' => null],
         ];
 
         foreach ($categoriesData as $catData) {
@@ -114,35 +115,35 @@ class BangladeshDemoDataSeeder extends Seeder
                 'bn' => ['name' => 'কারওয়ান বাজার', 'description' => 'ঢাকা শহরের অন্যতম বৃহত্তম পাইকারি বাজার।', 'address' => 'কারওয়ান বাজার, ঢাকা ১২১৫'],
                 'slug' => 'karwan-bazar', 'latitude' => 23.7516, 'longitude' => 90.3936,
                 'division' => 'Dhaka', 'district' => 'Dhaka', 'upazila_or_thana' => 'Tejgaon',
-                'image_path' => 'markets/demo-market.png',
+                'image_path' => null,
             ],
             [
                 'en' => ['name' => 'Hatirpool Kacha Bazar', 'description' => 'Popular market for fresh produce and fish.', 'address' => 'Hatirpool, Dhaka 1205'],
                 'bn' => ['name' => 'হাতিরপুল কাঁচা বাজার', 'description' => 'তাজা শাকসবজি ও মাছের জন্য জনপ্রিয় বাজার।', 'address' => 'হাতিরপুল, ঢাকা ১২০৫'],
                 'slug' => 'hatirpool-kacha-bazar', 'latitude' => 23.7390, 'longitude' => 90.3900,
                 'division' => 'Dhaka', 'district' => 'Dhaka', 'upazila_or_thana' => 'Dhanmondi',
-                'image_path' => 'markets/demo-market.png',
+                'image_path' => null,
             ],
             [
                 'en' => ['name' => 'Mohammadpur Krishi Market', 'description' => 'Government regulated agricultural market.', 'address' => 'Mohammadpur, Dhaka 1207'],
                 'bn' => ['name' => 'মোহাম্মদপুর কৃষি মার্কেট', 'description' => 'সরকার নিয়ন্ত্রিত কৃষি বাজার।', 'address' => 'মোহাম্মদপুর, ঢাকা ১২০৭'],
                 'slug' => 'mohammadpur-krishi-market', 'latitude' => 23.7665, 'longitude' => 90.3587,
                 'division' => 'Dhaka', 'district' => 'Dhaka', 'upazila_or_thana' => 'Mohammadpur',
-                'image_path' => 'markets/demo-market.png',
+                'image_path' => null,
             ],
             [
                 'en' => ['name' => 'Shantinagar Bazar', 'description' => 'Well organized kitchen market.', 'address' => 'Shantinagar, Dhaka 1217'],
                 'bn' => ['name' => 'শান্তিনগর বাজার', 'description' => 'সুসংগঠিত কিচেন মার্কেট।', 'address' => 'শান্তিনগর, ঢাকা ১২১৭'],
                 'slug' => 'shantinagar-bazar', 'latitude' => 23.7368, 'longitude' => 90.4132,
                 'division' => 'Dhaka', 'district' => 'Dhaka', 'upazila_or_thana' => 'Paltan',
-                'image_path' => 'markets/demo-market.png',
+                'image_path' => null,
             ],
             [
                 'en' => ['name' => 'New Market', 'description' => 'Historic market complex.', 'address' => 'New Market, Dhaka 1205'],
                 'bn' => ['name' => 'নিউ মার্কেট', 'description' => 'ঐতিহাসিক মার্কেট কমপ্লেক্স।', 'address' => 'নিউ মার্কেট, ঢাকা ১২০৫'],
                 'slug' => 'new-market', 'latitude' => 23.7328, 'longitude' => 90.3852,
                 'division' => 'Dhaka', 'district' => 'Dhaka', 'upazila_or_thana' => 'New Market',
-                'image_path' => 'markets/demo-market.png',
+                'image_path' => null,
             ],
         ];
 
@@ -220,7 +221,7 @@ class BangladeshDemoDataSeeder extends Seeder
                 'is_featured' => rand(0, 1),
                 'country_of_origin' => 'Bangladesh',
                 'brand' => 'Local',
-                'image_path' => 'products/demo-product.png',
+                'image_path' => null,
             ]);
             $pt = $product->translateOrNew('bn');
             foreach ($bn as $field => $value) {
@@ -248,9 +249,9 @@ class BangladeshDemoDataSeeder extends Seeder
 
         // 7. Create Banners with bilingual translations
         $bannersData = [
-            ['en' => ['title' => 'Fresh Vegetables'], 'bn' => ['title' => 'তাজা সবজি'], 'is_featured' => true, 'image_path' => 'banners/demo-veg.png'],
-            ['en' => ['title' => 'Eid Special Discount'], 'bn' => ['title' => 'ঈদ স্পেশাল ডিসকাউন্ট'], 'is_featured' => false, 'image_path' => 'banners/demo-eid.png'],
-            ['en' => ['title' => 'Winter Collection'], 'bn' => ['title' => 'শীতকালীন সংগ্রহ'], 'is_featured' => true, 'image_path' => 'banners/demo-winter.png'],
+            ['en' => ['title' => 'Fresh Vegetables'], 'bn' => ['title' => 'তাজা সবজি'], 'is_featured' => true, 'image_path' => null],
+            ['en' => ['title' => 'Eid Special Discount'], 'bn' => ['title' => 'ঈদ স্পেশাল ডিসকাউন্ট'], 'is_featured' => false, 'image_path' => null],
+            ['en' => ['title' => 'Winter Collection'], 'bn' => ['title' => 'শীতকালীন সংগ্রহ'], 'is_featured' => true, 'image_path' => null],
         ];
 
         foreach ($bannersData as $bannerData) {
@@ -295,5 +296,17 @@ class BangladeshDemoDataSeeder extends Seeder
         if (! $admin->hasRole('super_admin')) {
             $admin->assignRole('super_admin');
         }
+
+        $this->command->info('Downloading product images...');
+        Artisan::call('products:download-images', [], $this->command->getOutput());
+
+        $this->command->info('Downloading market images...');
+        Artisan::call('markets:download-images', [], $this->command->getOutput());
+
+        $this->command->info('Downloading banner images...');
+        Artisan::call('banners:download-images', [], $this->command->getOutput());
+
+        $this->command->info('Downloading category images...');
+        Artisan::call('categories:download-images', [], $this->command->getOutput());
     }
 }

@@ -78,11 +78,10 @@
                     <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Market Image') }}</h6>
                 </div>
                 <div class="card-body text-center">
-                    @if($market->image_path)
-                        <img src="{{ asset('storage/markets/'.$market->image_path) }}" alt="Market Image" class="img-fluid img-thumbnail mb-2" style="max-width: 220px; max-height: 220px;">
-                    @else
-                        <img src="{{ asset('adminpanel/img/market-placeholder.png') }}" class="img-fluid img-thumbnail mb-2" style="max-width: 220px; max-height: 220px;" alt="placeholder">
-                    @endif
+                    <img src="{{ $market->image_full_url }}"
+                         onerror="this.onerror=null;this.src='{{ asset('assets/img/placeholder.png') }}';"
+                         alt="Market Image" class="img-fluid img-thumbnail mb-2"
+                         style="max-width:220px;max-height:220px;object-fit:cover;">
                 </div>
             </div>
             <div class="card shadow mb-4">

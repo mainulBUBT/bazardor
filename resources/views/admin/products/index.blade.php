@@ -110,11 +110,10 @@
                             <tr>
                                 <td>{{ $product->id }}</td>
                                 <td>
-                                    @if($product->image_path)
-                                        <img src="{{ asset('storage/products/'.$product->image_path) }}" alt="{{ $product->name }}" class="img-fluid img-thumbnail" width="60">
-                                    @else
-                                        <img src="{{ asset('adminpanel/img/product-placeholder.png') }}" class="img-fluid img-thumbnail" width="60" alt="placeholder">
-                                    @endif
+                                    <img src="{{ $product->image_full_url }}"
+                                         onerror="this.onerror=null;this.src='{{ asset('assets/img/placeholder.png') }}';"
+                                         alt="{{ $product->name }}"
+                                         style="width:60px;height:60px;object-fit:cover;border-radius:4px;">
                                 </td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ optional($product->category)->name }}</td>

@@ -113,11 +113,10 @@
                             <td>{{ $category->name }}</td>
                             <td>{{ $category->slug }}</td>
                             <td>
-                                @if($category->image_path)
-                                    <img src="{{ asset('storage/categories/' . $category->image_path) }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
-                                @else
-                                    <img src="{{ asset('storage/categories/default.png') }}" alt="Category Image" class="img-thumbnail img-fluid" style="width: 80px; height: 40px; object-fit: cover;">
-                                @endif
+                                <img src="{{ $category->image_full_url }}"
+                                     onerror="this.onerror=null;this.src='{{ asset('assets/img/placeholder.png') }}';"
+                                     alt="{{ $category->name }}" class="img-thumbnail img-fluid"
+                                     style="width:80px;height:60px;object-fit:cover;">
                             </td>   
                             <td>
                                 {{ $category->parent ? $category->parent->name : translate('messages.None') }}

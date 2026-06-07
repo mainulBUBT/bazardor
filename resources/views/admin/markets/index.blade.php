@@ -121,11 +121,10 @@
                         <td>{{ $market->id }}</td>
                         <td class="text-center">
                             <div class="market-thumbnail">
-                                @if($market->image_path)
-                                    <img src="{{ asset('storage/markets/' . $market->image_path) }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
-                                @else
-                                    <img src="{{ asset('storage/markets/default.png') }}" alt="{{ $market->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
-                                @endif
+                                <img src="{{ $market->image_full_url }}"
+                                     onerror="this.onerror=null;this.src='{{ asset('assets/img/placeholder.png') }}';"
+                                     alt="{{ $market->name }}" class="img-thumbnail"
+                                     style="width:80px;height:80px;object-fit:cover;">
                             </div>
                         </td>
                         <td>{{ $market->name }}</td>
