@@ -75,8 +75,8 @@
                 <div class="form-row">
                     <div class="col-md-6 mb-3">
                         <label for="unitType">{{ translate('messages.Type') }}</label>
-                        <select class="form-control" name="unit_type" id="unitType">
-                            <option selected value="">{{ translate('messages.Select unit type') }}</option>
+                        <select class="form-control select2" name="unit_type" id="unitType" data-placeholder="{{ translate('messages.Select unit type') }}">
+                            <option value="">{{ translate('messages.Select unit type') }}</option>
                             <option value="weight" {{ $unit->unit_type == 'weight' ? 'selected' : '' }}>{{ translate('messages.Weight') }}</option>
                             <option value="volume" {{ $unit->unit_type == 'volume' ? 'selected' : '' }}>{{ translate('messages.Volume') }}</option>
                             <option value="length" {{ $unit->unit_type == 'length' ? 'selected' : '' }}>{{ translate('messages.Length') }}</option>

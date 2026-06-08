@@ -76,8 +76,8 @@
                 <div class="form-row">
                     <div class="col-md-4 mb-3">
                         <label for="unitType">{{ translate('messages.Type') }}</label>
-                        <select class="form-control" name="unit_type" id="unitType">
-                            <option selected value="">{{ translate('messages.Select unit type') }}</option>
+                        <select class="form-control select2" name="unit_type" id="unitType" data-placeholder="{{ translate('messages.Select unit type') }}">
+                            <option value="">{{ translate('messages.Select unit type') }}</option>
                             <option value="weight">{{ translate('messages.Weight') }}</option>
                             <option value="volume">{{ translate('messages.Volume') }}</option>
                             <option value="length">{{ translate('messages.Length') }}</option>
@@ -138,7 +138,7 @@
                                 <form id="filterForm">
                                     <div class="mb-2">
                                         <label for="filterType" class="form-label small">{{ translate('messages.Type') }}</label>
-                                        <select class="form-control form-control-sm" id="filterType" name="unit_type">
+                                        <select class="form-control form-control-sm select2" id="filterType" name="unit_type" data-placeholder="{{ translate('messages.All Types') }}">
                                             <option value="">{{ translate('messages.All Types') }}</option>
                                             <option value="weight" {{ request('unit_type') == 'weight' ? 'selected' : '' }}>{{ translate('messages.Weight') }}</option>
                                             <option value="volume" {{ request('unit_type') == 'volume' ? 'selected' : '' }}>{{ translate('messages.Volume') }}</option>
@@ -149,7 +149,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="filterStatus" class="form-label small">{{ translate('messages.Status') }}</label>
-                                        <select class="form-control form-control-sm" id="filterStatus" name="is_active">
+                                        <select class="form-control form-control-sm select2" id="filterStatus" name="is_active" data-placeholder="{{ translate('messages.All Status') }}">
                                             <option value="">{{ translate('messages.All Status') }}</option>
                                             <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>{{ translate('messages.Active') }}</option>
                                             <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>{{ translate('messages.Inactive') }}</option>

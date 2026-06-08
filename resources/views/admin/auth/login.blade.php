@@ -109,12 +109,14 @@
                         <div class="form-group-modern">
                             <div class="input-wrapper">
                                 <i class="fas fa-envelope input-icon"></i>
-                                <input 
-                                    type="email" 
-                                    class="form-control-modern @error('email') is-invalid @enderror" 
-                                    id="email" 
-                                    name="email" 
+                                <input
+                                    type="email"
+                                    class="form-control-modern @error('email') is-invalid @enderror"
+                                    id="email"
+                                    name="email"
                                     value="{{ old('email') }}"
+                                    placeholder=" "
+                                    title="{{ translate('messages.Email Address') }}"
                                     required
                                     autocomplete="email"
                                     autofocus
@@ -133,11 +135,13 @@
                         <div class="form-group-modern">
                             <div class="input-wrapper">
                                 <i class="fas fa-lock input-icon"></i>
-                                <input 
-                                    type="password" 
-                                    class="form-control-modern @error('password') is-invalid @enderror" 
-                                    id="password" 
+                                <input
+                                    type="password"
+                                    class="form-control-modern @error('password') is-invalid @enderror"
+                                    id="password"
                                     name="password"
+                                    placeholder=" "
+                                    title="{{ translate('messages.Password') }}"
                                     required
                                     autocomplete="current-password"
                                 >

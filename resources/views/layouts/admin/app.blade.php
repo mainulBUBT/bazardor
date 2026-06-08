@@ -57,13 +57,14 @@
                 min-height: 100vh;
             }
         </style>
-        <link href="{{ asset('assets/admin/css/custom.css') }}" rel="stylesheet">
         <!-- Toastr CSS -->
-        <link href="{{ asset('assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>  
+        <link href="{{ asset('assets/admin/vendor/toastr/toastr.css') }}" rel="stylesheet"/>
         <!-- SweetAlert2 CSS -->
         <link href="{{ asset('assets/admin/vendor/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"/>
         <!-- Select2 CSS -->
         <link href="{{ asset('assets/admin/vendor/select2/select2.min.css') }}" rel="stylesheet" />
+        <!-- Custom CSS (loaded last to override vendor styles) -->
+        <link href="{{ asset('assets/admin/css/custom.css') }}" rel="stylesheet">
     @stack('styles')
     </head>
     <body id="page-top">
