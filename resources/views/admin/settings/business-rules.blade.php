@@ -60,6 +60,31 @@
         </div>
     </div>
 
+    <!-- Contribution Processing Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ translate('messages.Contribution Processing') }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="toggle-item">
+                <label class="toggle-label">
+                    <i class="fas fa-robot"></i> {{ translate('messages.Auto-process price contributions') }}
+                </label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoProcessContributions"
+                        onchange="statusAlert(this)"
+                        data-url="{{ route('admin.settings.update-status', ['tab' => BUSINESS_RULES]) }}"
+                        name="auto_process_contributions"
+                        {{ ($settings['auto_process_contributions']['value'] ?? true) ? 'checked' : '' }}>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <small class="form-text text-muted mt-2 d-block">
+                {{ translate('messages.When enabled, submitted prices are automatically processed and live prices update instantly. When disabled, contributions remain pending until an admin approves them.') }}
+            </small>
+        </div>
+    </div>
+
     <!-- System Settings Card -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">

@@ -175,6 +175,11 @@ const PRICE_SUBMISSION_RATE_LIMITED_429 = [
     'message' => 'You can submit a new price for this product after 60 minutes.',
 ];
 
+const PRICE_OUT_OF_RANGE_422 = [
+    'response_code' => 'price_out_of_range_422',
+    'message' => 'The submitted price is too far from the current market price.',
+];
+
 const PRODUCT_SUBMISSION_CREATED_200 = [
     'response_code' => 'product_submission_created_200',
     'message' => 'Product submitted successfully. It will be visible after admin approval.',

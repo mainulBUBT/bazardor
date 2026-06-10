@@ -63,6 +63,7 @@ class UpdateSettingsRequest extends FormRequest
                 'contribution_window_hours' => 'required|integer|min:1|max:168',
                 'outdated_price_days' => 'required|integer|min:1|max:365',
                 'min_submissions_for_median' => 'required|integer|min:1|max:10',
+                'auto_process_contributions' => 'boolean',
             ],
             'notifications' => [
                 'enable_email_notifications' => 'boolean',

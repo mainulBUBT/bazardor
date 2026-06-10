@@ -200,6 +200,7 @@ class SettingService
                 'contribution_window_hours' => 24,
                 'outdated_price_days' => 30,
                 'min_submissions_for_median' => 1,
+                'auto_process_contributions' => true,
             ],
             'notifications' => [
                 'enable_email_notifications' => true,

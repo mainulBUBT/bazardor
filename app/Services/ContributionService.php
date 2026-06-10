@@ -129,7 +129,9 @@ class ContributionService
 
         $this->archiveOldContributions($data['product_id'], $data['market_id']);
 
-        $this->recomputeAndUpdatePrice($data['product_id'], $data['market_id']);
+        if ((bool) $this->settingService->getSettingWithDefault('auto_process_contributions', 'business')) {
+            $this->recomputeAndUpdatePrice($data['product_id'], $data['market_id']);
+        }
 
         return [
             'rate_limited' => false,

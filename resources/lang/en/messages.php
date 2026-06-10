@@ -1380,4 +1380,7 @@
   'Select specific zones, or check All Zones above' => 'Select specific zones  or check All Zones above',
   'Select "All Zones" or specific zones' => 'Select  All Zones  or specific zones',
   'The link is too long' => 'The link is too long',
+  'Contribution Processing' => 'Contribution Processing',
+  'Auto-process price contributions' => 'Auto-process price contributions',
+  'When enabled, submitted prices are automatically processed and live prices update instantly. When disabled, contributions remain pending until an admin approves them.' => 'When enabled  submitted prices are automatically processed and live prices update instantly. When disabled  contributions remain pending until an admin approves them.',
 );

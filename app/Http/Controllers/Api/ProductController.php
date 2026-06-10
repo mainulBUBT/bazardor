@@ -112,6 +112,13 @@ class ProductController extends Controller
 
         $contribution = $result['contribution'];
 
+        if (! $contribution) {
+            return response()->json(
+                formated_response(constant: PRICE_OUT_OF_RANGE_422),
+                422
+            );
+        }
+
         return response()->json(
             formated_response(
                 constant: PRICE_SUBMISSION_CREATED_200,
