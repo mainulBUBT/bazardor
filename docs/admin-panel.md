@@ -197,7 +197,7 @@ Settings are stored in the `settings` table as key-value JSON rows. The settings
 | Notifications | `GET /admin/settings?tab=notifications` | Push notification config |
 | Social | `GET /admin/settings?tab=social` | Google/Facebook OAuth keys |
 | Backup | `GET /admin/settings?tab=backup` | Create database backup |
-| Business Rules | `GET /admin/settings?tab=business-rules` | Price threshold rules |
+| Business Rules | `GET /admin/settings?tab=business-rules` | Price tolerance, rate limit, contribution window, and the **Auto-process price contributions** toggle (`auto_process_contributions`, default on — when off, submissions stay pending for manual approval) |
 | Languages | `GET /admin/settings?tab=languages` | Enabled locales, default language, RTL support |
 | Others | `GET /admin/settings?tab=others` | Misc toggles |
 

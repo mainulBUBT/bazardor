@@ -142,18 +142,18 @@ For production, use Laravel Horizon or a Supervisor-managed worker.
 
 ---
 
-## 7. Scheduler (for price contributions)
+## 7. Scheduler
 
-The `ProcessPriceContributions` command runs on a schedule to validate and promote pending price submissions. Add a cron entry:
+Price contributions are now processed **immediately** on submission inside `ContributionService` (see [architecture.md](architecture.md) → Price Contribution Flow) — there is no batch-processor command to schedule. The scheduler only runs daily housekeeping (`prices:housekeeping`, which reports outdated prices). Add the standard cron entry so scheduled tasks fire:
 
 ```cron
 * * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-Or run manually:
+Run housekeeping manually if needed:
 
 ```bash
-php artisan contributions:process
+php artisan prices:housekeeping
 ```
 
 ---
@@ -166,7 +166,8 @@ php artisan contributions:process
 | `php artisan migrate:fresh --seed` | Drop all tables, re-migrate, and seed |
 | `php artisan db:seed` | Run all seeders |
 | `php artisan roles:setup` | Create/re-seed all roles and permissions (idempotent) |
-| `php artisan contributions:process` | Validate pending price contributions against thresholds |
+| `php artisan images:fix [type] [--skip-fix]` | Fix `image_path` prefixes and download missing Wikipedia/Wikimedia images. `type` = `banners\|categories\|markets\|products\|all` (default `all`) |
+| `php artisan prices:housekeeping` | Report outdated prices (scheduled daily) |
 | `php artisan schedule:run` | Run scheduled tasks (add to cron) |
 | `php artisan queue:work` | Start database queue worker |
 | `php artisan config:clear` | Clear config cache |

@@ -22,8 +22,13 @@ npm run dev          # watch + HMR
 # Roles & permissions (idempotent — run after any permission change)
 php artisan roles:setup
 
-# Process pending price contributions against thresholds
-php artisan price-contributions:process
+# Image automation — fix image_path prefixes + download missing images from Wikipedia/Wikimedia
+php artisan images:fix                 # all entities: categories, products, markets, banners
+php artisan images:fix products        # one entity only: banners|categories|markets|products
+php artisan images:fix --skip-fix      # skip the image_path prefix-cleanup step
+
+# Report outdated prices (scheduled daily via routes/console.php)
+php artisan prices:housekeeping
 
 # After any config/.env change
 php artisan config:clear && php artisan cache:clear
@@ -190,18 +195,23 @@ The app uses **`astrotomic/laravel-translatable`** for multi-language support. S
 
 ### Price contribution flow
 
-**Path A — automated processor (primary):**
-1. `POST /api/products/submit-price` → `price_contributions` row (`status = pending`). Rate-limited to 1 submission/hour per user or device per product+market pair (`PRICE_SUBMISSION_RATE_LIMITED_429`).
-2. `php artisan price-contributions:process` groups all pending rows by `(product_id, market_id)` and, inside a DB transaction per group:
-   - Validates contributions against the configured price tolerance (±% from reference price).
-   - **Valid** contributions: `AVG(submitted_price)` → `updateOrCreate` on `product_market_prices`.
-   - All contributions (valid + invalid) are bulk-inserted into `price_contributions_history` (`status = validated | invalid`) and then **hard-deleted** from `price_contributions`.
-   - `user_statistics.reputation_score` is incremented (+1 valid / -1 invalid) for each authenticated contributor.
-3. The command is **not yet scheduled** — it must be run manually or added to the cron via `routes/console.php`.
+Price updates are now **immediate**, computed inside `ContributionService::submitPrice()` — there is no batch processor command. The whole flow runs on a single API call:
 
-**Path B — admin manual override:**
-- Admin sets `status = approved | rejected` via `/admin/contributions` (`ContributionController`).
-- This only changes the status column — it does **not** update `product_market_prices` or archive to history. The automated processor handles archiving when it next runs.
+1. `POST /api/products/submit-price` → `ContributionService::submitPrice()`.
+2. **Rate limit** — 1 submission per `rate_limit_minutes` setting (default 60) per user or device, per product+market pair. Returns `PRICE_SUBMISSION_RATE_LIMITED_429`.
+3. **Gate check** (`passesGateCheck`) — the submitted price must fall within ±`price_tolerance` (default 0.50 = ±50%) of a reference price. Reference resolves in order: current `product_market_prices.price` → zone median for that product → product `base_price`. With no reference, any price `> 0` passes. A price outside the band is rejected with `PRICE_OUT_OF_RANGE_422` (controller maps the `null` contribution to this) — no row is created.
+4. **Store** — `updateOrCreate` a `price_contributions` row (`status = pending`) keyed by product+market+user/device.
+5. **Archive old** — contributions older than `contribution_window_hours` (default 24) are upserted into `price_contributions_history` (`status = validated`) and **force-deleted** from `price_contributions`.
+6. **Recompute (conditional)** — if the `auto_process_contributions` business setting is **on** (default `true`), `recomputeAndUpdatePrice` takes the pending contributions inside the window; once there are at least `min_submissions_for_median` (default 1) of them it computes the **median** and `updateOrCreate`s `product_market_prices` (`price` + `price_date`) right away. If the setting is **off**, the contribution stays `pending` for manual admin approval and live prices are not touched.
+
+**Admin manual path:**
+- Admin sets `status = approved | rejected` via `/admin/contributions` (`ContributionController`). This is for human review of edge cases (and the fallback when `auto_process_contributions` is off).
+
+**Auto-process setting:**
+- `auto_process_contributions` lives in the **business** settings group (admin → Settings → Business Rules → *Contribution Processing* toggle). Read it via `SettingService::getSettingWithDefault('auto_process_contributions', 'business')`. Default `true`.
+
+**Daily housekeeping:**
+- `php artisan prices:housekeeping` (scheduled daily in `routes/console.php`, `withoutOverlapping`) reports outdated prices. It does **not** recompute prices — recomputation is immediate at submission time.
 
 ### Polymorphic relations
 

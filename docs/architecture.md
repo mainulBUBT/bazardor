@@ -197,28 +197,24 @@ See [admin-panel.md](admin-panel.md#roles--permissions) for the full breakdown. 
 
 ### Price Contribution Flow
 
-There are two paths by which a product price gets updated:
+Price updates are **immediate**, computed inside `ContributionService::submitPrice()` on a single API call. There is no batch-processor command — the older `price-contributions:process` / `contributions:process` command has been removed in favour of this redesigned flow (see [price-flow-redesign.md](price-flow-redesign.md)).
 
-**Path A — automated processor (primary path)**
+**Submission → live price (primary path)**
 
 1. User (authenticated) or anonymous guest (`X-Device-ID` header) calls `POST /api/products/submit-price`.
-2. `ContributionService::submitPrice()` enforces a **1-submission-per-hour** rate limit per user or device, per product+market pair. On pass, it `updateOrCreate`s a row in `price_contributions` with `status = pending`.
-3. `php artisan price-contributions:process` (`PriceContributionProcessor`) runs (manually or via cron — **not yet scheduled**):
-   - Groups all `pending` rows by `(product_id, market_id)`.
-   - For each group, inside a DB transaction with `lockForUpdate`:
-     - Fetches `price_thresholds` for the product (`min_price` / `max_price`). If none exists, all prices `> 0` are considered valid.
-     - Partitions contributions into **valid** and **invalid**.
-     - If valid contributions exist: calculates `AVG(submitted_price)` → `updateOrCreate` on `product_market_prices`.
-     - Bulk-inserts all contributions (valid + invalid) into `price_contributions_history` (`status = validated | invalid`).
-     - Hard-deletes (`forceDelete`) all processed rows from `price_contributions`.
-     - Updates `user_statistics` for each authenticated contributor: `+1 reputation` for valid, `-1` for invalid.
+2. `ContributionService::submitPrice()` enforces a rate limit of 1 submission per `rate_limit_minutes` (default 60), per user or device, per product+market pair → `PRICE_SUBMISSION_RATE_LIMITED_429`.
+3. **Gate check** (`passesGateCheck`): the submitted price must be within ±`price_tolerance` (default 0.50) of a reference price. The reference resolves in order — current `product_market_prices.price` → zone median for the product (`compute_median`) → product `base_price`. With no reference, any price `> 0` passes. Out-of-band prices are rejected (no row created) and the controller returns `PRICE_OUT_OF_RANGE_422`.
+4. On pass, it `updateOrCreate`s a `price_contributions` row (`status = pending`) keyed by product+market+user/device.
+5. `archiveOldContributions()` upserts contributions older than `contribution_window_hours` (default 24) into `price_contributions_history` (`status = validated`) and `forceDelete`s them from `price_contributions`.
+6. If the `auto_process_contributions` business setting is **on** (default `true`), `recomputeAndUpdatePrice()` runs immediately: of the pending contributions inside the window, once there are at least `min_submissions_for_median` (default 1) it computes the **median** and `updateOrCreate`s `product_market_prices` (`price` + `price_date`). If the setting is **off**, the row stays `pending` for admin approval and live prices are untouched.
 
-**Path B — admin manual override**
+**Admin manual override**
 
-Admin visits `/admin/contributions` and clicks Approve or Reject.
-- `ContributionService::approve/reject()` only updates the `status` column on `price_contributions`.
-- It does **not** update `product_market_prices` or archive to history — the automated processor handles archiving when it next runs.
-- This path is for human review of edge cases, not the primary update mechanism.
+Admin visits `/admin/contributions` and clicks Approve or Reject (`ContributionController`). This is for human review of edge cases, and the fallback when `auto_process_contributions` is disabled.
+
+**Daily housekeeping**
+
+`php artisan prices:housekeeping` (scheduled daily in `routes/console.php`, `withoutOverlapping`) reports outdated prices — it does not recompute them, since recomputation happens at submission time.
 
 ### Soft Deletes
 `Product`, `Category`, `Banner`, `Unit`, and `PriceContribution` use `SoftDeletes`. Records are never hard-deleted from these tables by normal CRUD operations.
